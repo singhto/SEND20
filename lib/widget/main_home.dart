@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
-import 'package:expand_widget/expand_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/banner_model.dart';
 import 'package:foodlion/models/order_model.dart';
+import 'package:foodlion/models/send_location_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
@@ -42,6 +42,10 @@ class _MainHomeState extends State<MainHome> {
   double lat, lng;
   bool statusShowCard = false;
 
+  List<SendLocationModeil> sendLocationModels = List();
+
+  String choosedLocation;
+
   // Method
   @override
   void initState() {
@@ -50,6 +54,27 @@ class _MainHomeState extends State<MainHome> {
     aboutNotification();
     editToken();
     findLatLng();
+
+    // findSendLocationWhereIdUser();
+  }
+
+  Future<Null> findSendLocationWhereIdUser() async {
+    print('idUser ==>> $idUser');
+
+    if (sendLocationModels.length !=0) {
+      sendLocationModels.clear();
+    }
+
+    String url =
+        'http://movehubs.com/app/getSenLocationWhereIdUser.php?isAdd=true&idUser=$idUser';
+    Response response = await Dio().get(url);
+    var result = json.decode(response.data);
+    for (var map in result) {
+      SendLocationModeil model = SendLocationModeil.fromJson(map);
+      setState(() {
+        sendLocationModels.add(model);
+      });
+    }
   }
 
   Future<Null> findLatLng() async {
@@ -59,11 +84,12 @@ class _MainHomeState extends State<MainHome> {
       lat = locationData.latitude;
       lng = locationData.longitude;
 
-      readBanner();
+      //readBanner();
       readShopThread();
       checkAmount();
       findUser();
       updateLatLng();
+      findSendLocationWhereIdUser();
     });
   }
 
@@ -177,13 +203,16 @@ class _MainHomeState extends State<MainHome> {
           double.parse(model.lng.trim()),
         );
 
+        //print('distance ======>>>>> $distance');
+
         var myFormat = NumberFormat('##0.0#', 'en_US');
 
         setState(() {
           userShopModels.add(model);
-          if (distance <= 30.0) {
+          if (distance <= 2.0) {
             showWidgets.add(createCard(model, '${myFormat.format(distance)}'));
             statusShowCard = true;
+            print('distance ======>>>>> $distance');
           }
         });
       }
@@ -531,6 +560,7 @@ class _MainHomeState extends State<MainHome> {
           Column(
             children: <Widget>[
               Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ListTile(
                     leading:
@@ -539,24 +569,33 @@ class _MainHomeState extends State<MainHome> {
                       'เพิ่มทำแหน่งใหม่',
                       style: TextStyle(fontSize: 18),
                     ),
-                    trailing: IconButton(icon: Icon(Icons.add), onPressed: (){
-                       Navigator.pushNamed(context, '/guestMap');
-                    })
-                  ),
-                  ListTile(
-                    leading:
-                        Radio(value: null, groupValue: null, onChanged: null),
-                    title: Text(
-                      'บ้าน',
-                      style: TextStyle(fontSize: 18),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/guestMap').then((value) {
+                          findSendLocationWhereIdUser();
+                        });
+                      },
                     ),
                   ),
+                  buildListSendLocation(),
                 ],
               ),
             ],
           )
         ],
       ),
+    );
+  }
+
+  Widget buildListSendLocation() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemCount: sendLocationModels.length,
+      itemBuilder: (context, index) =>
+          Text(sendLocationModels[index].nameLocation),
     );
   }
 
@@ -580,48 +619,80 @@ class _MainHomeState extends State<MainHome> {
           showCart()
         ],
       ),
-      body: GestureDetector(
-        onTap: () {
-          insertMapForm();
-        },
-        child: Column(
-          children: <Widget>[
-            //showBanner(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Icon(Icons.location_searching, size: 30,),
-                        SizedBox(
-                      width: 20.0,
-                      
-                    ),
-                    Text(
-                      'ส่งที่ : ตำแหน่งปัจจุบัน',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        letterSpacing: 0.5,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-            
-              ],
-            ),
-            statusShowCard
-                ? showShop()
-                : Center(
-                    child: MyStyle()
-                        .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
+      body: Column(
+        children: <Widget>[
+          //showBanner(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 20.0,
                   ),
-          ],
-        ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.location_searching,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        insertMapForm();
+                      }),
+                  SizedBox(
+                    width: 20.0,
+                  ),
+                  buildDropDown(context),
+                ],
+              ),
+            ],
+          ),
+          statusShowCard
+              ? showShop()
+              : Center(
+                  child: MyStyle()
+                      .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
+                ),
+        ],
       ),
     );
+  }
+
+  int indexChooseLocation;
+
+  Widget buildDropDown(BuildContext context) {
+    List<int> indexs = List();
+    int i = 0;
+    for (var model in sendLocationModels) {
+      indexs.add(i);
+      i++;
+      //print('$indexs');
+    }
+
+    return indexs.length == 0
+        ? MyStyle().showProgress()
+        : DropdownButton<int>(
+            items: indexs
+                .map(
+                  (e) => DropdownMenuItem(
+                    child: Text(sendLocationModels[e].nameLocation),
+                    value: e,
+                  ),
+                )
+                .toList(),
+            hint: Text('ส่งไปที่อยู่ปัจจุบัน'),
+            value: indexChooseLocation,
+            onChanged: (value) {
+              setState(() {
+                indexChooseLocation = value;
+                // print(
+                //     'คุณเลือก ====>>>>>> ${sendLocationModels[indexChooseLocation].lat}');
+
+                lat = double.parse(sendLocationModels[indexChooseLocation].lat);
+                lng = double.parse(sendLocationModels[indexChooseLocation].lng);
+
+                readShopThread();
+              });
+            },
+          );
   }
 }

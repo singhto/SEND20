@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/utility/my_api.dart';
+import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GuestMap extends StatefulWidget {
   @override
@@ -16,8 +18,8 @@ class GuestMapState extends State<GuestMap> {
   double lng;
   double currentLat;
   double currentLng;
-   String nameLocation;
-    UserModel userModel;
+  String nameLocation;
+  UserModel userModel;
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
@@ -39,7 +41,7 @@ class GuestMapState extends State<GuestMap> {
         target: LatLng(lat, lng),
         tilt: 59.440717697143555,
         zoom: 16);
-        print('=====>>>> $lat, $lng');
+    print('=====>>>> $lat, $lng');
 
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(ps23));
@@ -93,11 +95,12 @@ class GuestMapState extends State<GuestMap> {
         target: LatLng(currentLat, currentLng),
         tilt: 59.440717697143555,
         zoom: 16);
-        print('=====>>>> $currentLat, $currentLng');
+    print('=====>>>> $currentLat, $currentLng');
 
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(ps23));
   }
+
   Future<Null> insertMapForm() async {
     showDialog(
       context: context,
@@ -110,7 +113,7 @@ class GuestMapState extends State<GuestMap> {
               Container(
                 width: 150,
                 child: TextField(
-                 
+                  onChanged: (value) => nameLocation = value.trim(),
                   decoration: InputDecoration(
                     labelText: 'ชื่อที่จัดส่ง :',
                     //border: OutlineInputBorder(),
@@ -126,7 +129,12 @@ class GuestMapState extends State<GuestMap> {
                 width: 200.0,
                 child: RaisedButton.icon(
                   onPressed: () {
-                  
+                    if (nameLocation == null || nameLocation.isEmpty) {
+                      normalDialog(context, 'ยังไม่ใส่ชื่อที่จัดส่ง',
+                          'กรุณากำหนดชื่อที่จัดส่ง');
+                    } else {
+                      uploadValuToSendLocation();
+                    }
                   },
                   icon: Icon(Icons.save),
                   label: Text('บันทึก'),
@@ -137,6 +145,21 @@ class GuestMapState extends State<GuestMap> {
         ],
       ),
     );
+  }
+
+  Future<Null> uploadValuToSendLocation() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    String idUser = preferences.getString('id');
+
+    print(
+        ' onSave idUser $idUser lat = $currentLat, lng $currentLng , nameLocation $nameLocation,');
+
+    await MyAPI()
+        .addSendLocation(idUser, lat.toString(), lng.toString(), nameLocation)
+        .then((value) {
+          Navigator.pop(context);
+        });
   }
 
   @override
@@ -192,7 +215,6 @@ class GuestMapState extends State<GuestMap> {
                       child: IconButton(
                         icon: Icon(Icons.save, color: Colors.white),
                         onPressed: () {
-                          
                           updateLatLng();
                           //normalToast('พิกัด $currentLng, $currentLng');
                           insertMapForm();

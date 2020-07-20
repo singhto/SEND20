@@ -11,14 +11,13 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'normal_toast.dart';
 
 class MyAPI {
+ 
 
   Future<Null> addSendLocation(
-      String idUser, String lat, String lng, String nameLocation ) async {
+      String idUser, String lat, String lng, String nameLocation) async {
     String url =
         'http://movehubs.com/app/addSendLocation.php?isAdd=true&idUser=$idUser&Lat=$lat&Lng=$lng&NameLocation=$nameLocation';
-    await Dio()
-        .get(url)
-        .then((value) => normalToast('บันทึก ที่อยู่สำเร็จ'));
+    await Dio().get(url).then((value) => normalToast('บันทึก ที่อยู่สำเร็จ'));
   }
 
   Future<Null> addPhoneThread(

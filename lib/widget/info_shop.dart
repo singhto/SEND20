@@ -3,7 +3,6 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/review_shop.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
-import 'package:foodlion/widget/my_food.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

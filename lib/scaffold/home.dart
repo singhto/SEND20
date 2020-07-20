@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +61,10 @@ class _HomeState extends State<Home> {
   OrderUserModel orderUserModel;
   double lat, lng;
 
+  Location location = Location();
+  bool serviceLocationEnable;
+  PermissionStatus permissionStatus;
+
   // Method
   @override
   void initState() {
@@ -69,12 +74,52 @@ class _HomeState extends State<Home> {
     nameShop = widget.nameShop;
     distance = widget.distance;
     transport = widget.transport;
+    checkPermission();
 
-    findLatLng();
+    //findLatLng2();
+  }
+
+  Future<Null> checkPermission() async {
+    try {
+      serviceLocationEnable = await location.serviceEnabled();
+      print('servcicerEnable111 =====>>> $serviceLocationEnable');
+      if (!serviceLocationEnable) {
+        //สภาวะที่ไม่เปิด service location
+        serviceLocationEnable = await location.requestService();
+        print('servcicerEnable2222222 =====>>> $serviceLocationEnable');
+
+        if (!serviceLocationEnable) {
+          exit(0);
+        } else {
+          findLatLng();
+        }
+      } else {
+        findLatLng();
+      }
+    } catch (e) {
+      print('e checkPersion ${e.toString()}');
+    }
+  }
+
+  Future<Null> findLatLng2() async {
+    await callculateFindLatLngOneTime().then((value) {
+      print('valut $value');
+    });
+  }
+
+  Future<LocationData> callculateFindLatLngOneTime() async {
+    var currentLocation;
+    try {
+      currentLocation = (await location.getLocation());
+    } catch (e) {
+      print('e  calut ====>>> ${e.toString()}');
+      currentLocation = null;
+    }
+    return currentLocation;
   }
 
   Future<Null> findLatLng() async {
-    //print('##################findLatLng on Home Work#######################');
+    print('##################findLatLng on Home Work#######################');
     LocationData locationData = await findLocationData();
     setState(() {
       lat = locationData.latitude;
@@ -629,8 +674,14 @@ class _HomeState extends State<Home> {
                 },
                 child: Card(
                   child: ListTile(
-                    leading: Icon(Icons.touch_app, size: 30.0,),
-                    title: Text('สั่งอาหาร', style: MyStyle().h2StylePrimary,),
+                    leading: Icon(
+                      Icons.touch_app,
+                      size: 30.0,
+                    ),
+                    title: Text(
+                      'สั่งอาหาร',
+                      style: MyStyle().h2StylePrimary,
+                    ),
                   ),
                 ),
               ),
@@ -657,8 +708,14 @@ class _HomeState extends State<Home> {
                 },
                 child: Card(
                   child: ListTile(
-                    leading: Icon(Icons.store_mall_directory, size: 30.0,),
-                    title: Text('ขายอาหาร', style: MyStyle().h2StylePrimary,),
+                    leading: Icon(
+                      Icons.store_mall_directory,
+                      size: 30.0,
+                    ),
+                    title: Text(
+                      'ขายอาหาร',
+                      style: MyStyle().h2StylePrimary,
+                    ),
                   ),
                 ),
               ),
@@ -666,32 +723,38 @@ class _HomeState extends State<Home> {
           ),
         ),
         Container(
-          height: 80.0,
-          width: 200.0,
-          child: ListView(children: <Widget>[
-            GestureDetector(
-                onTap: () {
-                  if (registerBool) {
-                    setState(() {
-                      cuttentWidget = RegisterDelivery();
-                    });
-                  } else {
-                    setState(() {
-                      cuttentWidget = SignDelivery();
-                    });
-                  }
-                  Navigator.of(context).pop();
-                },
-                child: Card(
-                  child: ListTile(
-                    leading: Icon(Icons.directions_bike, size: 30.0,),
-                    title: Text('ส่งอาหาร', style: MyStyle().h2StylePrimary,),
+            height: 80.0,
+            width: 200.0,
+            child: ListView(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    if (registerBool) {
+                      setState(() {
+                        cuttentWidget = RegisterDelivery();
+                      });
+                    } else {
+                      setState(() {
+                        cuttentWidget = SignDelivery();
+                      });
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.directions_bike,
+                        size: 30.0,
+                      ),
+                      title: Text(
+                        'ส่งอาหาร',
+                        style: MyStyle().h2StylePrimary,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-          ],)
-            
-        ),
+              ],
+            )),
       ],
     );
   }
