@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1007268930420",
+    "firebase_url": "https://foodlion-yaqdii.firebaseio.com",
+    "project_id": "foodlion-yaqdii",
+    "storage_bucket": "foodlion-yaqdii.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007268930420:android:4a05d24c56f30de56fc221",
+        "android_client_info": {
+          "package_name": "com.movehubs.foodlion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007268930420-3lb6hcq85va8so5g0dmgcp4q2cnlubpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLyoGehQaMRxb0Ig_SrilYYQraCTcoHdI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007268930420-3lb6hcq85va8so5g0dmgcp4q2cnlubpo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1007268930420-3ip6f5btccp4t67ssjda3j93fpbpjt4q.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1007268930420-3ip6f5btccp4t67ssjda3j93fpbpjt4q</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCSoO3AyA3LTNs4RoZvDAhDSzHe8Pqoa2k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1007268930420</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.movehubs.foodlion</string>
+	<key>PROJECT_ID</key>
+	<string>foodlion-yaqdii</string>
+	<key>STORAGE_BUCKET</key>
+	<string>foodlion-yaqdii.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1007268930420:ios:f7902429819709176fc221</string>
+	<key>DATABASE_URL</key>
+	<string>https://foodlion-yaqdii.firebaseio.com</string>
+</dict>
+</plist>
