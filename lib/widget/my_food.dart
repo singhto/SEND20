@@ -8,7 +8,6 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/scaffold/show_food.dart';
 import 'package:foodlion/utility/my_style.dart';
-import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/sqlite_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +25,7 @@ class _MyFoodState extends State<MyFood> {
   List<UserShopModel> userShopModels = List();
   String myIdShop;
   int amount = 0;
-  //List<String> nameShops = List();
+  List<String> nameShops = List();
 
   UserShopModel userShopModel;
 

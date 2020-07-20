@@ -84,11 +84,11 @@ class _SetTimeState extends State<SetTime> {
             trailing: Switch(
               value: isSwitched,
               onChanged: (value) {
-                // setState(() {
-                //   isSwitched = value;
-                //   print(isSwitched);
-                // });
-                normalToast('ยังตั้งค่าไม่ได้ครับ กรุณาอัพเดทเวอร์ชั่น');
+                setState(() {
+                  isSwitched = value;
+                  print(isSwitched);
+                });
+               
               },
               activeTrackColor: Colors.lightGreenAccent,
               activeColor: Colors.green,

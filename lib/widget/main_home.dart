@@ -103,10 +103,12 @@ class _MainHomeState extends State<MainHome> {
     Location location = Location();
     try {
       return await location.getLocation();
+      
     } on PlatformException catch (e) {
       if (e.code == 'PERMISSION_DENIED') {}
       return null;
     }
+  
   }
 
   Future<Null> aboutNotification() async {
@@ -209,7 +211,7 @@ class _MainHomeState extends State<MainHome> {
 
         setState(() {
           userShopModels.add(model);
-          if (distance <= 2.0) {
+          if (distance <= 1.0) {
             showWidgets.add(createCard(model, '${myFormat.format(distance)}'));
             statusShowCard = true;
             print('distance ======>>>>> $distance');
@@ -551,43 +553,7 @@ class _MainHomeState extends State<MainHome> {
     Navigator.of(context).push(materialPageRoute);
   }
 
-  Future<Null> insertMapForm() async {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text('เลือกที่จัดส่ง'),
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    leading:
-                        Radio(value: null, groupValue: null, onChanged: null),
-                    title: Text(
-                      'เพิ่มทำแหน่งใหม่',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamed(context, '/guestMap').then((value) {
-                          findSendLocationWhereIdUser();
-                        });
-                      },
-                    ),
-                  ),
-                  buildListSendLocation(),
-                ],
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
+
 
   Widget buildListSendLocation() {
     return ListView.builder(
@@ -636,7 +602,9 @@ class _MainHomeState extends State<MainHome> {
                         size: 30,
                       ),
                       onPressed: () {
-                        insertMapForm();
+                        Navigator.pushNamed(context, '/guestMap').then((value) {
+                          findSendLocationWhereIdUser();
+                        });
                       }),
                   SizedBox(
                     width: 20.0,
@@ -654,6 +622,43 @@ class _MainHomeState extends State<MainHome> {
                 ),
         ],
       ),
+
+      bottomSheet: Container(
+        height: 40.0,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, -1),
+              blurRadius: 6.0,
+            )
+          ],
+        ),
+        child: Center(
+          child: FlatButton(
+            onPressed: () async {
+     
+            },
+            child: Column(
+              children: <Widget>[
+                
+                Text(
+                  'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
     );
   }
 
@@ -684,8 +689,8 @@ class _MainHomeState extends State<MainHome> {
             onChanged: (value) {
               setState(() {
                 indexChooseLocation = value;
-                // print(
-                //     'คุณเลือก ====>>>>>> ${sendLocationModels[indexChooseLocation].lat}');
+              print(
+              'คุณเลือก ${sendLocationModels[indexChooseLocation].lat}, ${sendLocationModels[indexChooseLocation].lng}');
 
                 lat = double.parse(sendLocationModels[indexChooseLocation].lat);
                 lng = double.parse(sendLocationModels[indexChooseLocation].lng);

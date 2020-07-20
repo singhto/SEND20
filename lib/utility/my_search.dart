@@ -47,7 +47,7 @@ class _MySearchState extends State<MySearch> {
   }
 
   Future<void> checkAmount() async {
-    print('checkAmount Work');
+    //print('checkAmount Work');
     try {
       List<OrderModel> list = await SQLiteHelper().readDatabase();
       setState(() {
@@ -72,8 +72,6 @@ class _MySearchState extends State<MySearch> {
     setState(() {});
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +80,10 @@ class _MySearchState extends State<MySearch> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
-              //color: Theme.of(context).primaryColor,
+              //padding: EdgeInsets.symmetric(vertical: 15.0),
+              color: Theme.of(context).primaryColor,
               child: Padding(
-                padding: const EdgeInsets.only(top: 30.0),
+                padding: EdgeInsets.only(top: 40.0),
                 child: Card(
                   child: ListTile(
                     leading: Icon(Icons.search),
@@ -93,7 +91,7 @@ class _MySearchState extends State<MySearch> {
                       controller: controller,
                       onChanged: onSearch,
                       decoration: InputDecoration(
-                          hintText: 'ค้นหา', border: InputBorder.none),
+                          hintText: 'ค้นหาร้านอาหาร', border: InputBorder.none),
                     ),
                     trailing: IconButton(
                       icon: Icon(Icons.cancel),
@@ -115,42 +113,44 @@ class _MySearchState extends State<MySearch> {
                             itemBuilder: (context, i) {
                               final b = _search[i];
                               return Container(
-                                padding: EdgeInsets.all(10.0),
+                                padding: EdgeInsets.all(6.0),
                                 child: Card(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(1.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        ListTile(
-                                          leading: Icon(Icons.alarm),
-                                          title: Text(
-                                            b.name,
-                                            style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w600),
+                                  child: Column(
+                                    //mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading: Container(
+                                          width: 40.0,
+                                          height: 40.0,
+                                          child: CircleAvatar(
+                                            backgroundImage:
+                                                NetworkImage(b.urlShop),
                                           ),
-                                          onTap: () {
-                                            if (MyAPI().checkTimeShop()) {
-                                              MaterialPageRoute route =
-                                                  MaterialPageRoute(
-                                                      builder: (value) =>
-                                                          MyFood(idShop: b.id,));
-                                              Navigator.of(context)
-                                                  .push(route)
-                                                  .then(
-                                                      (value) => checkAmount());
-                                            } else {
-                                              normalDialog(
-                                                  context,
-                                                  'ร้านปิดแล้ว',
-                                                  'ต้องขอ อภัยมากๆ ครับ ร้านเปิดบริการ 8.00- 19.00');
-                                            }
-                                          },
-                                          subtitle: Text('${b.lat} ${b.lng}'),
                                         ),
-                                      ],
-                                    ),
+                                        title: Text(
+                                          b.name,
+                                          style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        onTap: () {
+                                          if (MyAPI().checkTimeShop()) {
+                                            MaterialPageRoute route =
+                                                MaterialPageRoute(
+                                                    builder: (value) => MyFood(
+                                                          idShop: b.id,
+                                                        ));
+                                            Navigator.of(context)
+                                                .push(route)
+                                                .then((value) => checkAmount());
+                                          } else {
+                                            normalDialog(context, 'ร้านปิดแล้ว',
+                                                'ต้องขอ อภัยมากๆ ครับ ร้านเปิดบริการ 8.00- 19.00');
+                                          }
+                                        },
+                                        subtitle: Text('${b.lat} ${b.lng}'),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );

@@ -55,60 +55,6 @@ class _ShowFoodState extends State<ShowFood> {
     } catch (e) {}
   }
 
-  Widget showContent() {
-    return Container(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            showImage(),
-            MyStyle().mySizeBox(),
-            MyStyle().showTitle('รายละเอียด :'),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: showDetail(),
-            ),
-            showPrice(),
-            Expanded(
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.person),
-                  hintText: 'What do people call you?',
-                  labelText: 'Name *',
-                ),
-                onSaved: (String value) {
-                  // This optional block of code can be used to run
-                  // code when the user saves the form.
-                },
-                validator: (String value) {
-                  return value.contains('@') ? 'Do not use the @ char.' : null;
-                },
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget showPrice() {
-    return Row(
-      children: <Widget>[
-        MyStyle().showTitle('ราคา :'),
-        Text(
-          '${foodModel.priceFood} บาท',
-          style: MyStyle().h1PrimaryStyle,
-        ),
-      ],
-    );
-  }
-
-  Text showDetail() {
-    return Text(
-      foodModel.detailFood,
-      style: MyStyle().h2StylePrimary,
-    );
-  }
-
   Text showName() {
     return Text(
       foodModel.nameFood,
@@ -174,12 +120,103 @@ class _ShowFoodState extends State<ShowFood> {
     );
   }
 
+  Widget showListFood() {
+    return Column(
+      children: <Widget>[
+        Container(
+          child: Card(
+            child: ListTile(
+              leading: Radio(value: null, groupValue: null, onChanged: null),
+              title: Text(
+                '${foodModel.detailFood}',
+                style: TextStyle(fontSize: 18),
+              ),
+              trailing: Text(
+                '${foodModel.priceFood} บาท',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ),
+        Card(
+          child: ListTile(
+            leading: Radio(value: null, groupValue: null, onChanged: null),
+            title: Text(
+              'เมนูย่อย',
+              style: TextStyle(fontSize: 18),
+            ),
+            trailing: Text(
+              'บาท',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget showAmountFood() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 50.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.remove_circle,
+                  size: 36.0,
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  if (amountFood != 0) {
+                    setState(() {
+                      amountFood--;
+                    });
+                  }
+                }),
+            MyStyle().mySizeBox(),
+            Text(
+              '$amountFood',
+              style: MyStyle().h1PrimaryStyle,
+            ),
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  size: 36.0,
+                  color: Colors.green,
+                ),
+                onPressed: () {
+                  setState(() {
+                    amountFood++;
+                  });
+                }),
+            MyStyle().mySizeBox(),
+          ],
+        ),
+        SizedBox(
+          height: 20.0,
+        )
+      ],
+    );
+  }
+    Widget showTextFormField() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        icon: Icon(Icons.comment),
+        hintText: 'คุณต้องการอะไรเพิ่มเติมมั้ย?',
+        labelText: 'คำขอพิเศษ *',
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(foodModel.nameFood),
-      // ),
       body: Container(
         child: SingleChildScrollView(
           child: Column(
@@ -187,63 +224,11 @@ class _ShowFoodState extends State<ShowFood> {
               showImage(),
               showName(),
               showListFood(),
-              TextFormField(
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.comment),
-                  hintText: 'คุณต้องการอะไรเพิ่มเติมมั้ย?',
-                  labelText: 'คำขอพิเศษ *',
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 50.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      MyStyle().mySizeBox(),
-                      IconButton(
-                          icon: Icon(
-                            Icons.remove_circle,
-                            size: 36.0,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {
-                            if (amountFood != 0) {
-                              setState(() {
-                                amountFood--;
-                              });
-                            }
-                          }),
-                      MyStyle().mySizeBox(),
-                      Text(
-                        '$amountFood',
-                        style: MyStyle().h1PrimaryStyle,
-                      ),
-                      MyStyle().mySizeBox(),
-                      IconButton(
-                          icon: Icon(
-                            Icons.add_circle,
-                            size: 36.0,
-                            color: Colors.green,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              amountFood++;
-                            });
-                          }),
-                      MyStyle().mySizeBox(),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  )
-                ],
-              ),
+              showTextFormField(),
+              showAmountFood(),
               SizedBox(
                 height: 90.0,
-              ),
+              )
             ],
           ),
         ),
@@ -304,83 +289,5 @@ class _ShowFoodState extends State<ShowFood> {
     );
   }
 
-  Widget showListFood() {
-    return Column(
-      children: <Widget>[
-        Card(
-          child: ListTile(
-            
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.detailFood}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.priceFood} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-         Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d1}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p1} บาท', style: TextStyle(fontSize: 18),),
 
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d2}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p2} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d3}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p3} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d4}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p4} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d5}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p5} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d6}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p6} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d7}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p7} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d8}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p8} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text('${foodModel.d9}', style: TextStyle(fontSize: 18),),
-            trailing: Text('${foodModel.p9} บาท', style: TextStyle(fontSize: 18),),
-          ),
-        ),
-
-      ],
-    );
-  }
 }

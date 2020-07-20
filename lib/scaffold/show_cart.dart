@@ -160,60 +160,17 @@ class _ShowCartState extends State<ShowCart> {
     return result;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ตะกร้า'),
-      ),
-      body: orderModels.length == 0
-          ? Center(
-              child: Text(
-                'ยังไม่มีรายการอาหารในตะกร้า',
-                style: MyStyle().h1PrimaryStyle,
-              ),
-            )
-          : showContent(),
-    );
-  }
-
   Column showContent() {
     return Column(
       children: <Widget>[
         showListCart(),
         showBottom(),
-        orderButton(),
+        SizedBox(
+          height: 60.0,
+        )
       ],
     );
   }
-
-  Widget orderButton() => Container(
-        width: MediaQuery.of(context).size.width,
-        child: RaisedButton.icon(
-          color: MyStyle().primaryColor,
-          onPressed: () async {
-            await MyAPI()
-                .findPhone(userModel.id.toString(), 'User')
-                .then((phone) {
-              //print('phone = $phone');
-              if (phone == 'null') {
-                // print('No Data');
-                phoneForm();
-              } else {
-                confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
-              }
-            });
-          },
-          icon: Icon(
-            Icons.check_box,
-            color: Colors.white,
-          ),
-          label: Text(
-            'สั่งซื่อ',
-            style: MyStyle().hiStyleWhite,
-          ),
-        ),
-      );
 
   Future<void> confirmDialog(BuildContext context, String title, String message,
       {Icon icon}) async {
@@ -319,39 +276,40 @@ class _ShowCartState extends State<ShowCart> {
   Widget showSum(String title, String message, Color color) {
     return Container(
       decoration: BoxDecoration(color: color),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Text(
-            title,
-            style: MyStyle().hiStyleWhite,
-          ),
-          Text(
-            message,
-            style: MyStyle().hiStyleWhite,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: MyStyle().hiStyleWhite,
+                ),
+                Text(
+                  message,
+                  style: MyStyle().hiStyleWhite,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget showBottom() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width * 0.5,
-          child: Column(
-            children: <Widget>[
-              showSum(
-                  'ค่าขนส่ง', totalDelivery.toString(), MyStyle().lightColor),
-              showSum(
-                  'ค่าอาหาร', totalPrice.toString(), MyStyle().primaryColor),
-              showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
-            ],
-          ),
-        ),
-      ],
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          showSum('ค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
+          showSum('ค่าขนส่ง', totalDelivery.toString(), MyStyle().primaryColor),
+          showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
+        ],
+      ),
     );
   }
 
@@ -592,6 +550,63 @@ class _ShowCartState extends State<ShowCart> {
             ],
           )
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ตะกร้า'),
+      ),
+      body: orderModels.length == 0
+          ? Center(
+              child: Text(
+                'ยังไม่มีรายการอาหารในตะกร้า',
+                style: MyStyle().h1PrimaryStyle,
+              ),
+            )
+          : showContent(),
+      bottomSheet: Container(
+        height: 60.0,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, -1),
+              blurRadius: 6.0,
+            )
+          ],
+        ),
+        child: Center(
+          child: FlatButton(
+            onPressed: () async {
+              await MyAPI()
+                  .findPhone(userModel.id.toString(), 'User')
+                  .then((phone) {
+                //print('phone = $phone');
+                if (phone == 'null') {
+                  // print('No Data');
+                  phoneForm();
+                } else {
+                  confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
+                }
+              });
+            },
+            child: Text(
+              'สั่งซื้อ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

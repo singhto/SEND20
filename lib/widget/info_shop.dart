@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/review_shop.dart';
@@ -22,6 +23,13 @@ class _InfoShopState extends State<InfoShop> {
     super.initState();
     findShop();
     //status = userShopModel.status;
+  }
+
+  Future<Null> updateShopStatus() async {
+    
+    String url =
+        'http://movehubs.com/app/updateShopStatus.php?isAdd=true&id=$id&status=$status';
+    Response response = await Dio().get(url);
   }
 
   Future<Null> findShop() async {
@@ -171,7 +179,7 @@ class _InfoShopState extends State<InfoShop> {
       children: <Widget>[
         FlatButton(
           onPressed: () {
-             Navigator.push(
+            Navigator.push(
                 context, MaterialPageRoute(builder: (context) => ReviewShop()));
           },
           child: Text(
