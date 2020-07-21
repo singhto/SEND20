@@ -127,22 +127,29 @@ if (nameShop == null) {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 16, bottom: 16),
-            width: 250.0,
-            child: TextField(
-              onChanged: (value) {
-                dedouncer.run(() {
-                  setState(() {
-                    searchFoodModels = foodModels.where((FoodModel foodModel) {
-                      return (foodModel.nameFood.toLowerCase().contains(value.toLowerCase()));
-                    }).toList();
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              margin: EdgeInsets.only(top: 5, bottom: 5),
+              //width: 250.0,
+              child: TextField(
+                onChanged: (value) {
+                  dedouncer.run(() {
+                    setState(() {
+                      searchFoodModels = foodModels.where((FoodModel foodModel) {
+                        return (foodModel.nameFood.toLowerCase().contains(value.toLowerCase()));
+                      }).toList();
+                    });
                   });
-                });
-              },
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                },
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search,size: 30.0,),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide(width: 0.8, color: Theme.of(context).primaryColor)
+                  ),
+                  hintText: 'ค้นหารายการอาหาร'
+                ),
               ),
             ),
           ),

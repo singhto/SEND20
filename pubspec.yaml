@@ -35,7 +35,6 @@ dependencies:
   fluttertoast: ^4.0.1
   intl: ^0.16.1
   url_launcher: ^5.5.0
-  onesignal_flutter: ^2.6.0
   font_awesome_flutter: ^8.2.0
   geolocator: ^5.3.2+2
   expand_widget: ^1.0.0+1

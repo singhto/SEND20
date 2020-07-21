@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/review_shop.dart';
 import 'package:foodlion/scaffold/settime.dart';
-import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestMap.dart';
-import 'package:foodlion/widget/guestV1.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 
 void main() => runApp(MyApp());
@@ -38,7 +36,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'ThaiSansNeue',
       ),
       debugShowCheckedModeBanner: false,
-      title: 'S E N D',
+      title: 'SEND',
       home: Home(),
       routes: {
         '/myfoodshop': (context) => MyFoodShop(),
