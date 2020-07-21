@@ -12,8 +12,6 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'normal_toast.dart';
 
 class MyAPI {
- 
-
   Future<Null> addSendLocation(
       String idUser, String lat, String lng, String nameLocation) async {
     String url =
@@ -118,15 +116,31 @@ class MyAPI {
   }
 
 // นีคือ Function ในการคำนวนค่าส่งอาหาร
-  int checkTransport(int distance) {
+  Future<int> checkTransport(int distance) async {
     int transport = 0;
-    if (distance <= 1) {
-      transport = 19;
-      return transport;
-    } else {
-      transport = 19 + ((distance - 1) * 5);
-      return transport;
+
+    String url = 'http://movehubs.com/app/getAllCheckTransport.php';
+
+    Response response = await Dio().get(url);
+
+    var result = json.decode(response.data);
+
+    for (var map in result) {
+      int distanceJson = int.parse(map['Distance']);
+      if (distance == distanceJson) {
+        transport = int.parse(map['Transport']);
+      }
     }
+    print(' disn === $distance transpot==== $transport');
+    return transport;
+
+    // if (distance <= 1) {
+    //   transport = 19;
+    //   return transport;
+    // } else {
+    //   transport = 19 + ((distance - 1) * 5);
+    //   return transport;
+    // }
   }
 
   Future<String> findNameShopWhere(String idShop) async {
@@ -141,7 +155,7 @@ class MyAPI {
     return string;
   }
 
-    Future<SubFoodModel> getSubFoodWhereIdFood(String idFood) async {
+  Future<SubFoodModel> getSubFoodWhereIdFood(String idFood) async {
     SubFoodModel subFoodModel;
     String url =
         'http://movehubs.com/app/getSubFoodWhereIdFood.php?isAdd=true&idFood=$idFood';
@@ -152,7 +166,6 @@ class MyAPI {
     }
     return subFoodModel;
   }
-
 
   Future<FoodModel> findDetailFoodWhereId(String idFood) async {
     FoodModel foodModel;

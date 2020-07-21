@@ -121,31 +121,39 @@ class _ShowCartState extends State<ShowCart> {
 
       int index = int.parse(orderModel.idShop);
       if (checkMemberIdShop(index)) {
-        idShopOnSQLites.add(int.parse(orderModel.idShop));
-        indexOld = index;
-        //print('Work indexOld ===>>> $indexOld');
-
-        double distance = MyAPI().calculateDistance(lat1, lng1, lat2, lng2);
-        //print('distance ############==>>>>> $distance');
-
-        // print('distanceAint = $distanceAint');
-
-        var myFormat = NumberFormat('##0.0#', 'en_US');
-        String distanceString = myFormat.format(distance);
-        distances.add(distanceString);
-
-        int distanceAint = distance.round();
-
-        int transport = MyAPI().checkTransport(distanceAint);
-        //print('transport ===>>> $transport');
-        transports.add(transport);
-        sumTotals.add(transport);
-        totalDelivery = totalDelivery + transport;
-        sumTotal = sumTotal + totalDelivery;
+        checkMemberTrue(orderModel, indexOld, index, lat1, lng1, lat2, lng2);
       } else {
         transports.add(0);
         distances.add('');
       }
+    });
+  }
+
+  Future<Null> checkMemberTrue(OrderModel orderModel, int indexOld, int index,
+      double lat1, double lng1, double lat2, double lng2) async {
+    idShopOnSQLites.add(int.parse(orderModel.idShop));
+    indexOld = index;
+    //print('Work indexOld ===>>> $indexOld');
+
+    double distance = MyAPI().calculateDistance(lat1, lng1, lat2, lng2);
+    //print('distance ############==>>>>> $distance');
+
+    // print('distanceAint = $distanceAint');
+
+    var myFormat = NumberFormat('##0.0#', 'en_US');
+    String distanceString = myFormat.format(distance);
+    distances.add(distanceString);
+
+    int distanceAint = distance.round();
+
+    int transport = await MyAPI().checkTransport(distanceAint);
+
+    print('transport ===>>> $transport');
+    setState(() {
+      transports.add(transport);
+      sumTotals.add(transport);
+      totalDelivery = totalDelivery + transport;
+      sumTotal = sumTotal + totalDelivery;
     });
   }
 

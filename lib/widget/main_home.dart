@@ -46,6 +46,8 @@ class _MainHomeState extends State<MainHome> {
 
   String choosedLocation;
 
+  bool statusLoad = true;
+
   // Method
   @override
   void initState() {
@@ -59,9 +61,9 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Future<Null> findSendLocationWhereIdUser() async {
-    print('idUser ==>> $idUser');
+    //print('idUser ==>> $idUser');
 
-    if (sendLocationModels.length !=0) {
+    if (sendLocationModels.length != 0) {
       sendLocationModels.clear();
     }
 
@@ -85,15 +87,15 @@ class _MainHomeState extends State<MainHome> {
       lng = locationData.longitude;
 
       //readBanner();
-      readShopThread();
+      readShopThread(lat, lng);
       checkAmount();
       findUser();
-      updateLatLng();
+      updateLatLng(lat, lng);
       findSendLocationWhereIdUser();
     });
   }
 
-  Future<Null> updateLatLng() async {
+  Future<Null> updateLatLng(double lat, double lng) async {
     String url =
         'http://movehubs.com/app/editLatLngUserWhereId.php?isAdd=true&id=$idUser&Lat=$lat&Lng=$lng';
     Response response = await Dio().get(url);
@@ -103,12 +105,10 @@ class _MainHomeState extends State<MainHome> {
     Location location = Location();
     try {
       return await location.getLocation();
-      
     } on PlatformException catch (e) {
       if (e.code == 'PERMISSION_DENIED') {}
       return null;
     }
-  
   }
 
   Future<Null> aboutNotification() async {
@@ -187,37 +187,46 @@ class _MainHomeState extends State<MainHome> {
     return CachedNetworkImage(imageUrl: model.pathImage);
   }
 
-  Future<void> readShopThread() async {
+  Future<void> readShopThread(double lat1, double lng1) async {
+    print('ที่อ่าน $lat1, $lng1');
     String url = MyConstant().urlGetAllShop;
 
     try {
-      Response response = await Dio().get(url);
-      var result = json.decode(response.data);
-      // print('result ===>>> $result');
+      await Dio().get(url).then((value) {
+        var result = json.decode(value.data);
+        //print('result ===>>> $result');
 
-      for (var map in result) {
-        UserShopModel model = UserShopModel.fromJson(map);
+        if (showWidgets.length != 0) {
+          showWidgets.clear();
+        }
 
-        double distance = MyAPI().calculateDistance(
-          lat,
-          lng,
-          double.parse(model.lat.trim()),
-          double.parse(model.lng.trim()),
-        );
+        for (var map in result) {
+          UserShopModel model = UserShopModel.fromJson(map);
 
-        //print('distance ======>>>>> $distance');
+          double distance = MyAPI().calculateDistance(
+            lat1,
+            lng1,
+            double.parse(model.lat.trim()),
+            double.parse(model.lng.trim()),
+          );
 
-        var myFormat = NumberFormat('##0.0#', 'en_US');
+          //print('distance ===>>>>> $distance');
 
-        setState(() {
-          userShopModels.add(model);
-          if (distance <= 1.0) {
-            showWidgets.add(createCard(model, '${myFormat.format(distance)}'));
-            statusShowCard = true;
-            print('distance ======>>>>> $distance');
-          }
-        });
-      }
+          var myFormat = NumberFormat('##0.0#', 'en_US');
+
+          setState(() {
+            userShopModels.add(model);
+            statusLoad = false;
+            if (distance <= 5.0) {
+              showWidgets
+                  .add(createCard(model, '${myFormat.format(distance)}'));
+              statusShowCard = true;
+              //print('showWidgets.lenght ====>>> ${showWidgets.length}');
+              //print('${model.name} distanceไม่เกิน 1 กม ==>>>>> $distance');
+            }
+          });
+        }
+      });
     } catch (e) {}
   }
 
@@ -244,8 +253,8 @@ class _MainHomeState extends State<MainHome> {
               'ต้องขอ อภัยมากๆ ครับ ร้านเปิดบริการ 8.00- 18.00');
         }
 
-        // normalDialog(context, 'เปิดทำการ 23 ก.ค.นี้ครับ',
-        //     'โหลดแอพ SEND อีกครั้งหลังเปิดทำการ เพื่อใช้งาน ขอบคุณครับ');
+        // normalDialog(context, 'เปิดทำการ 23 ก.ค.นี้���รับ',
+        //     'โหลดแอพ SEND อีกครั้งหลังเปิดทำการ เพื่อ���ช้งาน ขอบคุณครับ');
       },
       child: Card(
         child: Column(
@@ -316,6 +325,7 @@ class _MainHomeState extends State<MainHome> {
       ));
 
   Widget showShop() {
+    print('ขนาดของ showWinget ที่ showShop = ${showWidgets.length}');
     return showWidgets.length == 0
         ? MyStyle().showProgress()
         : Expanded(
@@ -553,8 +563,6 @@ class _MainHomeState extends State<MainHome> {
     Navigator.of(context).push(materialPageRoute);
   }
 
-
-
   Widget buildListSendLocation() {
     return ListView.builder(
       shrinkWrap: true,
@@ -573,56 +581,21 @@ class _MainHomeState extends State<MainHome> {
       drawer: Drawer(
         child: userList(),
       ),
-      appBar: AppBar(
-        title: Text('เลือกร้านค้าจ๊า'),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                routeToShowSearch();
-                //normalToast('เปิดทำการ 1 ก.ค.นี้ครับ');
-              }),
-          showCart()
-        ],
-      ),
+      appBar: buildAppBar(),
       body: Column(
         children: <Widget>[
-          //showBanner(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.location_searching,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/guestMap').then((value) {
-                          findSendLocationWhereIdUser();
-                        });
-                      }),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  buildDropDown(context),
-                ],
-              ),
-            ],
-          ),
-          statusShowCard
-              ? showShop()
-              : Center(
-                  child: MyStyle()
-                      .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
-                ),
+          statusLoad
+              ? MyStyle().showProgress()
+              : //showBanner(),
+              //buildChooseSenLocation(context),
+              statusShowCard
+                  ? showShop()
+                  : Center(
+                      child: MyStyle()
+                          .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
+                    ),
         ],
       ),
-
       bottomSheet: Container(
         height: 40.0,
         width: MediaQuery.of(context).size.width,
@@ -638,12 +611,9 @@ class _MainHomeState extends State<MainHome> {
         ),
         child: Center(
           child: FlatButton(
-            onPressed: () async {
-     
-            },
+            onPressed: () async {},
             child: Column(
               children: <Widget>[
-                
                 Text(
                   'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
                   style: TextStyle(
@@ -658,7 +628,50 @@ class _MainHomeState extends State<MainHome> {
           ),
         ),
       ),
+    );
+  }
 
+  AppBar buildAppBar() {
+    return AppBar(
+      title: Text('เลือกร้านค้าจ๊า'),
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              routeToShowSearch();
+              //normalToast('เปิดทำการ 1 ก.ค.นี้ครับ');
+            }),
+        showCart()
+      ],
+    );
+  }
+
+  Row buildChooseSenLocation(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            SizedBox(
+              width: 20.0,
+            ),
+            IconButton(
+                icon: Icon(
+                  Icons.location_searching,
+                  size: 30,
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/guestMap').then((value) {
+                    findSendLocationWhereIdUser();
+                  });
+                }),
+            SizedBox(
+              width: 20.0,
+            ),
+            buildDropDown(context),
+          ],
+        ),
+      ],
     );
   }
 
@@ -689,13 +702,17 @@ class _MainHomeState extends State<MainHome> {
             onChanged: (value) {
               setState(() {
                 indexChooseLocation = value;
-              print(
-              'คุณเลือก ${sendLocationModels[indexChooseLocation].lat}, ${sendLocationModels[indexChooseLocation].lng}');
+                print(
+                    'คุณเลือก ${sendLocationModels[indexChooseLocation].lat}, ${sendLocationModels[indexChooseLocation].lng}');
 
-                lat = double.parse(sendLocationModels[indexChooseLocation].lat);
-                lng = double.parse(sendLocationModels[indexChooseLocation].lng);
+                double lat3 =
+                    double.parse(sendLocationModels[indexChooseLocation].lat);
+                double lng3 =
+                    double.parse(sendLocationModels[indexChooseLocation].lng);
 
-                readShopThread();
+                print('$lat3, $lng3');
+
+                readShopThread(lat3, lng3);
               });
             },
           );

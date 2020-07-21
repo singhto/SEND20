@@ -133,7 +133,7 @@ class _MyDeliveryShopOrderState extends State<MyDeliveryShopOrder> {
       int distanceToInt = distance.round();
       // print('distanceToInt ==>>> $distanceToInt');
 
-      int transport = MyAPI().checkTransport(distanceToInt);
+      int transport = await MyAPI().checkTransport(distanceToInt);
 
       setState(() {
         orderUserModels.add(orderUserModel);

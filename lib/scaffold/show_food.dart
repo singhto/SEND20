@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
 import 'package:foodlion/models/order_model.dart';
@@ -20,29 +23,30 @@ class _ShowFoodState extends State<ShowFood> {
   // Field
   FoodModel foodModel;
   int amountFood = 1;
-  String idShop, idUser, idFood, nameshop, nameFood, urlFood, priceFood, statusFood;
+  String idShop,
+      idUser,
+      idFood,
+      nameshop,
+      nameFood,
+      urlFood,
+      priceFood,
+      statusFood;
   bool statusShop = false;
   String nameCurrentShop;
   SubFoodModel subFoodModel;
+  List<SubFoodModel> subFoodModels = List();
+
+  String chooseSubMenu;
 
   // Method
   @override
   void initState() {
     super.initState();
     foodModel = widget.foodModel;
-    
+
     setupVariable();
-    //readSubFood();
+    readSubMenu();
   }
-
-  //   Future<void> readSubFood() async {
-  //   idFood = await MyAPI().getSubFoodWhereIdFood(idFood);
-  //   nameFood = subFoodModel.nameFood;
-  //   statusFood = subFoodModel.statusFood;
-  //   priceFood = subFoodModel.priceFood;
-
-    
-  // }
 
   Future<void> setupVariable() async {
     idShop = foodModel.idShop;
@@ -133,10 +137,29 @@ class _ShowFoodState extends State<ShowFood> {
     );
   }
 
+  Future<Null> readSubMenu() async {
+    String idFood = foodModel.id;
+    String url =
+        'http://movehubs.com/app/getSubFoodWhereIdFood.php?isAdd=true&idFood=$idFood';
+
+    Response response = await Dio().get(url);
+    if (response.toString() != 'null') {
+      var result = json.decode(response.data);
+      for (var map in result) {
+        SubFoodModel model = SubFoodModel.fromJson(map);
+        if (chooseSubMenu == null) {
+          chooseSubMenu = model.nameFood;
+        }
+        setState(() {
+          subFoodModels.add(model);
+        });
+      }
+    }
+  }
+
   Widget showListFood() {
     return Column(
       children: <Widget>[
-       
         Card(
           child: ListTile(
             leading: Radio(value: true, groupValue: null, onChanged: null),
@@ -150,21 +173,46 @@ class _ShowFoodState extends State<ShowFood> {
             ),
           ),
         ),
-        Card(
-          child: ListTile(
-            leading: Radio(value: null, groupValue: null, onChanged: null),
-            title: Text(
-              'เมนูย่อย',
-              style: TextStyle(fontSize: 20),
-            ),
-            trailing: Text(
-              'บาท',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-        ),
+        showListSubMunu(),
       ],
     );
+  }
+
+  Widget showListSubMunu() {
+    
+    return subFoodModels.length == 0
+        ? Text('ไม่มีเมนูย่อย')
+        : Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'เมนูย่อย',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: subFoodModels.length,
+                itemBuilder: (context, index) => Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Radio(
+                      value: subFoodModels[index].nameFood,
+                      groupValue: chooseSubMenu,
+                      onChanged: (value) {
+                        setState(() {
+                          chooseSubMenu = value;
+                        });
+                      },
+                    ),
+                    Text(subFoodModels[index].nameFood),
+                    Text(subFoodModels[index].priceFood),
+                  ],
+                ),
+              ),
+            ],
+          );
   }
 
   Widget showAmountFood() {
@@ -216,7 +264,8 @@ class _ShowFoodState extends State<ShowFood> {
       ],
     );
   }
-    Widget showTextFormField() {
+
+  Widget showTextFormField() {
     return TextFormField(
       decoration: const InputDecoration(
         icon: Icon(Icons.comment),
@@ -300,6 +349,4 @@ class _ShowFoodState extends State<ShowFood> {
       ),
     );
   }
-
-
 }
