@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
 import 'package:foodlion/models/order_model.dart';
+import 'package:foodlion/models/sub_food_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
@@ -19,17 +20,29 @@ class _ShowFoodState extends State<ShowFood> {
   // Field
   FoodModel foodModel;
   int amountFood = 1;
-  String idShop, idUser, idFood, nameshop, nameFood, urlFood, priceFood;
+  String idShop, idUser, idFood, nameshop, nameFood, urlFood, priceFood, statusFood;
   bool statusShop = false;
   String nameCurrentShop;
+  SubFoodModel subFoodModel;
 
   // Method
   @override
   void initState() {
     super.initState();
     foodModel = widget.foodModel;
+    
     setupVariable();
+    //readSubFood();
   }
+
+  //   Future<void> readSubFood() async {
+  //   idFood = await MyAPI().getSubFoodWhereIdFood(idFood);
+  //   nameFood = subFoodModel.nameFood;
+  //   statusFood = subFoodModel.statusFood;
+  //   priceFood = subFoodModel.priceFood;
+
+    
+  // }
 
   Future<void> setupVariable() async {
     idShop = foodModel.idShop;
@@ -123,18 +136,17 @@ class _ShowFoodState extends State<ShowFood> {
   Widget showListFood() {
     return Column(
       children: <Widget>[
-        Container(
-          child: Card(
-            child: ListTile(
-              leading: Radio(value: null, groupValue: null, onChanged: null),
-              title: Text(
-                '${foodModel.detailFood}',
-                style: TextStyle(fontSize: 18),
-              ),
-              trailing: Text(
-                '${foodModel.priceFood} บาท',
-                style: TextStyle(fontSize: 18),
-              ),
+       
+        Card(
+          child: ListTile(
+            leading: Radio(value: true, groupValue: null, onChanged: null),
+            title: Text(
+              '${foodModel.detailFood}',
+              style: TextStyle(fontSize: 20),
+            ),
+            trailing: Text(
+              '${foodModel.priceFood} บาท',
+              style: TextStyle(fontSize: 20),
             ),
           ),
         ),
@@ -143,11 +155,11 @@ class _ShowFoodState extends State<ShowFood> {
             leading: Radio(value: null, groupValue: null, onChanged: null),
             title: Text(
               'เมนูย่อย',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 20),
             ),
             trailing: Text(
               'บาท',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 20),
             ),
           ),
         ),
@@ -251,7 +263,7 @@ class _ShowFoodState extends State<ShowFood> {
             onPressed: () {
               if (statusShop) {
                 normalDialog(context, 'ไม่สามารถเลือกได้ ?',
-                    'โปรดเลือกอาหาร จากร้าน $nameCurrentShop คุณสามารถสั่งอาหา���ได้ครั้งละ 1 ร้านค้าค่��');
+                    'โปรดเลือกอาหาร จากร้าน $nameCurrentShop คุณสามารถสั่งอาหารได้ครั้งละ 1 ร้าน');
               } else if (amountFood == 0) {
                 normalDialog(context, 'ยังไม่มี รายการอาหาร',
                     'กรุณาเพิ่มจำนวน รายการอาหาร');

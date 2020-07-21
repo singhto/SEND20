@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:foodlion/models/delivery_model.dart';
 import 'package:foodlion/models/food_model.dart';
+import 'package:foodlion/models/sub_food_model.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 
@@ -139,6 +140,19 @@ class MyAPI {
     }
     return string;
   }
+
+    Future<SubFoodModel> getSubFoodWhereIdFood(String idFood) async {
+    SubFoodModel subFoodModel;
+    String url =
+        'http://movehubs.com/app/getSubFoodWhereIdFood.php?isAdd=true&idFood=$idFood';
+    Response response = await Dio().get(url);
+    var result = json.decode(response.data);
+    for (var map in result) {
+      subFoodModel = SubFoodModel.fromJson(map);
+    }
+    return subFoodModel;
+  }
+
 
   Future<FoodModel> findDetailFoodWhereId(String idFood) async {
     FoodModel foodModel;
