@@ -43,7 +43,7 @@ class MyStyle {
 
   Widget showLogo() {
     return Container(
-      height: 120.0,
+      height: 100.0,
       child: Image.asset('images/logo_1024.png'),
     );
   }

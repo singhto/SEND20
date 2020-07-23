@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
-import 'package:foodlion/widget/guestV1.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class Guest extends StatefulWidget {
   @override
@@ -54,15 +54,26 @@ class GuestState extends State<Guest> {
   //   controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   // }
 
-  Future getLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
+
+    Future<Null> getLocation() async {
+    LocationData locationData = await findLocationData();
 
     setState(() {
-      lat = position.latitude ?? 16.7516811;
-      lng = position.longitude ?? 101.215812;
+      lat = locationData.latitude;
+      lng = locationData.longitude;
+
+     
     });
+  }
+
+  Future<LocationData> findLocationData() async {
+    Location location = Location();
+    try {
+      return await location.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {}
+      return null;
+    }
   }
 
   void _add() {
@@ -352,7 +363,7 @@ class GuestState extends State<Guest> {
             ),
           ),
         ),
-        _buildContainer(),
+        //_buildContainer(),
       ],
     ));
   }

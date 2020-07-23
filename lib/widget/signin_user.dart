@@ -7,7 +7,6 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
-import 'package:foodlion/widget/main_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SingInUser extends StatefulWidget {
@@ -31,7 +30,7 @@ class _SingInUserState extends State<SingInUser> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              MyStyle().mySizeBox(),
+              SizedBox(height: 30,),
               MyStyle().showLogo(),
               MyStyle().mySizeBox(),
               TextField(
@@ -71,31 +70,7 @@ class _SingInUserState extends State<SingInUser> {
                 padding: const EdgeInsets.all(8.0),
                 child: isLoading ? CircularProgressIndicator() : null,
               ),
-              Container(
-                width: 250.0,
-                child: RaisedButton.icon(
-                  color: MyStyle().primaryColor,
-                  onPressed: () {
-                    if (user == null ||
-                        user.isEmpty ||
-                        password == null ||
-                        password.isEmpty) {
-                      normalDialog(
-                          context, 'Have Space', 'Please Fill Ever Blank');
-                    } else {
-                      checkAuthen();
-                    }
-                  },
-                  icon: Icon(
-                    Icons.fingerprint,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    'เข้าสู่ระบบ',
-                    style: MyStyle().h2StyleWhite,
-                  ),
-                ),
-              ),
+           
             ],
           ),
         ),
@@ -157,6 +132,43 @@ class _SingInUserState extends State<SingInUser> {
           MyStyle().showTitle(''),
           showContent(),
         ],
+      ),bottomSheet: Container(
+        height: 60.0,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, -1),
+              blurRadius: 6.0,
+            )
+          ],
+        ),
+        child: Center(
+          child: FlatButton(
+            onPressed: () async {
+          if (user == null ||
+                        user.isEmpty ||
+                        password == null ||
+                        password.isEmpty) {
+                      normalDialog(
+                          context, 'Have Space', 'Please Fill Ever Blank');
+                    } else {
+                      checkAuthen();
+                    }
+            },
+            child: Text(
+              'เข้าสู่ระบบ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

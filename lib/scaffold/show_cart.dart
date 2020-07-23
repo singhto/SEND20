@@ -11,6 +11,7 @@ import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/utility/sqlite_helper.dart';
+import 'package:foodlion/widget/show_order_user.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -249,18 +250,29 @@ class _ShowCartState extends State<ShowCart> {
 
     Response response = await Dio().get(url);
     if (response.toString() == 'true') {
-      print('Success Order');
+      print('===============.....Success Order');
+      
+
 
       await SQLiteHelper().deleteSQLiteAll().then((value) {
         MyAPI().notificationAPI(
             tokenShop, 'มีรายการอาหารจาก SEND', 'มีรายการอาหารสั่งมา คะ');
         notiToRider();
         Navigator.of(context).pop();
+        routeToOrderUser();
+        normalToast('สั่งอาหารสำเร็จ');
       });
     } else {
       normalDialog(context, 'มีความผิดปกติ',
           'กรุณาทิ้งไว้สักครู่ แล้วค่อย Confirm Order ใหม่ คะ');
     }
+  }
+
+    void routeToOrderUser() {
+      
+    MaterialPageRoute materialPageRoute =
+        MaterialPageRoute(builder: (value) => ShowOrderUser());
+    Navigator.of(context).push(materialPageRoute);
   }
 
   Future<Null> notiToRider() async {

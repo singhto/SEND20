@@ -7,18 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/banner_model.dart';
 import 'package:foodlion/models/order_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
-import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
-import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/utility/sqlite_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'my_food.dart';
 
 class GuestV1 extends StatefulWidget {
   final double lat, lng;
@@ -36,6 +33,8 @@ class _GuestV1State extends State<GuestV1> {
   String idUser, nameLogin;
   int amount = 0;
   double lat, lng;
+    bool statusLoad = true;
+      bool statusShowCard = false;
 
   @override
   void initState() {
@@ -56,11 +55,11 @@ class _GuestV1State extends State<GuestV1> {
     setState(() {
       lat = locationData.latitude;
       lng = locationData.longitude;
-      print('lat ==>> $lat, lng ==>> $lng');
+      //print('lat vvvvvv==>> $lat, lng ==>> $lng');
       readBanner();
       readShopThread();
-      checkAmount();
-      findUser();
+      //checkAmount();
+      //findUser();
     });
   }
 
@@ -85,7 +84,11 @@ class _GuestV1State extends State<GuestV1> {
 
   Text showName(UserShopModel model) => Text(
         model.name,
-        style: MyStyle().h2Style,
+        style: TextStyle(
+        fontWeight: FontWeight.w900,
+        color: Theme.of(context).primaryColor,
+        letterSpacing: 2.0,
+      )
       );
 
   Widget createCard(UserShopModel model, String distance) {
@@ -94,8 +97,8 @@ class _GuestV1State extends State<GuestV1> {
         //print('You Click ${model.id}');
 
       
-          normalDialog(context, 'เปิดทำการ 23 ก.ค.นี้ครับ',
-              'โหลดแอพ SEND อีกครั้งหลังเปิดทำการ เพื่อใช้งาน ขอบคุณครับ');
+          normalDialog(context, 'คุณยังไม่ได้เป็นสมาชิก',
+              'กรุณาสมัครสมาชิกก่อนเข้าสู่ระบบครับ');
         
       },
       child: Card(
@@ -103,7 +106,11 @@ class _GuestV1State extends State<GuestV1> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
             showImageShop(model),
+             MyStyle().mySizeBox(),
             Expanded(child: showName(model)),
             showDistance(distance),
           ],
@@ -141,7 +148,7 @@ class _GuestV1State extends State<GuestV1> {
 
           ],
         ),
-        Text('$distance Km.'),
+        Text('$distance กม.',style: TextStyle(color: Colors.grey),),
       ],
     );
   }
@@ -168,8 +175,10 @@ class _GuestV1State extends State<GuestV1> {
 
         setState(() {
           userShopModels.add(model);
-          if (distance <= 10.0) {
+          statusLoad = false;
+          if (distance <= 10.00) {
             showWidgets.add(createCard(model, '${myFormat.format(distance)}'));
+             statusShowCard = true;
           }
         });
       }
@@ -229,22 +238,7 @@ class _GuestV1State extends State<GuestV1> {
     } catch (e) {}
   }
 
-  Future<Null> editToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    idUser = preferences.getString('id');
 
-    if (idUser != null) {
-      String token = await findToken();
-      print('from Guest idUser = $idUser, token = $token');
-
-      String url =
-          'http://movehubs.com/app/editTokenUserWhereId.php?isAdd=true&id=$idUser&Token=$token';
-      Response response = await Dio().get(url);
-      if (response.toString() == 'true') {
-        normalToast('อัพเดทตำแหน่งใหม่ สำเร็จ');
-      }
-    }
-  }
 
   Widget showShop() {
     return showWidgets.length == 0
@@ -267,9 +261,20 @@ class _GuestV1State extends State<GuestV1> {
       // ),
       body: Column(
         children: <Widget>[
+
           showBanner(),
-          //MyStyle().showTitle('ร้านอาหารใกล้คุณ'),
-          showShop(),
+          MyStyle().showTitle('ร้านอาหารใกล้คุณ'),
+
+          statusLoad
+              ? MyStyle().showProgress()
+              : //showBanner(),
+              //buildChooseSenLocation(context),
+              statusShowCard
+                  ? showShop()
+                  : Center(
+                      child: MyStyle()
+                          .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
+                    ),
         ],
       ),
     );

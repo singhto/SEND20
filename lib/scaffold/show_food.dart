@@ -160,26 +160,46 @@ class _ShowFoodState extends State<ShowFood> {
   Widget showListFood() {
     return Column(
       children: <Widget>[
-        Card(
-          child: ListTile(
-            leading: Radio(value: true, groupValue: null, onChanged: null),
-            title: Text(
-              '${foodModel.detailFood}',
-              style: TextStyle(fontSize: 20),
+        ListTile(
+          title: Text(
+            'รายละเอียด :',
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.grey,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 3.0,
             ),
-            trailing: Text(
-              '${foodModel.priceFood} บาท',
-              style: TextStyle(fontSize: 20),
+          ),
+          subtitle: Text(
+            '${foodModel.detailFood}',
+            style: TextStyle(
+              fontSize: 22,
+              color: Theme.of(context).primaryColor,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 3.0,
             ),
           ),
         ),
-        showListSubMunu(),
+
+        Card(
+          child: ListTile(
+            trailing: Text(
+              '${foodModel.priceFood} บาท',
+              style: TextStyle(
+                fontSize: 24,
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 3.0,
+              ),
+            ),
+          ),
+        ),
+        //showListSubMunu(),
       ],
     );
   }
 
   Widget showListSubMunu() {
-    
     return subFoodModels.length == 0
         ? Text('ไม่มีเมนูย่อย')
         : Column(
@@ -195,7 +215,8 @@ class _ShowFoodState extends State<ShowFood> {
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemCount: subFoodModels.length,
-                itemBuilder: (context, index) => Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                itemBuilder: (context, index) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Radio(
                       value: subFoodModels[index].nameFood,
@@ -228,7 +249,7 @@ class _ShowFoodState extends State<ShowFood> {
             IconButton(
                 icon: Icon(
                   Icons.remove_circle,
-                  size: 36.0,
+                  size: 50.0,
                   color: Colors.red,
                 ),
                 onPressed: () {
@@ -239,15 +260,15 @@ class _ShowFoodState extends State<ShowFood> {
                   }
                 }),
             MyStyle().mySizeBox(),
-            Text(
-              '$amountFood',
-              style: MyStyle().h1PrimaryStyle,
-            ),
+            Text('$amountFood',
+                style: TextStyle(
+                  fontSize: 50.0,
+                )),
             MyStyle().mySizeBox(),
             IconButton(
                 icon: Icon(
                   Icons.add_circle,
-                  size: 36.0,
+                  size: 50.0,
                   color: Colors.green,
                 ),
                 onPressed: () {
@@ -265,16 +286,6 @@ class _ShowFoodState extends State<ShowFood> {
     );
   }
 
-  Widget showTextFormField() {
-    return TextFormField(
-      decoration: const InputDecoration(
-        icon: Icon(Icons.comment),
-        hintText: 'คุณต้องการอะไรเพิ่มเติมมั้ย?',
-        labelText: 'คำขอพิเศษ *',
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -283,9 +294,9 @@ class _ShowFoodState extends State<ShowFood> {
           child: Column(
             children: <Widget>[
               showImage(),
+              MyStyle().mySizeBox(),
               showName(),
               showListFood(),
-              showTextFormField(),
               showAmountFood(),
               SizedBox(
                 height: 90.0,

@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
-import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -86,7 +85,7 @@ class _HomeState extends State<Home> {
       if (!serviceLocationEnable) {
         //สภาวะที่ไม่เปิด service location
         serviceLocationEnable = await location.requestService();
-        print('servcicerEnable2222222 =====>>> $serviceLocationEnable');
+        print('servcicerEnable22222 =====>>> $serviceLocationEnable');
 
         if (!serviceLocationEnable) {
           exit(0);
@@ -100,6 +99,43 @@ class _HomeState extends State<Home> {
       print('e checkPersion ${e.toString()}');
     }
   }
+
+  Future<Null> findLatLng() async {
+    print('################## findLatLng on Home Work $lat');
+
+    setState(() {
+      print('object  $lat');
+    });
+
+    LocationData locationData = await findLocationData();
+
+    print(' ==>> $lat, lng ==>> $lng');
+
+    setState(() {
+      lat = locationData.latitude;
+      lng = locationData.longitude;
+
+      print('latHome ==>> $lat, lng ==>> $lng');
+
+      checkLogin();
+      checkWidget();
+    });
+  }
+
+    Future<LocationData> findLocationData() async {
+    Location location = Location();
+    print('nnnn $lat');
+
+    try {
+      return await location.getLocation();
+    } on PlatformException catch (e) {
+      print('sssss $lat');
+      if (e.code == 'PERMISSION_DENIED') {}
+      return null;
+    }
+    
+  }
+
 
   Future<Null> findLatLng2() async {
     await callculateFindLatLngOneTime().then((value) {
@@ -118,30 +154,7 @@ class _HomeState extends State<Home> {
     return currentLocation;
   }
 
-  Future<Null> findLatLng() async {
-    print('##################findLatLng on Home Work#######################');
-    LocationData locationData = await findLocationData();
-    setState(() {
-      lat = locationData.latitude;
-      lng = locationData.longitude;
 
-      print('latHome ==>> $lat, lng ==>> $lng');
-
-      checkLogin();
-      checkWidget();
-    });
-  }
-
-  Future<LocationData> findLocationData() async {
-    Location location = Location();
-
-    try {
-      return await location.getLocation();
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {}
-      return null;
-    }
-  }
 
   void checkWidget() {
     Widget myWidget = widget.currentWidget;
@@ -233,7 +246,7 @@ class _HomeState extends State<Home> {
       children: <Widget>[
         showHead(),
         menuGuestV1(),
-        menuHome(),
+        //menuHome(),
         menuSignIn(),
         menuSignUp(),
       ],
@@ -606,7 +619,7 @@ class _HomeState extends State<Home> {
         style: MyStyle().h2Style,
       ),
       subtitle: Text(
-        'คลิกเพื่อ สมัครใช้บริการ',
+        'คลิกเพื่อสมัครใช้บริการ',
         style: MyStyle().h3StylePrimary,
       ),
       onTap: () {
@@ -849,7 +862,7 @@ class _HomeState extends State<Home> {
     return UserAccountsDrawerHeader(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('images/bic2.png'), fit: BoxFit.cover),
+            image: AssetImage('images/bic3.png'), fit: BoxFit.cover),
       ),
       currentAccountPicture: showLogo(),
       accountName: Text(

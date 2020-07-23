@@ -123,9 +123,6 @@ class _AddMyFoodState extends State<AddMyFood> {
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.fastfood),
                 hintText: 'ชื่ออาหาร :',
-                // enabledBorder: OutlineInputBorder(
-                //   borderSide: BorderSide(color: Colors.grey),
-                // ),
               ),
             ),
           ),
@@ -136,33 +133,29 @@ class _AddMyFoodState extends State<AddMyFood> {
   }
 
   Widget subForm() {
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => detailFood = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_1),
-                hintText: 'เมนูย่อย :',
-              ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: TextField(
+            style: MyStyle().h2Style,
+            onChanged: (value) => detailFood = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.filter_1),
+              hintText: 'รายละเอียด :',
             ),
           ),
         ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => priceFood = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: TextField(
+            style: MyStyle().h2Style,
+            keyboardType: TextInputType.number,
+            onChanged: (value) => priceFood = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.attach_money),
+              hintText: 'ราคา :',
             ),
           ),
         ),
@@ -170,320 +163,9 @@ class _AddMyFoodState extends State<AddMyFood> {
     );
   }
 
-  Widget subForm1() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d1 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_2),
-                hintText: 'เมนูย่อย2 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p1 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget subForm2() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d2 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_3),
-                hintText: 'เมนูย่อย3 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p2 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget subForm3() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d3 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_4),
-                hintText: 'เมนูย่อย4 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p3 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget subForm4() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d4 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_5),
-                hintText: 'เมนูย่อย5 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p4 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget subForm5() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d5 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_6),
-                hintText: 'เมนูย่อย6 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p5 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget subForm6() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d6 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_7),
-                hintText: 'เมนูย่อย7 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p6 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget subForm7() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d7 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_8),
-                hintText: 'เมนูย่อย8 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p7 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget subForm8() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d8 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.filter_9),
-                hintText: 'เมนูย่อย9 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p8 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget subForm9() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              onChanged: (value) => d9 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.exposure),
-                hintText: 'เมนูย่อย10 :',
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              style: MyStyle().h2Style,
-              keyboardType: TextInputType.number,
-              onChanged: (value) => p9 = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคา :',
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget qtyForm() {
     return Row(
@@ -655,7 +337,7 @@ class _AddMyFoodState extends State<AddMyFood> {
           MyStyle().mySizeBox(),
           nameForm(),
           subForm(),
-          totalSubForm(),
+   
           MyStyle().mySizeBox(),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -710,98 +392,5 @@ class _AddMyFoodState extends State<AddMyFood> {
         ),
       ),
     );
-  }
-
-  ExpandChild totalSubForm() {
-    return ExpandChild(
-        hideArrowOnExpanded: true,
-        arrowColor: Colors.red,
-        arrowSize: 40,
-        child: Column(
-          children: <Widget>[
-            subForm1(),
-            ExpandChild(
-              hideArrowOnExpanded: true,
-              arrowColor: Colors.red,
-              arrowSize: 40,
-              child: Column(
-                children: <Widget>[
-                  subForm2(),
-                  ExpandChild(
-                    hideArrowOnExpanded: true,
-                    arrowColor: Colors.red,
-                    arrowSize: 40,
-                    child: Column(
-                      children: <Widget>[
-                        subForm3(),
-                        ExpandChild(
-                          hideArrowOnExpanded: true,
-                          arrowColor: Colors.red,
-                          arrowSize: 40,
-                          child: Column(
-                            children: <Widget>[
-                              subForm4(),
-                              ExpandChild(
-                                hideArrowOnExpanded: true,
-                                arrowColor: Colors.red,
-                                arrowSize: 40,
-                                child: Column(
-                                  children: <Widget>[
-                                    subForm5(),
-                                    ExpandChild(
-                                      hideArrowOnExpanded: true,
-                                      arrowColor: Colors.red,
-                                      arrowSize: 40,
-                                      child: Column(
-                                        children: <Widget>[
-                                          subForm6(),
-                                          ExpandChild(
-                                            hideArrowOnExpanded: true,
-                                            arrowColor: Colors.red,
-                                            arrowSize: 40,
-                                            child: Column(
-                                              children: <Widget>[
-                                                subForm7(),
-                                                ExpandChild(
-                                                  hideArrowOnExpanded: true,
-                                                  arrowColor: Colors.red,
-                                                  arrowSize: 40,
-                                                  child: Column(
-                                                    children: <Widget>[
-                                                      subForm8(),
-                                                      ExpandChild(
-                                                        hideArrowOnExpanded:
-                                                            true,
-                                                        arrowColor: Colors.red,
-                                                        arrowSize: 40,
-                                                        child: Column(
-                                                          children: <Widget>[
-                                                            subForm9(),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ));
   }
 }

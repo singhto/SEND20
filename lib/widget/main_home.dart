@@ -261,11 +261,15 @@ class _MainHomeState extends State<MainHome> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
             showImageShop(model),
+            MyStyle().mySizeBox(),
             Expanded(
               child: showName(model),
             ),
-            showStatus(model),
+            //showStatus(model),
             showDistance(distance),
           ],
         ),
@@ -306,15 +310,17 @@ class _MainHomeState extends State<MainHome> {
             ),
           ],
         ),
-        Text('$distance Km.'),
+        Text('$distance กม.',style: TextStyle(color: Colors.grey),),
       ],
     );
   }
 
-  Text showName(UserShopModel model) => Text(
-        model.name,
-        style: MyStyle().h2Style,
-      );
+  Widget showName(UserShopModel model) => Text(model.name,
+      style: TextStyle(
+        fontWeight: FontWeight.w900,
+        color: Theme.of(context).primaryColor,
+        letterSpacing: 2.0,
+      ));
 
   Text showStatus(UserShopModel model) => Text(model.status,
       style: TextStyle(
@@ -386,7 +392,7 @@ class _MainHomeState extends State<MainHome> {
       children: <Widget>[
         showHeadUser(),
         menuHome(),
-        menuNoti(),
+        //menuNoti(),
         menuShowCart(),
         menuUserOrder(),
         menuSignOut(),
@@ -596,35 +602,39 @@ class _MainHomeState extends State<MainHome> {
                     ),
         ],
       ),
-      bottomSheet: Container(
-        height: 40.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: FlatButton(
-            onPressed: () async {},
-            child: Column(
-              children: <Widget>[
-                Text(
-                  'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                  ),
+      //bottomSheet: buildBottomSheet(context),
+    );
+  }
+
+  Widget buildBottomSheet(BuildContext context) {
+    return Container(
+      height: 40.0,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, -1),
+            blurRadius: 6.0,
+          )
+        ],
+      ),
+      child: Center(
+        child: FlatButton(
+          onPressed: () async {},
+          child: Column(
+            children: <Widget>[
+              Text(
+                'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2.0,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -633,17 +643,32 @@ class _MainHomeState extends State<MainHome> {
 
   AppBar buildAppBar() {
     return AppBar(
-      title: Text('เลือกร้านค้าจ๊า'),
-      actions: <Widget>[
-        IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              routeToShowSearch();
-              //normalToast('เปิดทำการ 1 ก.ค.นี้ครับ');
-            }),
-        showCart()
-      ],
+      title: Center(
+        child: GestureDetector(
+          onTap: () {
+            routeToShowSearch();
+          },
+          child: Text(
+            'ค้นหาร้านค้า',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 3.0,
+            ),
+          ),
+        ),
+      ),
+      actions: <Widget>[showSearch(), showCart()],
     );
+  }
+
+  Widget showSearch() {
+    return IconButton(
+        icon: Icon(Icons.search),
+        onPressed: () {
+          routeToShowSearch();
+          //normalToast('เปิดทำการ 1 ก.ค.นี้ครับ');
+        });
   }
 
   Row buildChooseSenLocation(BuildContext context) {

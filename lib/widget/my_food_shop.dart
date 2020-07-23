@@ -107,19 +107,7 @@ class _MyFoodShopState extends State<MyFoodShop> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Center(
-                child: Switch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                      print(isSwitched);
-                    });
-                  },
-                  activeTrackColor: Colors.lightGreenAccent,
-                  activeColor: Colors.green,
-                ),
-              ),
+        //isSwitc(),
         IconButton(
             icon: Icon(
               Icons.edit,
@@ -144,6 +132,22 @@ class _MyFoodShopState extends State<MyFoodShop> {
             onPressed: () => deleteConfirmDialog(index)),
       ],
     );
+  }
+
+  Widget isSwitc() {
+    return Center(
+              child: Switch(
+                value: isSwitched,
+                onChanged: (value) {
+                  setState(() {
+                    isSwitched = value;
+                    print(isSwitched);
+                  });
+                },
+                activeTrackColor: Colors.lightGreenAccent,
+                activeColor: Colors.green,
+              ),
+            );
   }
 
   Future<void> deleteConfirmDialog(int index) async {
@@ -185,7 +189,7 @@ class _MyFoodShopState extends State<MyFoodShop> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Text(
-            'ราคา : ${foodModels[index].priceFood} บาท',
+            '${foodModels[index].priceFood} บาท',
             style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
@@ -239,8 +243,8 @@ class _MyFoodShopState extends State<MyFoodShop> {
   Widget showImageFood(int index) {
     return Container(
       padding: EdgeInsets.all(20.0),
-      width: MediaQuery.of(context).size.width * 0.5,
-      height: MediaQuery.of(context).size.width * 0.5,
+      width: 150.0,
+      height: 150.0,
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
