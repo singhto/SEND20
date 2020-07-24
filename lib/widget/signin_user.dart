@@ -8,6 +8,15 @@ import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'main_home.dart';
+
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: <String>[
+    'email',
+  ],
+);
 
 class SingInUser extends StatefulWidget {
   @override
@@ -16,10 +25,22 @@ class SingInUser extends StatefulWidget {
 
 class _SingInUserState extends State<SingInUser> {
   // Filed
+  GoogleSignInAccount _currentUser;
   String user, password;
   bool isLoading = false;
 
   // Method
+
+  Future<void> _handleSignIn() async {
+    try {
+      _currentUser = await _googleSignIn.signIn();
+      print(_currentUser);
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => MainHome()));
+    } catch (error) {
+      print(error);
+    }
+  }
 
   Widget showContent() {
     return Container(
@@ -30,7 +51,9 @@ class _SingInUserState extends State<SingInUser> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              SizedBox(height: 30,),
+              SizedBox(
+                height: 30,
+              ),
               MyStyle().showLogo(),
               MyStyle().mySizeBox(),
               TextField(
@@ -63,6 +86,7 @@ class _SingInUserState extends State<SingInUser> {
                       borderSide: BorderSide(color: MyStyle().dartColor)),
                 ),
               ),
+              //loginGoogle(),
               SizedBox(
                 height: 16.0,
               ),
@@ -70,11 +94,42 @@ class _SingInUserState extends State<SingInUser> {
                 padding: const EdgeInsets.all(8.0),
                 child: isLoading ? CircularProgressIndicator() : null,
               ),
-           
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget loginGoogle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        FlatButton.icon(
+            color: Colors.red,
+            textColor: Colors.white,
+            onPressed: () => _handleSignIn(),
+            icon: Text(
+              'G',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            label: Text('เข้าระบบด้วย Google')),
+        FlatButton.icon(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed: () {},
+            icon: Text(
+              'f',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            label: Text('เข้าระบบด้วย Facebook signin')),
+      ],
     );
   }
 
@@ -127,12 +182,19 @@ class _SingInUserState extends State<SingInUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
-      body: Stack(
-        children: <Widget>[
-          MyStyle().showTitle(''),
-          showContent(),
-        ],
-      ),bottomSheet: Container(
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              showContent(),
+              SizedBox(
+                height: 90.0,
+              )
+            ],
+          ),
+        ),
+      ),
+      bottomSheet: Container(
         height: 60.0,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -148,15 +210,14 @@ class _SingInUserState extends State<SingInUser> {
         child: Center(
           child: FlatButton(
             onPressed: () async {
-          if (user == null ||
-                        user.isEmpty ||
-                        password == null ||
-                        password.isEmpty) {
-                      normalDialog(
-                          context, 'Have Space', 'Please Fill Ever Blank');
-                    } else {
-                      checkAuthen();
-                    }
+              if (user == null ||
+                  user.isEmpty ||
+                  password == null ||
+                  password.isEmpty) {
+                normalDialog(context, 'Have Space', 'Please Fill Ever Blank');
+              } else {
+                checkAuthen();
+              }
             },
             child: Text(
               'เข้าสู่ระบบ',

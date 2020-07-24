@@ -163,10 +163,6 @@ class _AddMyFoodState extends State<AddMyFood> {
     );
   }
 
-
-
-
-
   Widget qtyForm() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -337,13 +333,14 @@ class _AddMyFoodState extends State<AddMyFood> {
           MyStyle().mySizeBox(),
           nameForm(),
           subForm(),
-   
           MyStyle().mySizeBox(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: isLoading ? MyStyle().showProgress() : null,
           ),
-         SizedBox(height: 90.0,)
+          SizedBox(
+            height: 90.0,
+          )
         ],
       ),
       bottomSheet: Container(
@@ -362,22 +359,22 @@ class _AddMyFoodState extends State<AddMyFood> {
         child: Center(
           child: FlatButton(
             onPressed: () {
-             if (file == null) {
-            normalDialog(
-                context, 'Non Choose Image', 'Please Click Camera or Gallery');
-          } else if (nameFood == null ||
-              nameFood.isEmpty ||
-              detailFood == null ||
-              detailFood.isEmpty ||
-              qty == null ||
-              qty.isEmpty ||
-              priceFood == null ||
-              priceFood.isEmpty) {
-            normalDialog(context, 'กรอกข้อมูลให้ครบ',
-                'กรุณากรอกข้อมูลให้ครบทุกช่องครับ');
-          } else {
-            uploadImage();
-          }
+              if (file == null) {
+                normalDialog(context, 'Non Choose Image',
+                    'Please Click Camera or Gallery');
+              } else if (nameFood == null ||
+                  nameFood.isEmpty ||
+                  detailFood == null ||
+                  detailFood.isEmpty ||
+                  qty == null ||
+                  qty.isEmpty ||
+                  priceFood == null ||
+                  priceFood.isEmpty) {
+                normalDialog(context, 'กรอกข้อมูลให้ครบ',
+                    'กรุณากรอกข้อมูลให้ครบทุกช่องครับ');
+              } else {
+                uploadImage();
+              }
             },
             child: Text(
               'บันทึกข้อมูล',

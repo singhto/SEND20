@@ -24,16 +24,13 @@ class _InfoShopState extends State<InfoShop> {
     findShop();
     //status = userShopModel.status;
     //updateShopStatus();
-
   }
 
   Future<Null> updateShopStatus() async {
-    
     String url =
         'http://movehubs.com/app/updateShopStatus.php?isAdd=true&id=$id&status=$status';
     Response response = await Dio().get(url);
     print('respone=== $response');
-    
   }
 
   Future<Null> findShop() async {
@@ -227,22 +224,22 @@ class _InfoShopState extends State<InfoShop> {
 
   Widget flatButtonSetTime(BuildContext context) {
     return FlatButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/settime');
-        },
-        child: Text(
-          'กำหนดเวลา',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
+      onPressed: () {
+        Navigator.pushNamed(context, '/settime');
+      },
+      child: Text(
+        'กำหนดเวลา',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 30.0),
-        color: Theme.of(context).primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      );
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 30.0),
+      color: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+    );
   }
 
   @override
