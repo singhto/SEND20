@@ -134,22 +134,6 @@ class _MyFoodShopState extends State<MyFoodShop> {
     );
   }
 
-  Widget isSwitc() {
-    return Center(
-              child: Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    print(isSwitched);
-                  });
-                },
-                activeTrackColor: Colors.lightGreenAccent,
-                activeColor: Colors.green,
-              ),
-            );
-  }
-
   Future<void> deleteConfirmDialog(int index) async {
     showDialog(
       context: context,

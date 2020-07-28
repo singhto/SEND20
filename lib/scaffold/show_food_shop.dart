@@ -27,25 +27,7 @@ class _ShowFoodShopState extends State<ShowFoodShop> {
       urlFood,
       priceFood,
       detailFood,
-      qtyFood,
-      d1Food,
-      d2Food,
-      d3Food,
-      d4Food,
-      d5Food,
-      d6Food,
-      d7Food,
-      d8Food,
-      d9Food,
-      p1Food,
-      p2Food,
-      p3Food,
-      p4Food,
-      p5Food,
-      p6Food,
-      p7Food,
-      p8Food,
-      p9Food;
+      qtyFood;
   File file;
   bool isLoading = false;
 
@@ -61,24 +43,6 @@ class _ShowFoodShopState extends State<ShowFoodShop> {
     priceFood = foodModel.priceFood;
     detailFood = foodModel.detailFood;
     qtyFood = foodModel.qty;
-    d1Food = foodModel.d1;
-    d2Food = foodModel.d2;
-    d3Food = foodModel.d3;
-    d4Food = foodModel.d4;
-    d5Food = foodModel.d5;
-    d6Food = foodModel.d6;
-    d7Food = foodModel.d7;
-    d8Food = foodModel.d8;
-    d9Food = foodModel.d9;
-    p1Food = foodModel.p1;
-    p2Food = foodModel.p2;
-    p3Food = foodModel.p3;
-    p4Food = foodModel.p4;
-    p5Food = foodModel.p5;
-    p6Food = foodModel.p6;
-    p7Food = foodModel.p7;
-    p8Food = foodModel.p8;
-    p9Food = foodModel.p9;
   }
 
   Widget showName() {
@@ -249,7 +213,7 @@ class _ShowFoodShopState extends State<ShowFoodShop> {
       isLoading = true;
     });
     String urlAPI =
-        'http://movehubs.com/app/editFoodShopWhereId.php?isAdd=true&id=$id&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Qty=$qtyFood&D1=$d1Food&D2=$d2Food&D3=$d3Food&D4=$d4Food&D5=$d5Food&D6=$d6Food&D7=$d7Food&D8=$d8Food&D9=$d9Food&P1=$p1Food&P2=$p2Food&P3=$p3Food&P4=$p4Food&P5=$p5Food&P6=$p6Food&P7=$p7Food&P8=$p8Food&P9=$p9Food';
+        'http://movehubs.com/app/editFoodShopWhereId.php?isAdd=true&id=$id&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Qty=$qtyFood';
 
     try {
       await Dio().get(urlAPI).then(

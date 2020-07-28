@@ -7,6 +7,7 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
+import 'package:foodlion/utility/normal_toast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -236,6 +237,7 @@ class _RegisterUserState extends State<RegisterUser> {
         (response) {
           //print('res==>>>$response');
           if (response.toString() == 'true') {
+            normalToast('สมัครสำเร็จ กรุณาลงชื่อเข้าใช้อีกครั้ง..');
             MaterialPageRoute route = MaterialPageRoute(
               builder: (value) => Home(),
             );

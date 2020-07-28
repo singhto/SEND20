@@ -12,6 +12,8 @@ import 'package:foodlion/utility/my_style.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utility/my_style.dart';
+
 class DetailOrder extends StatefulWidget {
   final OrderUserModel orderUserModel;
   final String nameShop;
@@ -36,6 +38,7 @@ class _DetailOrderState extends State<DetailOrder> {
   LatLng shopLatLng, userLatLng;
   IconData shopMarkerIcon;
   List<String> nameFoods = List();
+   List<String> detailFoods = List();
   List<int> amounts = List();
   List<int> prices = List();
   List<int> sums = List();
@@ -119,6 +122,7 @@ class _DetailOrderState extends State<DetailOrder> {
       setState(() {
         nameFoods.add(foodModel.nameFood);
         prices.add(int.parse(foodModel.priceFood));
+        detailFoods.add(foodModel.detailFood);
       });
     }
   }
@@ -139,28 +143,6 @@ class _DetailOrderState extends State<DetailOrder> {
       userLatLng = LatLng(double.parse(userModel.lat.trim()),
           double.parse(userModel.lng.trim()));
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: stateStatus ? acceptJob() : successJob(),
-      appBar: AppBar(
-        title: Text('รายการอาหาร $nameShop'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          showTitleNameShop(),
-          showMap(shopLatLng, nameShop, 'ร้านค้าที่ไปรับอาหาร', 100.0),
-          MyStyle().showTitle('รายการอาหารที่สั่ง'),
-          showListOrder(),
-          showSumFood(),
-          showSumDistance(),
-          showNameUser(),
-          showMap(userLatLng, nameUser, 'สถานที่ส่งอาหาร', 310.0),
-        ],
-      ),
-    );
   }
 
   Widget successJob() => FloatingActionButton(
@@ -228,15 +210,14 @@ class _DetailOrderState extends State<DetailOrder> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitle('ยื่นยันการรับงาน'),
+        title: Center(child: MyStyle().showTitle('RIDER ทำภาระกิจนี้หรือไม่')),
         children: <Widget>[
-          MyStyle().showTitleH2Primary('Rider ยื่นยันการรับงาน คะ'),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               confirm(),
               MyStyle().mySizeBox(),
-              cancel('ไม่รับงานนี คะ'),
+              cancel('ปฏิเสธ'),
             ],
           ),
           // waitButton(),
@@ -276,7 +257,15 @@ class _DetailOrderState extends State<DetailOrder> {
         Icons.check,
         color: Colors.green,
       ),
-      label: Text('ยืนยันการรับงาน'),
+      label: Text(
+        'ทำงานนี้',
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18.0,
+          letterSpacing: 2.0,
+          color: Colors.green,
+        ),
+      ),
     );
   }
 
@@ -287,7 +276,15 @@ class _DetailOrderState extends State<DetailOrder> {
         Icons.clear,
         color: Colors.red,
       ),
-      label: Text(string),
+      label: Text(
+        string,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 18.0,
+          letterSpacing: 2.0,
+          color: Colors.red,
+        ),
+      ),
     );
   }
 
@@ -315,9 +312,11 @@ class _DetailOrderState extends State<DetailOrder> {
         tokenUser, 'Rider รับ Order', 'คนส่งอาหาร กำลังไปรับอาหาร คะ');
 
     //Send Notification to Shop
-    UserShopModel userShopModel = await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
+    UserShopModel userShopModel =
+        await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
     String tokenShop = userShopModel.token;
-    MyAPI().notificationAPI(tokenShop, 'Rider กำลังไปรับอาหาร', 'Rider กำลังไปที่ ร้านเพื่อรับอาหาร');
+    MyAPI().notificationAPI(tokenShop, 'Rider กำลังไปรับอาหาร',
+        'Rider กำลังไปที่ ร้านเพื่อรับอาหาร');
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => RiderSuccess(
@@ -343,75 +342,39 @@ class _DetailOrderState extends State<DetailOrder> {
     // }
   }
 
-  Widget showSumFood() => Row(
-        children: <Widget>[
-          Expanded(
-            flex: 4,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  'ผลรวมอาหาร   ',
-                  style: MyStyle().h2StylePrimary,
-                ),
-              ],
+  Widget showSumFood() => Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'ค่าอาหาร  ',
+              style: MyStyle().h2StylePrimary,
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              margin: EdgeInsets.only(right: 5.0),
-              decoration: BoxDecoration(color: MyStyle().primaryColor),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '${orderUserModel.totalPrice} บาท',
-                    style: MyStyle().h2StyleWhite,
-                  ),
-                ],
-              ),
+            Text(
+              '${orderUserModel.totalPrice} บาท',
+              style: MyStyle().h2StylePrimary,
             ),
-          ),
-        ],
-      );
+          ],
+        ),
+  );
 
-  Widget showSumDistance() => Row(
-        children: <Widget>[
-          Expanded(
-            flex: 3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  'ผลรวมระยะทาง และ ค่าขนส่ง   ',
-                  style: MyStyle().h2StylePrimary,
-                ),
-              ],
+  Widget showSumDistance() => Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'ค่าขนส่ง  ',
+              style: MyStyle().h2StylePrimary,
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              margin: EdgeInsets.only(right: 5.0),
-              decoration: BoxDecoration(color: MyStyle().dartColor),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    distance == 0 ? '1 กิโลเมตร' : '$distance กิโลเมตร',
-                    style: MyStyle().h2StyleWhite,
-                  ),
-                  Text(
-                    '$transport บาท',
-                    style: MyStyle().h2StyleWhite,
-                  )
-                ],
-              ),
+            Text(
+              '$transport บาท',
+              style: MyStyle().h2StylePrimary,
             ),
-          ),
-        ],
-      );
+          ],
+        ),
+  );
 
   Widget showNameUser() {
     return nameUser == null
@@ -445,7 +408,7 @@ class _DetailOrderState extends State<DetailOrder> {
       );
     }
     return Container(
-      height: 200.0,
+      height: 180.0,
       child: latLng == null
           ? MyStyle().showProgress()
           : GoogleMap(
@@ -461,14 +424,23 @@ class _DetailOrderState extends State<DetailOrder> {
         physics: ScrollPhysics(),
         itemCount: nameFoods.length,
         itemBuilder: (value, index) => Container(
-          padding: EdgeInsets.only(left: 16.0),
+          padding: EdgeInsets.only(left: 16.0, top: 8.0),
           child: Row(
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Text(
-                  nameFoods[index],
-                  style: MyStyle().h3StylePrimary,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      nameFoods[index],
+                      style: MyStyle().h3StyleDark,
+                    ),
+                    Text(
+                      detailFoods[index],
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                    Divider(),
+                  ],
                 ),
               ),
               Expanded(
@@ -506,5 +478,61 @@ class _DetailOrderState extends State<DetailOrder> {
     return sumPrice.toString();
   }
 
-  Widget showTitleNameShop() => MyStyle().showTitle('ร้าน $nameShop');
+  Widget showTitleNameShop() => MyStyle().showTitle('ร้าน$nameShop');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: stateStatus ? acceptJob() : successJob(),
+      appBar: AppBar(
+        title: Text(
+          'ระยะทาง $distance กม.',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 3.0,
+          ),
+        ),
+      ),
+      body: ListView(
+        children: <Widget>[
+          showTitleNameShop(),
+          showMap(shopLatLng, nameShop, 'ร้านค้าที่ไปรับอาหาร', 80.0),
+          showNameUser(),
+          showMap(userLatLng, nameUser, 'สถานที่ส่งอาหาร', 310.0),
+          //MyStyle().showTitle('รายการอาหารที่สั่ง'),
+          showListOrder(),
+          showSumFood(),
+          showSumDistance(),
+          SizedBox(
+            height: 200.0,
+          ),
+        ],
+      ),
+      bottomSheet: Container(
+        height: 60.0,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, -1),
+              blurRadius: 6.0,
+            )
+          ],
+        ),
+        child: Center(
+          child: Text(
+            'เริ่มภาระกิจ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

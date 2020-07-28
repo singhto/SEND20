@@ -4,6 +4,7 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/review_shop.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
+import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,22 +16,38 @@ class InfoShop extends StatefulWidget {
 
 class _InfoShopState extends State<InfoShop> {
   UserShopModel userShopModel;
-  String id, idFood, nameFood, urlFood, priceFood, detailFood, status;
+  String id, idFood, nameFood, urlFood, priceFood, detailFood, status, check;
   bool isSwitched = false;
 
   @override
   void initState() {
     super.initState();
     findShop();
+    //editInfoShop();
     //status = userShopModel.status;
     //updateShopStatus();
   }
 
-  Future<Null> updateShopStatus() async {
+  Future<Null> editInfoShopOn() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id');
     String url =
-        'http://movehubs.com/app/updateShopStatus.php?isAdd=true&id=$id&status=$status';
-    Response response = await Dio().get(url);
-    print('respone=== $response');
+        'http://ps23.co.th/app/editInfoShop.php?isAdd=true&id=$id&Check=on';
+    print('====On === $url');
+    try {
+      await Dio().get(url);
+    } catch (e) {}
+  }
+
+  Future<Null> editInfoShopOff() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id');
+    String url =
+        'http://ps23.co.th/app/editInfoShop.php?isAdd=true&id=$id&Check=off';
+    print('====Off ==== $url');
+    try {
+      await Dio().get(url);
+    } catch (e) {}
   }
 
   Future<Null> findShop() async {
@@ -83,6 +100,39 @@ class _InfoShopState extends State<InfoShop> {
         fit: BoxFit.cover,
         height: 220.0,
       ),
+    );
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('เลือก เปิด หรือ ปิดร้าน'),
+
+          actions: <Widget>[
+            FlatButton(
+              child: Text('เปิดร้าน'),
+              onPressed: () {
+                editInfoShopOn();
+                setState(() {
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+            FlatButton(
+              child: Text('ปิดร้าน'),
+              onPressed: () {
+                editInfoShopOff();
+                setState(() {
+                  Navigator.of(context).pop();
+                });
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -151,18 +201,16 @@ class _InfoShopState extends State<InfoShop> {
                   ),
                 ],
               ),
-              Center(
-                child: Switch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                      print(isSwitched);
-                    });
-                  },
-                  activeTrackColor: Colors.lightGreenAccent,
-                  activeColor: Colors.green,
-                ),
+              Column(
+                children: <Widget>[
+                  //Text('สถานะ : ${userShopModel.check}'),
+
+                  RaisedButton(
+                      child: Text('${userShopModel.check}'),
+                      onPressed: () {
+                        _showMyDialog();
+                      })
+                ],
               ),
             ],
           ),
@@ -241,6 +289,8 @@ class _InfoShopState extends State<InfoShop> {
       ),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {

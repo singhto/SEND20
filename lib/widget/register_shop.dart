@@ -308,11 +308,13 @@ class _RegisterShopState extends State<RegisterShop> {
       isLoading = true;
     });
     String urlAPI =
-        '${MyConstant().urlAddUserShop}?isAdd=true&Name=$name&User=$user&Password=$password&UrlShop=$urlImage&Lat=$lat&Lng=$lng&Check=off';
+        '${MyConstant().urlAddUserShop}?isAdd=true&Name=$name&User=$user&Password=$password&UrlShop=$urlImage&Lat=$lat&Lng=$lng&Check=off&phoneShop=$phone';
 
     try {
       await Dio().get(urlAPI).then(
+        
         (response) {
+          print('response $response');
           setState(() {
             isLoading = false;
           });

@@ -78,16 +78,19 @@ class MyStyle {
     color: Colors.white,
     fontWeight: FontWeight.bold,
     fontSize: 24.0,
+    letterSpacing: 1.0,
   );
 
   TextStyle h3StylePrimary = TextStyle(
     fontSize: 16.0,
     color: Color.fromARGB(0xff, 0xef, 0x79, 0x36),
+    letterSpacing: 1.0,
   );
 
   TextStyle h3StyleDark = TextStyle(
     fontWeight: FontWeight.bold,
-    fontSize: 18.0,
+    fontSize: 20.0,
+    letterSpacing: 1.0,
     color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
   );
 
@@ -96,6 +99,7 @@ class MyStyle {
     color: Colors.white,
     fontWeight: FontWeight.bold,
     fontSize: 18.0,
+    letterSpacing: 1.0,
   );
 
   TextStyle h2Style = TextStyle(
@@ -103,19 +107,36 @@ class MyStyle {
     color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
     fontWeight: FontWeight.bold,
     fontSize: 20.0,
+    letterSpacing: 1.0,
+  );
+
+    TextStyle h3Style = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
+    fontWeight: FontWeight.bold,
+    fontSize: 22.0,
+    letterSpacing: 1.0,
   );
 
   TextStyle h2NormalStyle = TextStyle(
     fontFamily: 'ThaiSansNeue',
     color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
     fontSize: 20.0,
+    letterSpacing: 1.0,
   );
-
+  
+    TextStyle h2NormalStyleGrey = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Colors.grey.shade800,
+    fontSize: 20.0,
+    letterSpacing: 1.0,
+  );
   TextStyle h2StylePrimary = TextStyle(
     fontFamily: 'ThaiSansNeue',
     color: Color.fromARGB(0xff, 0xef, 0x79, 0x36),
     fontWeight: FontWeight.bold,
     fontSize: 20.0,
+    letterSpacing: 1.0,
   );
 
   TextStyle h1Style = TextStyle(
@@ -123,6 +144,7 @@ class MyStyle {
     color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
     fontWeight: FontWeight.bold,
     fontSize: 24.0,
+    letterSpacing: 1.0,
   );
 
   TextStyle h1PrimaryStyle = TextStyle(
@@ -130,6 +152,7 @@ class MyStyle {
     color: Color.fromARGB(0xff, 0xef, 0x79, 0x36),
     fontWeight: FontWeight.bold,
     fontSize: 24.0,
+    letterSpacing: 1.0,
   );
 
   Widget mySizeBox() {
@@ -150,7 +173,8 @@ class MyStyle {
               fontFamily: 'ThaiSansNeue',
               color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
               fontWeight: FontWeight.bold,
-              fontSize: 24.0,
+              fontSize: 20.0,
+              letterSpacing: 1.0,
             ),
           ),
         ),
@@ -162,14 +186,15 @@ class MyStyle {
     return Row(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 8.0),
+          //padding: EdgeInsets.only(left: 8.0),
           child: Text(
             string,
             style: TextStyle(
               fontFamily: 'ThaiSansNeue',
               color: Color.fromARGB(0xff, 0xef, 0x79, 0x36),
-              // fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold,
               fontSize: 20.0,
+              letterSpacing: 1.0,
             ),
           ),
         ),
@@ -187,8 +212,9 @@ class MyStyle {
             style: TextStyle(
               fontFamily: 'ThaiSansNeue',
               color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
-              // fontWeight: FontWeight.bold,
-              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0,
+              fontSize: 22.0,
             ),
           ),
         ),

@@ -101,8 +101,6 @@ class _MyFoodState extends State<MyFood> {
 if (nameShop == null) {
    nameShop = await MyAPI().findNameShopWhere(model.idShop);
 }
-
-        //UserShopModel userShopModels = UserShopModel.fromJson(map);
         setState(() {
           foodModels.add(model);
           searchFoodModels = foodModels;

@@ -174,9 +174,6 @@ class _ShowCartState extends State<ShowCart> {
       children: <Widget>[
         showListCart(),
         showBottom(),
-        SizedBox(
-          height: 60.0,
-        )
       ],
     );
   }
@@ -251,8 +248,6 @@ class _ShowCartState extends State<ShowCart> {
     Response response = await Dio().get(url);
     if (response.toString() == 'true') {
       print('===============.....Success Order');
-      
-
 
       await SQLiteHelper().deleteSQLiteAll().then((value) {
         MyAPI().notificationAPI(
@@ -268,8 +263,7 @@ class _ShowCartState extends State<ShowCart> {
     }
   }
 
-    void routeToOrderUser() {
-      
+  void routeToOrderUser() {
     MaterialPageRoute materialPageRoute =
         MaterialPageRoute(builder: (value) => ShowOrderUser());
     Navigator.of(context).push(materialPageRoute);
@@ -328,6 +322,44 @@ class _ShowCartState extends State<ShowCart> {
           showSum('ค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
           showSum('ค่าขนส่ง', totalDelivery.toString(), MyStyle().primaryColor),
           showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
+          Center(
+            child: OutlineButton(
+              onPressed: () async {
+                await MyAPI()
+                    .findPhone(userModel.id.toString(), 'User')
+                    .then((phone) {
+                  if (phone == 'null') {
+                    phoneForm();
+                  } else {
+                    confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
+                  }
+                });
+              },
+              textColor: Colors.green,
+              borderSide: BorderSide(
+                  color: Colors.green, width: 1.0, style: BorderStyle.solid),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.send,
+                      color: Colors.orange,
+                    ),
+                    Text(
+                      '   ส่งคำสั่งซื้อ   ',
+                      style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 3.0,
+                          color: Colors.green),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -583,51 +615,11 @@ class _ShowCartState extends State<ShowCart> {
       body: orderModels.length == 0
           ? Center(
               child: Text(
-                'ยังไม่มีรายการอาหารในตะกร้า',
+                'ไม่มีรายการอาหารในตะกร้า',
                 style: MyStyle().h1PrimaryStyle,
               ),
             )
           : showContent(),
-      bottomSheet: Container(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: FlatButton(
-            onPressed: () async {
-              await MyAPI()
-                  .findPhone(userModel.id.toString(), 'User')
-                  .then((phone) {
-                //print('phone = $phone');
-                if (phone == 'null') {
-                  // print('No Data');
-                  phoneForm();
-                } else {
-                  confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
-                }
-              });
-            },
-            child: Text(
-              'สั่งซื้อ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

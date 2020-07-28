@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
 import 'package:foodlion/models/order_user_model.dart';
-import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,30 +14,28 @@ class HandleShop extends StatefulWidget {
 }
 
 class _HandleShopState extends State<HandleShop> {
+  // Field
+  bool status, shopBool = true, riderBool = true, userBool = true;
+  Widget currentWidget;
   List<OrderUserModel> orderUserModels = List();
-  List<UserModel> userModels = List();
+  List<String> nameShops = List();
   List<List<FoodModel>> listFoodModels = List();
   List<List<String>> listAmounts = List();
-  List<List<String>> listSums = List();
-  List<List<String>> listStatuss = List();
-  List<String> nameShops = List();
-  Widget currentWidget;
-  List<String> nameUsers = List();
 
+  // Method
   @override
   void initState() {
     super.initState();
     readOrder();
   }
 
-  Future<Null> readOrder() async {
+  Future<void> readOrder() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String idShop = preferences.getString('id');
 
     String url =
         'http://movehubs.com/app/getOrderWhereIdShopNew.php?isAdd=true&idShop=$idShop';
     Response response = await Dio().get(url);
-
     print('res ===>> $response');
 
     if (response.toString() == 'null') {
@@ -54,8 +51,6 @@ class _HandleShopState extends State<HandleShop> {
       var result = json.decode(response.data);
       for (var map in result) {
         OrderUserModel orderUserModel = OrderUserModel.fromJson(map);
-        UserModel userModel =
-            await MyAPI().findDetailUserWhereId(orderUserModel.idUser);
 
         String amountString = orderUserModel.amountFoods;
         amountString = amountString.substring(1, (amountString.length - 1));
@@ -96,7 +91,6 @@ class _HandleShopState extends State<HandleShop> {
           nameShops.add(nameShop);
           orderUserModels.add(orderUserModel);
           currentWidget = showContent();
-          nameUsers.add(userModel.name);
         });
       }
     }
@@ -109,18 +103,51 @@ class _HandleShopState extends State<HandleShop> {
             color: index % 2 == 0 ? Colors.grey.shade300 : Colors.white,
             child: Column(
               children: <Widget>[
-                showShop(index),
+                //showShop(index),
                 showDateTime(index),
                 headTitle(),
                 showListViewOrder(index),
                 showTotalPrice(index),
                 //showTotalDelivery(index),
                 //showSumTotal(index),
-                showProcessOrder(index),
+                //showProcessOrder(index),
               ],
             ),
           ),
         ),
+      );
+
+  Widget showTotalPrice(int index) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 16.0),
+            child: MyStyle().showTitleH2Dark(
+                'ราคารวม ${orderUserModels[index].totalPrice} บาท'),
+          ),
+        ],
+      );
+
+  Widget showTotalDelivery(int index) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 16.0),
+            child: MyStyle().showTitleH2Primary(
+                'ค่าขนส่ง ${orderUserModels[index].totalDelivery} บาท'),
+          ),
+        ],
+      );
+
+  Widget showSumTotal(int index) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 16.0),
+            child: MyStyle().showTitleH2DartBold(
+                'ราคารวม ${orderUserModels[index].sumTotal} บาท'),
+          ),
+        ],
       );
 
   Widget showProcessOrder(int index) => Row(
@@ -177,22 +204,34 @@ class _HandleShopState extends State<HandleShop> {
         ],
       );
 
-  Widget showTotalPrice(int index) => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+  Widget headTitle() => Row(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              margin: EdgeInsets.only(right: 16.0),
-              child: Text(
-                'รวม ${orderUserModels[index].totalPrice} บาท',
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              'รายการอาหาร',
+              style: MyStyle().h3StyleDark,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              'ราคา',
+              style: MyStyle().h3StyleDark,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              'จำนวน',
+              style: MyStyle().h3StyleDark,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              'รวม',
+              style: MyStyle().h3StyleDark,
             ),
           ),
         ],
@@ -206,71 +245,58 @@ class _HandleShopState extends State<HandleShop> {
           children: <Widget>[
             Expanded(
               flex: 3,
-              child: Center(
-                  child: Text(listFoodModels[index][index2].nameFood,
-                      style: MyStyle().h2NormalStyle)),
-            ),
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text(listFoodModels[index][index2].priceFood,
-                    style: MyStyle().h2NormalStyle),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    listFoodModels[index][index2].nameFood,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.0,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  Text(
+                    listFoodModels[index][index2].detailFood,
+                    style: MyStyle().h2NormalStyleGrey,
+                  ),
+                  Divider(),
+                ],
               ),
             ),
             Expanded(
               flex: 1,
-              child: Center(
-                child: Text(listAmounts[index][index2],
-                    style: MyStyle().h2NormalStyle),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text(
-                    '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',
-                    style: MyStyle().h2NormalStyle),
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget headTitle() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
               child: Text(
-                'รายการอาหาร',
-                style: MyStyle().h3StyleDark,
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: Text(
-                  'ราคา',
-                  style: MyStyle().h3StyleDark,
+                listFoodModels[index][index2].priceFood,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ),
             Expanded(
               flex: 1,
-              child: Center(
-                child: Text(
-                  'จำนวน',
-                  style: MyStyle().h3StyleDark,
+              child: Text(
+                listAmounts[index][index2],
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ),
             Expanded(
               flex: 1,
-              child: Center(
-                child: Text(
-                  'รวม',
-                  style: MyStyle().h3StyleDark,
+              child: Text(
+                '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ),
@@ -278,17 +304,23 @@ class _HandleShopState extends State<HandleShop> {
         ),
       );
 
-  Widget showDateTime(int index) =>
-      Row(
+  Widget showDateTime(int index) => Row(
         children: <Widget>[
-          MyStyle().showTitleH2Primary('วันที่ :'),
-          MyStyle().showTitleH2Primary(orderUserModels[index].dateTime),
-          MyStyle().showTitleH2Primary('เลขที่ :'),
-          MyStyle().showTitleH2Primary(orderUserModels[index].id),
+          Text(
+            'วันที่ ${orderUserModels[index].dateTime} : เลขที่ ${orderUserModels[index].id}',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 2.0,
+            ),
+          )
         ],
       );
 
-  Widget showShop(int index) => MyStyle().showTitle('คุณ ${nameUsers[index]}');
+  Widget showIdOrder(int index) =>
+      MyStyle().showTitleH2Primary(orderUserModels[index].id);
+
+  Widget showShop(int index) => MyStyle().showTitle('ร้าน ${nameShops[index]}');
 
   @override
   Widget build(BuildContext context) {

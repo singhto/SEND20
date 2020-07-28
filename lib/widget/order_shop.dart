@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
 import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/models/user_model.dart';
+import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
@@ -19,12 +20,14 @@ class OrderShop extends StatefulWidget {
 
 class _OrderShopState extends State<OrderShop> {
   // Field
-  String idShop;
+  String idShop, checkOn = 'on', checkOff = 'off';
   List<OrderUserModel> orderUserModels = List();
+  List<UserShopModel> userShopModels = List();
   List<String> nameUsers = List();
   List<List<FoodModel>> listFoodModels = List();
   List<List<String>> listAmounts = List();
   List<int> totals = List();
+  UserShopModel userShopModel;
 
   // Method
   @override
@@ -102,6 +105,7 @@ class _OrderShopState extends State<OrderShop> {
         idFoodString = idFoodString.substring(1, idFoodString.length - 1);
         List<String> listFood = idFoodString.split(',');
         List<FoodModel> foodModels = List();
+
         List<int> priceInts = List();
         for (var idFood in listFood) {
           FoodModel foodModel =
@@ -234,8 +238,9 @@ class _OrderShopState extends State<OrderShop> {
                 child: Row(
                   children: <Widget>[
                     MyStyle().showTitleH2Primary('วันที่ :'),
-                    MyStyle().showTitleH2Primary(orderUserModels[index1].dateTime),
-                    MyStyle().showTitleH2Primary('เลขที่ :'),
+                    MyStyle()
+                        .showTitleH2Primary(orderUserModels[index1].dateTime),
+                    MyStyle().showTitleH2Primary('  เลขที่ :'),
                     MyStyle().showTitleH2Primary(orderUserModels[index1].id),
                   ],
                 ),
@@ -288,9 +293,19 @@ class _OrderShopState extends State<OrderShop> {
                     children: <Widget>[
                       Expanded(
                         flex: 3,
-                        child: Text(
-                          listFoodModels[index1][index2].nameFood,
-                          style: MyStyle().h2NormalStyle,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              listFoodModels[index1][index2].nameFood,
+                              style: MyStyle().h2Style,
+                            ),
+                            Text(
+                              listFoodModels[index1][index2].detailFood,
+                              style: MyStyle().h2NormalStyleGrey,
+                            ),
+                            Divider()
+                          ],
                         ),
                       ),
                       Expanded(
@@ -356,11 +371,95 @@ class _OrderShopState extends State<OrderShop> {
     );
   }
 
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'คุณสามารถ ปิดหรือเปิดร้าน ได้ทุกเมื่อ โดยไม่มีข้อผูกมัด',
+            style: MyStyle().h3Style,
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'หากคุณเลือก ปิดร้าน',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                Text(
+                  'ลูกค้าจะไม่สามารถมองเห็นร้าน และเมนูอาหารของคุณ',
+                  style: MyStyle().h2NormalStyle,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      editInfoShopOn();
+                    },
+                    color: Colors.green,
+                    child: Text(
+                      'เปิดร้าน',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 80.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                onPressed: () {
+                  editInfoShopOff();
+                },
+                color: Colors.red,
+                child: Text('ปิดร้าน',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                      fontSize: 20.0,
+                    )),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<Null> showConfirmFinish(int index) async {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('รับ Order ของคุณ ${nameUsers[index]} ใช่ไหม ?'),
+        title: Text(
+          'รับ Order ของคุณ ${nameUsers[index]} หรือไม่?',
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.0,
+          ),
+        ),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -370,7 +469,7 @@ class _OrderShopState extends State<OrderShop> {
               cancelButton(index),
             ],
           ),
-          waitButton(),
+          //waitButton(),
         ],
       ),
     );
@@ -386,7 +485,14 @@ class _OrderShopState extends State<OrderShop> {
         Icons.check,
         color: Colors.green,
       ),
-      label: Text('รับทำ Order'),
+      label: Text(
+        'รับ Order',
+        style: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.0,
+        ),
+      ),
     );
   }
 
@@ -429,7 +535,14 @@ class _OrderShopState extends State<OrderShop> {
         Icons.clear,
         color: Colors.red,
       ),
-      label: Text('ไม่สะดวกรับ order'),
+      label: Text(
+        'ไม่รับ order',
+        style: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.0,
+        ),
+      ),
     );
   }
 
@@ -457,12 +570,61 @@ class _OrderShopState extends State<OrderShop> {
   Future<Null> sentNotiToUser(int index) async {
     UserModel userModel =
         await MyAPI().findDetailUserWhereId(orderUserModels[index].idUser);
-    MyAPI().notificationAPI(userModel.token, 'Rider กำลังไปรับอาหาร',
-        'Rider กำลังไปรับ อาหารที่ร้านค้า คะ รอแป้ป');
+    MyAPI().notificationAPI(userModel.token, 'ร้านค้ารับ Order ของคุณแล้ว',
+        'กำลังปรุงอาหารใช้เวลา 15 นาที ครับ');
+  }
+
+  Future<Null> editInfoShopOn() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id');
+    String url =
+        'http://ps23.co.th/app/editInfoShop.php?isAdd=true&id=$id&Check=$checkOn';
+    //print('====On === $url');
+    try {
+      await Dio().get(url).then(
+        (response) {
+          if (response.toString() == 'true') {
+            Navigator.of(context).pop();
+          } else {}
+        },
+      );
+    } catch (e) {}
+
+    normalToast('เปิดร้าน');
+  }
+
+  Future<Null> editInfoShopOff() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String id = preferences.getString('id');
+    String url2 =
+        'http://ps23.co.th/app/editInfoShop.php?isAdd=true&id=$id&Check=$checkOff';
+    //print('====Off ==== $url2');
+    try {
+      await Dio().get(url2).then(
+        (response) {
+          if (response.toString() == 'true') {
+            Navigator.of(context).pop();
+          } else {}
+        },
+      );
+    } catch (e) {}
+    normalToast('ปิดร้าน');
   }
 
   @override
   Widget build(BuildContext context) {
-    return orderUserModels.length == 0 ? waitOrder() : showListOrder();
+    return Scaffold(
+      body: orderUserModels.length == 0 ? waitOrder() : showListOrder(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _showMyDialog();
+            //getShopWhrerId();
+          },
+          child: Icon(Icons.power_settings_new)
+          //backgroundColor: userShopModels[index].name == 'on'
+          //? Colors.pink.shade300
+          //: Colors.grey.shade300
+          ),
+    );
   }
 }

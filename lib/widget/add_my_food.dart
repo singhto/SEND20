@@ -1,17 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:foodlion/models/get_foodname_model.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:expand_widget/expand_widget.dart';
-import 'package:http/http.dart' as http;
 
 class AddMyFood extends StatefulWidget {
   @override
@@ -27,72 +23,15 @@ class _AddMyFoodState extends State<AddMyFood> {
       priceFood,
       score = '5',
       qty,
-      d1,
-      d2,
-      d3,
-      d4,
-      d5,
-      d6,
-      d7,
-      d8,
-      d9,
-      p1,
-      p2,
-      p3,
-      p4,
-      p5,
-      p6,
-      p7,
-      p8,
-      p9,
       dropdownValue = 'One';
   File file;
   bool isLoading = false;
-  List<GetFoodName> _list = [];
-  List<GetFoodName> _search = [];
-  int selectedIndex = 0;
 
   // Method
   @override
   void initState() {
     super.initState();
     findIdShop();
-    fetchData();
-  }
-
-  onSearch(String text) async {
-    _search.clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-    _list.forEach((f) {
-      if (f.foodName.contains(text) || f.id.toString().contains(text))
-        _search.add(f);
-      {}
-    });
-    setState(() {});
-  }
-
-  Future<Null> fetchData() async {
-    setState(() {
-      isLoading = true;
-    });
-    _list.clear();
-    final response =
-        await http.get('http://movehubs.com/app/getAllFoodName.php');
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      int index = 0;
-      setState(() {
-        for (Map i in data) {
-          _list.add(GetFoodName.fromJson(i));
-          index++;
-          isLoading = false;
-          print('data>>> $i');
-        }
-      });
-    }
   }
 
   Future<void> findIdShop() async {
@@ -105,7 +44,7 @@ class _AddMyFoodState extends State<AddMyFood> {
   Widget showImageFood() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.15,
+      height: MediaQuery.of(context).size.height * 0.2,
       child: file == null ? Image.asset('images/food2.png') : Image.file(file),
     );
   }
@@ -118,44 +57,38 @@ class _AddMyFoodState extends State<AddMyFood> {
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: TextField(
-              style: MyStyle().h2Style,
               onChanged: (value) => nameFood = value.trim(),
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.fastfood),
                 hintText: 'ชื่ออาหาร :',
+                // enabledBorder: OutlineInputBorder(
+                //   borderSide: BorderSide(color: Colors.grey),
+                // ),
               ),
             ),
           ),
         ),
-        qtyForm()
+        qtyForm(),
       ],
     );
   }
 
-  Widget subForm() {
-    return Column(
+  Widget detailForm() {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: TextField(
-            style: MyStyle().h2Style,
-            onChanged: (value) => detailFood = value.trim(),
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.filter_1),
-              hintText: 'รายละเอียด :',
-            ),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: TextField(
-            style: MyStyle().h2Style,
-            keyboardType: TextInputType.number,
-            onChanged: (value) => priceFood = value.trim(),
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.attach_money),
-              hintText: 'ราคา :',
+        Expanded(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: TextField(
+              onChanged: (value) => detailFood = value.trim(),
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.details),
+                hintText: 'รายละเอียด : ขนาด หรือความพิเศษของสินค้านี้',
+                // enabledBorder: OutlineInputBorder(
+                //   borderSide: BorderSide(color: Colors.grey),
+                // ),
+              ),
             ),
           ),
         ),
@@ -167,6 +100,10 @@ class _AddMyFoodState extends State<AddMyFood> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Text(
+          'แพ็ค :',
+          style: TextStyle(fontSize: 18.0),
+        ),
         SizedBox(
           width: 20.0,
         ),
@@ -194,6 +131,30 @@ class _AddMyFoodState extends State<AddMyFood> {
               child: Text(value),
             );
           }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget priceForm() {
+    return Row(
+      //mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              onChanged: (value) => priceFood = value.trim(),
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.attach_money),
+                hintText: 'ราคาต่อหน่วย : กรอกเฉพาะตัวเลขเท่านั้น',
+                // enabledBorder: OutlineInputBorder(
+                //   borderSide: BorderSide(color: Colors.grey),
+                // ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -284,6 +245,9 @@ class _AddMyFoodState extends State<AddMyFood> {
       int i = random.nextInt(100000);
       String nameImage = 'food$i.jpg';
       //print('nameImage = $nameImage');
+      setState(() {
+        isLoading = false;
+      });
       Map<String, dynamic> map = Map();
       // map['file'] = UploadFileInfo(file, nameImage);
       // FormData formData = FormData.from(map);
@@ -299,12 +263,15 @@ class _AddMyFoodState extends State<AddMyFood> {
   }
 
   Future<void> saveFoodThread() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       String url =
-          'http://movehubs.com/app/addFoodShop.php?isAdd=true&idShop=$idShop&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Score=$score&Qty=$qty&D1=$d1&D2=$d2&D3=$d3&D4=$d4&D5=$d5&D6=$d6&D7=$d7&D8=$d8&D9=$d9&P1=$p1&P2=$p2&P3=$p3&P4=$p4&P5=$p5&P6=$p6&P7=$p7&P8=$p8&P9=$p9';
+          'http://movehubs.com/app/addFoodShop.php?isAdd=true&idShop=$idShop&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Score=$score&Qty=$qty';
 
       Response response = await Dio().get(url);
-
       setState(() {
         isLoading = false;
       });
@@ -332,61 +299,20 @@ class _AddMyFoodState extends State<AddMyFood> {
           showButton(),
           MyStyle().mySizeBox(),
           nameForm(),
-          subForm(),
+          MyStyle().mySizeBox(),
+          detailForm(),
+          SizedBox(
+            width: 20.0,
+          ),
+          Expanded(child: priceForm()),
           MyStyle().mySizeBox(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: isLoading ? MyStyle().showProgress() : null,
           ),
-          SizedBox(
-            height: 90.0,
-          )
+          saveButton(),
+          MyStyle().mySizeBox(),
         ],
-      ),
-      bottomSheet: Container(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: FlatButton(
-            onPressed: () {
-              if (file == null) {
-                normalDialog(context, 'Non Choose Image',
-                    'Please Click Camera or Gallery');
-              } else if (nameFood == null ||
-                  nameFood.isEmpty ||
-                  detailFood == null ||
-                  detailFood.isEmpty ||
-                  qty == null ||
-                  qty.isEmpty ||
-                  priceFood == null ||
-                  priceFood.isEmpty) {
-                normalDialog(context, 'กรอกข้อมูลให้ครบ',
-                    'กรุณากรอกข้อมูลให้ครบทุกช่องครับ');
-              } else {
-                uploadImage();
-              }
-            },
-            child: Text(
-              'บันทึกข้อมูล',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

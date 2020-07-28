@@ -245,20 +245,26 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
           children: <Widget>[
             Expanded(
               flex: 3,
-              child: Text(listFoodModels[index][index2].nameFood),
+              child: Column(
+                children: <Widget>[
+                  Text(listFoodModels[index][index2].nameFood,style: TextStyle(fontSize: 20.0,),),
+                  Text(listFoodModels[index][index2].detailFood,style: TextStyle(fontSize: 16.0,),),
+                  Divider(),
+                ],
+              ),
             ),
             Expanded(
               flex: 1,
-              child: Text(listFoodModels[index][index2].priceFood),
+              child: Text(listFoodModels[index][index2].priceFood,style: TextStyle(fontSize: 20.0,),),
             ),
             Expanded(
               flex: 1,
-              child: Text(listAmounts[index][index2]),
+              child: Text(listAmounts[index][index2],style: TextStyle(fontSize: 20.0,),),
             ),
             Expanded(
               flex: 1,
               child: Text(
-                  '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}'),
+                  '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',style: TextStyle(fontSize: 20.0,),),
             ),
           ],
         ),

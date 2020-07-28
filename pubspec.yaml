@@ -40,6 +40,7 @@ dependencies:
   expand_widget: ^1.0.0+1
   flappy_search_bar: ^1.7.2
   google_sign_in: ^4.5.1
+  app_settings: ^4.0.1+1
   
 
 dev_dependencies:

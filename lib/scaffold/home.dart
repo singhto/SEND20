@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
+import 'package:foodlion/scaffold/noti_location.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
+import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -90,10 +92,10 @@ class _HomeState extends State<Home> {
         if (!serviceLocationEnable) {
           exit(0);
         } else {
-          findLatLng();
+          findLatLng2();
         }
       } else {
-        findLatLng();
+        findLatLng2();
       }
     } catch (e) {
       print('e checkPersion ${e.toString()}');
@@ -102,10 +104,6 @@ class _HomeState extends State<Home> {
 
   Future<Null> findLatLng() async {
     print('################## findLatLng on Home Work $lat');
-
-    setState(() {
-      print('object  $lat');
-    });
 
     LocationData locationData = await findLocationData();
 
@@ -122,7 +120,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-    Future<LocationData> findLocationData() async {
+  Future<LocationData> findLocationData() async {
     Location location = Location();
     print('nnnn $lat');
 
@@ -133,14 +131,23 @@ class _HomeState extends State<Home> {
       if (e.code == 'PERMISSION_DENIED') {}
       return null;
     }
-    
   }
 
-
   Future<Null> findLatLng2() async {
-    await callculateFindLatLngOneTime().then((value) {
-      print('valut $value');
+     LocationData locationData = await callculateFindLatLngOneTime();
+     print('locationDataData $locationData');
+
+     setState(() {
+      lat = locationData.latitude;
+      lng = locationData.longitude;
+
+      print('latHome ==>> $lat, lng ==>> $lng');
+
+      checkLogin();
+      checkWidget();
     });
+
+
   }
 
   Future<LocationData> callculateFindLatLngOneTime() async {
@@ -150,11 +157,16 @@ class _HomeState extends State<Home> {
     } catch (e) {
       print('e  calut ====>>> ${e.toString()}');
       currentLocation = null;
+      if (currentLocation == null) {
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) => NotiLocation(),
+        );
+        Navigator.pushAndRemoveUntil(context, route, (route) => false);
+       
+      }
     }
     return currentLocation;
   }
-
-
 
   void checkWidget() {
     Widget myWidget = widget.currentWidget;
@@ -837,7 +849,7 @@ class _HomeState extends State<Home> {
         style: MyStyle().h2Style,
       ),
       subtitle: Text(
-        'ร้านค้าในรัศมี 10 Km.',
+        'ร้านค้าในรัศมี 10 กม.',
         style: MyStyle().h3StylePrimary,
       ),
       onTap: () {
@@ -932,10 +944,11 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            'S E N D',
+            'SEND',
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
+              letterSpacing: 3.0,
             ),
           ),
         ),
