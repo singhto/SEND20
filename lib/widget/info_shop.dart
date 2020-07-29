@@ -5,6 +5,7 @@ import 'package:foodlion/scaffold/review_shop.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
+import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -110,7 +111,6 @@ class _InfoShopState extends State<InfoShop> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('เลือก เปิด หรือ ปิดร้าน'),
-
           actions: <Widget>[
             FlatButton(
               child: Text('เปิดร้าน'),
@@ -206,9 +206,18 @@ class _InfoShopState extends State<InfoShop> {
                   //Text('สถานะ : ${userShopModel.check}'),
 
                   RaisedButton(
-                      child: Text('${userShopModel.check}'),
+                      child: Text('${userShopModel.check}',
+                          style: TextStyle(
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2.0,
+                            color: userShopModel.check == 'on'
+                                ? Colors.green
+                                : Colors.red,
+                          )),
                       onPressed: () {
-                        _showMyDialog();
+                        //_showMyDialog();
+                        normalToast('สถานะร้านค้า ${userShopModel.check}');
                       })
                 ],
               ),
@@ -246,11 +255,10 @@ class _InfoShopState extends State<InfoShop> {
         ),
         FlatButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MyFoodShop()));
+            normalToast('เมนูนีี้ยังไม่พร้อมใช้งาน');
           },
           child: Text(
-            'เมนูอาหาร',
+            'ตั้งค่า',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16.0,
@@ -262,10 +270,6 @@ class _InfoShopState extends State<InfoShop> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        //flatButtonSetTime(context),
-        SizedBox(
-          height: 6.0,
-        )
       ],
     );
   }
@@ -289,8 +293,6 @@ class _InfoShopState extends State<InfoShop> {
       ),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {

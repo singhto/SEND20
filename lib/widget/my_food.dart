@@ -229,15 +229,6 @@ if (nameShop == null) {
                         SizedBox(
                           height: 4.0,
                         ),
-                        Text(
-                          //'บรรจุ: กล่อง/ถุง',
-                          'บรรจุ: ${searchFoodModels[index].qty}',
-                          style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.orange.shade300),
-                          overflow: TextOverflow.ellipsis,
-                        ),
                         showPrice(index),
                       ],
                     ),

@@ -228,7 +228,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         setState(() {
-          cuttentWidget = SingInUser();
+          cuttentWidget = GuestV1();
         });
       }
     } catch (e) {}

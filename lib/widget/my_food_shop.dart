@@ -20,6 +20,7 @@ class _MyFoodShopState extends State<MyFoodShop> {
   List<FoodModel> foodModels = List();
   String myIdShop;
    bool isSwitched = true;
+     Widget currentWidget;
 
   // Method
   @override
@@ -37,6 +38,7 @@ class _MyFoodShopState extends State<MyFoodShop> {
   }
 
   Future<void> readAllFood() async {
+  
     String idShop = await getIdShop();
     if (myIdShop != null) {
       idShop = myIdShop;
@@ -48,8 +50,32 @@ class _MyFoodShopState extends State<MyFoodShop> {
         'http://movehubs.com/app/getFoodWhereIdShop.php?isAdd=true&idShop=$idShop';
 
     Response response = await Dio().get(url);
-    // print('response ===>> $response');
-    if (response.toString() != 'null') {
+    print('response ===>> $response');
+    if (response.toString() == 'null') {
+      setState(() {
+        currentWidget = Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'ไม่มีรายการอาหาร',
+                style: MyStyle().h1PrimaryStyle,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'โปรดเพิ่ม  ',
+                    style: MyStyle().h1PrimaryStyle,
+                  ),
+                  Icon(Icons.playlist_add, size: 30.0, color: Colors.grey,)
+                ],
+              ),
+            ],
+          ),
+        );
+      });
+    } else {
       var result = json.decode(response.data);
       // print('result ===>>> $result');
 
@@ -57,7 +83,7 @@ class _MyFoodShopState extends State<MyFoodShop> {
         FoodModel model = FoodModel.fromJson(map);
         setState(() {
           foodModels.add(model);
-          statusData = false;
+          currentWidget = showListFood();
         });
       }
     }
@@ -240,30 +266,11 @@ class _MyFoodShopState extends State<MyFoodShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Center(child: Text('แก้ไขรายการอาหาร')),
-       
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: const Icon(Icons.home),
-      //       tooltip: 'เพิ่ม',
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context, MaterialPageRoute(builder: (context) => Home()));
-      //       },
-      //     ),
-      //     IconButton(
-      //       icon: const Icon(Icons.add),
-      //       tooltip: 'เพิ่ม',
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context, MaterialPageRoute(builder: (context) => AddMyFood()));
-      //       },
-      //     ),
-      //   ],
-      // ),
-      body: statusData ? showNoData() : showListFood(),
+    return 
+ 
+    Scaffold(
+      body: currentWidget == null ? MyStyle().showProgress() : currentWidget,
     );
+   
   }
 }
