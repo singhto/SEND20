@@ -7,7 +7,6 @@ import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/scaffold/noti_location.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
-import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -229,7 +228,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         setState(() {
-          cuttentWidget = GuestV1();
+          cuttentWidget = SingInUser();
         });
       }
     } catch (e) {}
@@ -286,8 +285,8 @@ class _HomeState extends State<Home> {
         menuOrderShop(),
         handleMenu(),
         menuInfoShop(),
-        //menuMyFoodShop(),
-        //menuAddMyFood(),
+        menuMyFoodShop(),
+        menuAddMyFood(),
         menuSignOut(),
       ],
     );
@@ -338,11 +337,11 @@ class _HomeState extends State<Home> {
         color: MyStyle().dartColor,
       ),
       title: Text(
-        'เมนูอาหาร',
+        'รายการอาหาร',
         style: MyStyle().h2Style,
       ),
       subtitle: Text(
-        'เพิ่ม ลบ แก้ไขเมนูอาหาร',
+        'รายการอาหารของร้าน',
         style: MyStyle().h3StylePrimary,
       ),
       onTap: () {
@@ -942,14 +941,12 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: showDrawer(),
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'SEND',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 3.0,
-            ),
+        title: Text(
+          'SEND',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 3.0,
           ),
         ),
       ),

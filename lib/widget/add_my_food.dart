@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
+import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,14 +18,7 @@ class AddMyFood extends StatefulWidget {
 
 class _AddMyFoodState extends State<AddMyFood> {
   // Field
-  String idShop,
-      nameFood,
-      detailFood,
-      urlFood,
-      priceFood,
-      score = '5',
-      qty,
-      dropdownValue = 'One';
+  String idShop, nameFood, detailFood, urlFood, priceFood, score = '0';
   File file;
   bool isLoading = false;
 
@@ -42,10 +37,12 @@ class _AddMyFoodState extends State<AddMyFood> {
   }
 
   Widget showImageFood() {
+    isLoading = false;
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.2,
       child: file == null ? Image.asset('images/food2.png') : Image.file(file),
+      
     );
   }
 
@@ -53,22 +50,19 @@ class _AddMyFoodState extends State<AddMyFood> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              onChanged: (value) => nameFood = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.fastfood),
-                hintText: 'ชื่ออาหาร :',
-                // enabledBorder: OutlineInputBorder(
-                //   borderSide: BorderSide(color: Colors.grey),
-                // ),
+        Container(
+          width: 250.0,
+          child: TextField(
+            onChanged: (value) => nameFood = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.fastfood),
+              hintText: 'ชื่ออาหาร :',
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
               ),
             ),
           ),
         ),
-        qtyForm(),
       ],
     );
   }
@@ -77,17 +71,15 @@ class _AddMyFoodState extends State<AddMyFood> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              onChanged: (value) => detailFood = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.details),
-                hintText: 'รายละเอียด : ขนาด หรือความพิเศษของสินค้านี้',
-                // enabledBorder: OutlineInputBorder(
-                //   borderSide: BorderSide(color: Colors.grey),
-                // ),
+        Container(
+          width: 250.0,
+          child: TextField(
+            onChanged: (value) => detailFood = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.details),
+              hintText: 'รายละเอียด :',
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
               ),
             ),
           ),
@@ -96,62 +88,20 @@ class _AddMyFoodState extends State<AddMyFood> {
     );
   }
 
-  Widget qtyForm() {
+  Widget priceForm() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          'แพ็ค :',
-          style: TextStyle(fontSize: 18.0),
-        ),
-        SizedBox(
-          width: 20.0,
-        ),
-        DropdownButton<String>(
-          hint: Text('เลือก'),
-          value: qty,
-          icon: Icon(Icons.arrow_downward),
-          iconSize: 24,
-          style: TextStyle(color: Colors.deepOrange),
-          onChanged: (String newValue) {
-            setState(() {
-              qty = newValue;
-            });
-          },
-          items: <String>[
-            'กล่อง',
-            'กระปุก',
-            'ขวด',
-            'ถุง',
-            'ห่อ',
-            'แก้ว',
-          ].map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget priceForm() {
-    return Row(
-      //mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: TextField(
-              keyboardType: TextInputType.number,
-              onChanged: (value) => priceFood = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.attach_money),
-                hintText: 'ราคาต่อหน่วย : กรอกเฉพาะตัวเลขเท่านั้น',
-                // enabledBorder: OutlineInputBorder(
-                //   borderSide: BorderSide(color: Colors.grey),
-                // ),
+        Container(
+          width: 250.0,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            onChanged: (value) => priceFood = value.trim(),
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.attach_money),
+              hintText: 'ราคา :',
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
               ),
             ),
           ),
@@ -206,19 +156,18 @@ class _AddMyFoodState extends State<AddMyFood> {
       child: RaisedButton.icon(
         color: MyStyle().primaryColor,
         onPressed: () {
+          isLoading = true;
           if (file == null) {
             normalDialog(
                 context, 'Non Choose Image', 'Please Click Camera or Gallery');
+     
           } else if (nameFood == null ||
               nameFood.isEmpty ||
               detailFood == null ||
               detailFood.isEmpty ||
-              qty == null ||
-              qty.isEmpty ||
               priceFood == null ||
               priceFood.isEmpty) {
-            normalDialog(context, 'กรอกข้อมูลให้ครบ',
-                'กรุณากรอกข้อมูลให้ครบทุกช่องครับ');
+            normalDialog(context, 'Have Space', 'Please Fill Every Blank');
           } else {
             uploadImage();
           }
@@ -236,18 +185,13 @@ class _AddMyFoodState extends State<AddMyFood> {
   }
 
   Future<void> uploadImage() async {
-    setState(() {
-      isLoading = true;
-    });
     try {
       String url = 'http://movehubs.com/app/saveFood.php';
       Random random = Random();
       int i = random.nextInt(100000);
       String nameImage = 'food$i.jpg';
-      //print('nameImage = $nameImage');
-      setState(() {
-        isLoading = false;
-      });
+      print('nameImage = $nameImage');
+
       Map<String, dynamic> map = Map();
       // map['file'] = UploadFileInfo(file, nameImage);
       // FormData formData = FormData.from(map);
@@ -256,44 +200,44 @@ class _AddMyFoodState extends State<AddMyFood> {
       FormData formData = FormData.fromMap(map);
       await Dio().post(url, data: formData).then((response) {
         urlFood = 'http://movehubs.com/app/Food/$nameImage';
-        //print('urlFood ===>>> $urlFood');
+        print('urlFood ===>>> $urlFood');
         saveFoodThread();
+        isLoading = false;
       });
     } catch (e) {}
   }
 
   Future<void> saveFoodThread() async {
-    setState(() {
-      isLoading = true;
-    });
-
+     isLoading = true;
     try {
       String url =
-          'http://movehubs.com/app/addFoodShop.php?isAdd=true&idShop=$idShop&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Score=$score&Qty=$qty';
+          'http://movehubs.com/app/addFoodShop.php?isAdd=true&idShop=$idShop&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Score=$score';
 
       Response response = await Dio().get(url);
-      setState(() {
-        isLoading = false;
-      });
+ 
       if (response.toString() == 'true') {
         MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => MyFoodShop());
+            MaterialPageRoute(builder: (value) => Home());
+            normalToast('เพิ่มข้อมูลเรียบร้อย');
         Navigator.of(context).pushAndRemoveUntil(route, (value) => false);
       } else {
         normalDialog(context, 'Cannot Add Food', 'Please Try Again');
       }
     } catch (e) {}
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('เพิ่มเมนูอาหาร'),
-      ),
+      // appBar: AppBar(
+      //   title: Center(child: Text('เพิ่มรายการอาหาร')),
+      // ),
       body: ListView(
         padding: EdgeInsets.all(16.0),
         children: <Widget>[
+          MyStyle().showTitle('เพิ่มรายการอาหาร'),
+          MyStyle().mySizeBox(),
           showImageFood(),
           MyStyle().mySizeBox(),
           showButton(),
@@ -301,15 +245,13 @@ class _AddMyFoodState extends State<AddMyFood> {
           nameForm(),
           MyStyle().mySizeBox(),
           detailForm(),
-          SizedBox(
-            width: 20.0,
-          ),
-          Expanded(child: priceForm()),
+          MyStyle().mySizeBox(),
+          priceForm(),
           MyStyle().mySizeBox(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: isLoading ? MyStyle().showProgress() : null,
-          ),
+          padding: const EdgeInsets.all(8.0),
+          child: isLoading ? MyStyle().showProgress() : null,
+        ),
           saveButton(),
           MyStyle().mySizeBox(),
         ],

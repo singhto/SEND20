@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
-import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/show_food_shop.dart';
 import 'package:foodlion/utility/my_style.dart';
-import 'package:foodlion/widget/add_my_food.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyFoodShop extends StatefulWidget {
@@ -243,28 +241,28 @@ class _MyFoodShopState extends State<MyFoodShop> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('แก้ไขรายการอาหาร')),
+      // appBar: AppBar(
+      //   title: Center(child: Text('แก้ไขรายการอาหาร')),
        
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.home),
-            tooltip: 'เพิ่ม',
-            onPressed: () {
-              Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Home()));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'เพิ่ม',
-            onPressed: () {
-              Navigator.push(
-                context, MaterialPageRoute(builder: (context) => AddMyFood()));
-            },
-          ),
-        ],
-      ),
+      //   actions: <Widget>[
+      //     IconButton(
+      //       icon: const Icon(Icons.home),
+      //       tooltip: 'เพิ่ม',
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context, MaterialPageRoute(builder: (context) => Home()));
+      //       },
+      //     ),
+      //     IconButton(
+      //       icon: const Icon(Icons.add),
+      //       tooltip: 'เพิ่ม',
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context, MaterialPageRoute(builder: (context) => AddMyFood()));
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: statusData ? showNoData() : showListFood(),
     );
   }

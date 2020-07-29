@@ -7,6 +7,8 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
+import 'package:foodlion/widget/curve_clipper.dart';
+import 'package:foodlion/widget/register_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -40,65 +42,6 @@ class _SingInUserState extends State<SingInUser> {
     } catch (error) {
       print(error);
     }
-  }
-
-  Widget showContent() {
-    return Container(
-      alignment: Alignment(0, -0.8),
-      child: Container(
-        width: 250.0,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox(
-                height: 30,
-              ),
-              MyStyle().showLogo(),
-              MyStyle().mySizeBox(),
-              TextField(
-                style: MyStyle().h2NormalStyle,
-                onChanged: (value) => user = value.trim(),
-                decoration: InputDecoration(
-                  labelText: 'Username :',
-                  labelStyle: MyStyle().h3StylePrimary,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: MyStyle().dartColor)),
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextField(
-                style: MyStyle().h2NormalStyle,
-                onChanged: (valur) => password = valur.trim(),
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password :',
-                  labelStyle: MyStyle().h3StylePrimary,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: MyStyle().dartColor)),
-                ),
-              ),
-              //loginGoogle(),
-              SizedBox(
-                height: 16.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: isLoading ? CircularProgressIndicator() : null,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget loginGoogle() {
@@ -181,53 +124,130 @@ class _SingInUserState extends State<SingInUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: true,
-      body: Container(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
           child: Column(
             children: <Widget>[
-              showContent(),
               SizedBox(
-                height: 90.0,
+                height: 30.0,
+              ),
+              MyStyle().showLogo(),
+              // ClipPath(
+              //   clipper: CurveClipper(),
+              //   child: Image(
+              //     height: MediaQuery.of(context).size.height / 2.5,
+              //     image: NetworkImage('http://movehubs.com/img/logoSigin.jpg'),
+              //     fit: BoxFit.cover,
+              //   ),
+              // ),
+              // Text(
+              //   'SEND',
+              //   style: TextStyle(
+              //     color: Theme.of(context).primaryColor,
+              //     fontSize: 34.0,
+              //     fontWeight: FontWeight.bold,
+              //     letterSpacing: 10.0,
+              //   ),
+              // ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: TextField(
+                  onChanged: (value) => user = value.trim(),
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: 'Email / Phone',
+                      prefixIcon: Icon(
+                        Icons.account_box,
+                        size: 30.0,
+                      )),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: TextField(
+                  onChanged: (valur) => password = valur.trim(),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                    fillColor: Colors.white,
+                    filled: true,
+                    hintText: 'Password',
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      size: 30.0,
+                    ),
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              SizedBox(
+                height: 40.0,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  if (user == null ||
+                      user.isEmpty ||
+                      password == null ||
+                      password.isEmpty) {
+                    normalDialog(
+                        context, 'ใส่ข้อมูลไม่ครบ', 'กรอกข้อมูลให้ถูกต้องครับ');
+                  } else {
+                    checkAuthen();
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 60.0),
+                  alignment: Alignment.center,
+                  height: 45.0,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Text(
+                    'เข้าสู่ระบบ',
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: GestureDetector(
+                    //onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterUser())),
+                    child: Container(
+                      alignment: Alignment.center,
+                      color: Theme.of(context).primaryColor,
+                      height: 80.0,
+                      child: Text(
+                        'ยังไม่ได้เป็นสมาชิกใช่หรือไม่? สมัครใช้บริการ',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               )
             ],
-          ),
-        ),
-      ),
-      bottomSheet: Container(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: FlatButton(
-            onPressed: () async {
-              if (user == null ||
-                  user.isEmpty ||
-                  password == null ||
-                  password.isEmpty) {
-                normalDialog(context, 'Have Space', 'Please Fill Ever Blank');
-              } else {
-                checkAuthen();
-              }
-            },
-            child: Text(
-              'เข้าสู่ระบบ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-              ),
-            ),
           ),
         ),
       ),

@@ -8,6 +8,7 @@ import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
+import 'package:foodlion/widget/signin_user.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -45,140 +46,9 @@ class _RegisterUserState extends State<RegisterUser> {
     try {
       return await location.getLocation();
     } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        
-      }
+      if (e.code == 'PERMISSION_DENIED') {}
       return null;
     }
-  }
-
-  Widget showMap() {
-    LatLng centerLatLng = LatLng(lat, lng);
-    CameraPosition cameraPosition = CameraPosition(
-      target: centerLatLng,
-      zoom: 16.0,
-    );
-
-    return GoogleMap(
-      initialCameraPosition: cameraPosition,
-      markers: myMarkers(),
-      onMapCreated: (value) {},
-    );
-  }
-
-  Set<Marker> myMarkers() {
-    LatLng latLng = LatLng(lat, lng);
-
-    return <Marker>[
-      Marker(
-        markerId: MarkerId('idShop'),
-        position: latLng,
-        infoWindow: InfoWindow(
-          title: 'Your',
-          snippet: 'lat = $lat, lng = $lng',
-        ),
-      ),
-    ].toSet();
-  }
-
-  Widget nameForm() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          width: 250.0,
-          child: TextField(
-            onChanged: (value) => name = value.trim(),
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.account_box),
-              hintText: 'ชื่อ-นามสกุล :',
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget userForm() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          width: 250.0,
-          child: TextField(
-            onChanged: (value) => user = value.trim(),
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.email),
-              hintText: 'Username :',
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget passwordForm() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          width: 250.0,
-          child: TextField(
-            onChanged: (value) => password = value.trim(),
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.lock_open),
-              hintText: 'Password :',
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget uploadButton() {
-    return Column(
-      children: <Widget>[
-        Material(
-          borderRadius: BorderRadius.all(
-            const Radius.circular(30.0),
-          ),
-          shadowColor: Theme.of(context).primaryColor,
-          elevation: 5.0,
-          child: MaterialButton(
-            onPressed: () {
-              if (name == null ||
-                  name.isEmpty ||
-                  user == null ||
-                  user.isEmpty ||
-                  password == null ||
-                  password.isEmpty) {
-                normalDialog(context, 'ห้ามเว้นว่าง', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
-              } else {
-                checkUser();
-              }
-            },
-            color: Theme.of(context).primaryColor,
-            minWidth: 250.0,
-            height: 55.0,
-            child: Text('สมัครใช้บริการ', style: TextStyle(
-              color: Colors.white,
-              fontSize: 25.0,
-              fontWeight: FontWeight.w300,
-              letterSpacing: 0.3,
-            ),),
-          ),
-        ),
-      ],
-    );
   }
 
   Future<void> checkUser() async {
@@ -230,7 +100,8 @@ class _RegisterUserState extends State<RegisterUser> {
     setState(() {
       isLoading = true;
     });
-    String urlAPI ='http://movehubs.com/app/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&Token=$token&Lat=$lat&Lng=$lng';
+    String urlAPI =
+        'http://movehubs.com/app/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&Token=$token&Lat=$lat&Lng=$lng';
 
     try {
       await Dio().get(urlAPI).then(
@@ -239,7 +110,7 @@ class _RegisterUserState extends State<RegisterUser> {
           if (response.toString() == 'true') {
             normalToast('สมัครสำเร็จ กรุณาลงชื่อเข้าใช้อีกครั้ง..');
             MaterialPageRoute route = MaterialPageRoute(
-              builder: (value) => Home(),
+              builder: (value) => SingInUser(),
             );
             Navigator.of(context).pushAndRemoveUntil(route, (value) => false);
           } else {
@@ -250,28 +121,136 @@ class _RegisterUserState extends State<RegisterUser> {
     } catch (e) {}
   }
 
-  Widget showListView() {
-    return ListView(
-      padding: EdgeInsets.all(16.0),
-      children: <Widget>[
-        MyStyle().mySizeBox(),
-        nameForm(),
-        MyStyle().mySizeBox(),
-        userForm(),
-        MyStyle().mySizeBox(),
-        passwordForm(),
-        MyStyle().mySizeBox(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: isLoading ? MyStyle().showProgress() : null,
-        ),
-        uploadButton(),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return showListView();
+    return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   title: Text('สมัครใช้บริการ'),
+      // ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: <Widget>[
+              MyStyle().mySizeBox(),
+              Text(
+                'ข้อมูลของคุณ',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 34.0,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 5.0,
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: TextField(
+                  onChanged: (value) => name = value.trim(),
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: 'ชื่อ - นามสกุล',
+                      prefixIcon: Icon(
+                        Icons.account_box,
+                        size: 30.0,
+                      )),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: TextField(
+                  onChanged: (value) => user = value.trim(),
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: 'Email / Phone',
+                      prefixIcon: Icon(
+                        Icons.email,
+                        size: 30.0,
+                      )),
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: TextField(
+                  onChanged: (value) => password = value.trim(),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                    fillColor: Colors.white,
+                    filled: true,
+                    hintText: 'Password',
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      size: 30.0,
+                    ),
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              SizedBox(
+                height: 40.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: isLoading ? MyStyle().showProgress() : null,
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (name == null ||
+                      name.isEmpty ||
+                      user == null ||
+                      user.isEmpty ||
+                      password == null ||
+                      password.isEmpty) {
+                    normalDialog(context, 'ห้ามเว้นว่าง',
+                        'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                  } else {
+                    checkUser();
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 60.0),
+                  alignment: Alignment.center,
+                  height: 45.0,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: Text(
+                    'สมัครใช้บริการ',
+                    style: TextStyle(
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                        color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
