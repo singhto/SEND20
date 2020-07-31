@@ -271,7 +271,7 @@ if (nameShop == null) {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(nameShop == null ?'ร้าน' : 'ร้าน$nameShop'),
+        title: Text('ร้าน$nameShop'),
         actions: <Widget>[showCart()],
       ),
       body: statusData ? showNoData() : showListFood(),

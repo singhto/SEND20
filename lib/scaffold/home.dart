@@ -157,10 +157,7 @@ class _HomeState extends State<Home> {
       print('e  calut ====>>> ${e.toString()}');
       currentLocation = null;
       if (currentLocation == null) {
-        MaterialPageRoute route = MaterialPageRoute(
-          builder: (context) => NotiLocation(),
-        );
-        Navigator.pushAndRemoveUntil(context, route, (route) => false);
+        exit(0);
        
       }
     }
@@ -228,7 +225,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         setState(() {
-          cuttentWidget = GuestV1();
+          cuttentWidget = SingInUser();
         });
       }
     } catch (e) {}
