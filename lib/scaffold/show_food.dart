@@ -38,6 +38,18 @@ class _ShowFoodState extends State<ShowFood> {
 
   String chooseSubMenu;
 
+  List<bool> isCheckeds = List();
+  List<int> listAmountOption = List();
+  List<int> listSumOption = List();
+  List<int> factorPriceOption = List();
+  int total = 0;
+
+  List<int> idOfChoose = List();
+  List<String> nameOptions = List();
+  List<String> sizeOptions = List();
+
+  int indexChoose = 0;
+
   // Method
   @override
   void initState() {
@@ -146,12 +158,21 @@ class _ShowFoodState extends State<ShowFood> {
     if (response.toString() != 'null') {
       var result = json.decode(response.data);
       for (var map in result) {
+        isCheckeds.add(false);
+        listAmountOption.add(0);
+
         SubFoodModel model = SubFoodModel.fromJson(map);
+
+        int factor = int.parse(model.priceFood.trim());
+        listSumOption.add(0);
+        factorPriceOption.add(factor);
+
         if (chooseSubMenu == null) {
           chooseSubMenu = model.nameFood;
         }
         setState(() {
           subFoodModels.add(model);
+          total = calculatrTotal();
         });
       }
     }
@@ -160,29 +181,7 @@ class _ShowFoodState extends State<ShowFood> {
   Widget showListFood() {
     return Column(
       children: <Widget>[
-        Card(
-          child: ListTile(
-            title: Text(
-              '${foodModel.nameFood} ${foodModel.detailFood}',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-              ),
-            ),
-            //subtitle: showAmountFood(),
-            trailing: Text(
-              'รวม ...',
-              style: TextStyle(
-                fontSize: 22,
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
-              ),
-            ),
-          ),
-        ),
+        showTotal(),
         showListSubMunu(),
         Padding(padding: EdgeInsets.only(top: 20.0)),
         Text(
@@ -200,10 +199,34 @@ class _ShowFoodState extends State<ShowFood> {
               borderSide: BorderSide(),
             ),
           ),
-
-  
         ),
       ],
+    );
+  }
+
+  Card showTotal() {
+    return Card(
+      child: ListTile(
+        title: Text(
+          '${foodModel.nameFood} ${foodModel.detailFood}',
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2.0,
+          ),
+        ),
+        //subtitle: showAmountFood(),
+        trailing: Text(
+          'รวม $total',
+          style: TextStyle(
+            fontSize: 22,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+          ),
+        ),
+      ),
     );
   }
 
@@ -219,18 +242,10 @@ class _ShowFoodState extends State<ShowFood> {
                 itemBuilder: (context, index) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Radio(
-                      value: subFoodModels[index].nameFood,
-                      groupValue: chooseSubMenu,
-                      onChanged: (value) {
-                        setState(() {
-                          chooseSubMenu = value;
-                        });
-                      },
-                    ),
+                    checkOption(index),
                     Text(subFoodModels[index].nameFood),
-                    showAmountFood(),
-                    Text(subFoodModels[index].priceFood),
+                    showAmountFood(index),
+                    showSumPriceOption(index),
                   ],
                 ),
               ),
@@ -238,7 +253,55 @@ class _ShowFoodState extends State<ShowFood> {
           );
   }
 
-  Widget showAmountFood() {
+  Widget showSumPriceOption(int index) {
+    //print('listsSumOption[$index] == ${listSumOption[index]}');
+    //print('listsSumAmountOption[$index] == ${listAmountOption[index]}');
+
+    listSumOption[index] = factorPriceOption[index] * listAmountOption[index];
+
+    //print('listSumOption[$index] ==>> ${listSumOption[index]}');
+    return Text('${listSumOption[index]}');
+  }
+
+  Widget checkOption(int index) {
+    //print('isCheck $isCheckeds');
+    //print('index $index');
+    return Container(
+      width: 80.0,
+      child: CheckboxListTile(
+        value: isCheckeds[index],
+        onChanged: (value) {
+          setState(() {
+            isCheckeds[index] = value;
+
+            if (value) {
+              listAmountOption[index] = 1;
+              total = calculatrTotal();
+
+              idOfChoose.add(indexChoose);
+              indexChoose++;
+              nameOptions.add(subFoodModels[index].nameFood);
+              //print('nameOptions === $nameOptions');
+              sizeOptions.add(subFoodModels[index].priceFood);
+            } else {
+              listAmountOption[index] = 0;
+              total = calculatrTotal();
+
+              nameOptions.removeWhere(
+                  (element) => (element == subFoodModels[index].nameFood));
+
+              //print('nameOptions === $nameOptions');
+              String id = subFoodModels[index].id;
+              //sizeOptions.removeAt(int)
+              //sizeOptions.removeWhere((element) => (element == subFoodModels[index].priceFood));
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  Widget showAmountFood(int index) {
     return Column(
       children: <Widget>[
         Row(
@@ -252,14 +315,18 @@ class _ShowFoodState extends State<ShowFood> {
                   color: Colors.red,
                 ),
                 onPressed: () {
-                  if (amountFood != 0) {
+                  if (listAmountOption[index] != 0) {
                     setState(() {
-                      amountFood--;
+                      listAmountOption[index]--;
+                      total = calculatrTotal();
+                      if (listAmountOption[index] == 0) {
+                        isCheckeds[index] = false;
+                      }
                     });
                   }
                 }),
             MyStyle().mySizeBox(),
-            Text('$amountFood',
+            Text('${listAmountOption[index]}',
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
@@ -273,7 +340,9 @@ class _ShowFoodState extends State<ShowFood> {
                 ),
                 onPressed: () {
                   setState(() {
-                    amountFood++;
+                    listAmountOption[index]++;
+                    total = calculatrTotal();
+                    isCheckeds[index] = true;
                   });
                 }),
           ],
@@ -328,17 +397,22 @@ class _ShowFoodState extends State<ShowFood> {
               } else {
                 print(
                     'idFood=$idFood, idShop=$idShop,nameShop=$nameshop, nameFood=$nameFood, urlFood=$urlFood, priceFood=$priceFood, amountFood=$amountFood');
-                OrderModel model = OrderModel(
-                  idFood: idFood,
-                  idShop: idShop,
-                  nameShop: nameshop,
-                  nameFood: nameFood,
-                  urlFood: urlFood,
-                  priceFood: priceFood,
-                  amountFood: amountFood.toString(),
-                );
-                SQLiteHelper().insertDatabase(model);
-                Navigator.of(context).pop();
+
+                print(
+                    'nameOption = $nameOptions, sizeOption = $sizeOptions, priceOption = ?, sumOption = ?, remark = ?');
+                print(
+                    'latUser = ?, lngUser = ? latShop = ?, lngShop = ?, sumPrice = ?, transport = ?, distance = ?');
+                // OrderModel model = OrderModel(
+                //   idFood: idFood,
+                //   idShop: idShop,
+                //   nameShop: nameshop,
+                //   nameFood: nameFood,
+                //   urlFood: urlFood,
+                //   priceFood: priceFood,
+                //   amountFood: amountFood.toString(),
+                // );
+                // SQLiteHelper().insertDatabase(model);
+                // Navigator.of(context).pop();
               }
             },
             child: Text(
@@ -354,5 +428,19 @@ class _ShowFoodState extends State<ShowFood> {
         ),
       ),
     );
+  }
+
+  int calculatrTotal() {
+    int index = 0;
+    int totalInt = 0;
+    print('listAmount === $listAmountOption');
+    print('factorPrice === $factorPriceOption');
+    for (var j in listAmountOption) {
+      int total = listAmountOption[index] * factorPriceOption[index];
+      totalInt = totalInt + total;
+
+      index++;
+    }
+    return totalInt;
   }
 }

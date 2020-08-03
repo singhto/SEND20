@@ -7,6 +7,18 @@ class OrderModel {
   String urlFood;
   String priceFood;
   String amountFood;
+  String nameOption;
+  String sizeOption;
+  String priceOption;
+  String sumOption;
+  String remark;
+  String latUser;
+  String lngUser;
+  String latShop;
+  String lngShop;
+  String sumPrice;
+  String transport;
+  String distance;
 
   OrderModel(
       {this.id,
@@ -16,7 +28,19 @@ class OrderModel {
       this.nameFood,
       this.urlFood,
       this.priceFood,
-      this.amountFood});
+      this.amountFood,
+      this.nameOption,
+      this.sizeOption,
+      this.priceOption,
+      this.sumOption,
+      this.remark,
+      this.latUser,
+      this.lngUser,
+      this.latShop,
+      this.lngShop,
+      this.sumPrice,
+      this.transport,
+      this.distance});
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -27,6 +51,18 @@ class OrderModel {
     urlFood = json['urlFood'];
     priceFood = json['priceFood'];
     amountFood = json['amountFood'];
+    nameOption = json['nameOption'];
+    sizeOption = json['sizeOption'];
+    priceOption = json['priceOption'];
+    sumOption = json['sumOption'];
+    remark = json['remark'];
+    latUser = json['latUser'];
+    lngUser = json['lngUser'];
+    latShop = json['latShop'];
+    lngShop = json['lngShop'];
+    sumPrice = json['sumPrice'];
+    transport = json['transport'];
+    distance = json['distance'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +75,42 @@ class OrderModel {
     data['urlFood'] = this.urlFood;
     data['priceFood'] = this.priceFood;
     data['amountFood'] = this.amountFood;
+    data['nameOption'] = this.nameOption;
+    data['sizeOption'] = this.sizeOption;
+    data['priceOption'] = this.priceOption;
+    data['sumOption'] = this.sumOption;
+    data['remark'] = this.remark;
+    data['latUser'] = this.latUser;
+    data['lngUser'] = this.lngUser;
+    data['latShop'] = this.latShop;
+    data['lngShop'] = this.lngShop;
+    data['sumPrice'] = this.sumPrice;
+    data['transport'] = this.transport;
+    data['distance'] = this.distance;
     return data;
   }
 }
+
+
+// {
+//     "id": 1,
+//     "idFood": "",
+//     "idShop": "",
+//     "nameShop": "",
+//     "nameFood": "",
+//     "urlFood": "",
+//     "priceFood": "",
+//     "amountFood": "",
+//     "nameOption": "",
+//     "sizeOption": "",
+//     "priceOption": "",
+//     "sumOption": "",
+//     "remark": "",
+//     "latUser": "",
+//     "lngUser": "",
+//     "latShop": "",
+//     "lngShop": "",
+//     "sumPrice": "",
+//     "transport": "",
+//     "distance": ""
+// }

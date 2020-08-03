@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class SQLiteHelper {
   // Field
-  String nameDatabase = 'foodData.db';
+  String nameDatabase = 'foodData2.db';
   String tableDatabase = 'orderTABLE';
   int versionDatabase = 1;
   String idColumn = 'id';
@@ -16,6 +16,22 @@ class SQLiteHelper {
   String priceFood = 'priceFood';
   String amountFood = 'amountFood';
 
+  String nameOption = 'nameOption'; //['ใส้กรอก' 'ทูน่า']
+  String sizeOption = 'sizeOption'; //['s' 'm']
+  String priceOption = 'priceOption'; //['10' '30']
+  String sumOption = 'sumOption'; // '40'
+  String remark = 'remark';
+
+  String latUser = 'latUser';
+  String lngUser = 'lngUser';
+  String latShop = 'latShop';
+  String lngShop = 'lngShop';
+  String sumPrice = 'sumPrice';
+  String transport = 'transport';
+  String distance = 'distance';
+
+
+
   // Method
   SQLiteHelper() {
     initDatabase();
@@ -25,7 +41,7 @@ class SQLiteHelper {
     await openDatabase(join(await getDatabasesPath(), nameDatabase),
         onCreate: (Database database, int version) {
       return database.execute(
-          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $urlFood TEXT, $priceFood TEXT, $amountFood TEXT)');
+          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $urlFood TEXT, $priceFood TEXT, $amountFood TEXT, $nameOption TEXT,$sizeOption TEXT,$priceOption TEXT,$sumOption TEXT,$remark TEXT,$latUser TEXT,$lngUser TEXT,$latShop TEXT,$lngShop TEXT,$sumPrice TEXT,$transport TEXT,$distance TEXT)');
     }, version: versionDatabase);
   }
 

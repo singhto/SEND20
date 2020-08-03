@@ -43,6 +43,8 @@ class _MainHomeState extends State<MainHome> {
 
   bool statusLoad = true;
 
+  bool statusDistance = true;
+
   // Method
   @override
   void initState() {
@@ -77,7 +79,6 @@ class _MainHomeState extends State<MainHome> {
   Future<Null> findLatLng() async {
     LocationData locationData = await findLocationData();
 
-
     setState(() {
       lat = locationData.latitude;
       lng = locationData.longitude;
@@ -111,20 +112,20 @@ class _MainHomeState extends State<MainHome> {
     FirebaseMessaging firebaseMessaging = FirebaseMessaging();
     firebaseMessaging.configure(
       onLaunch: (message) {
-        print('onLaunch ==> $message');
+        //print('onLaunch ==> $message');
       },
       onMessage: (message) {
         // ขณะเปิดแอพอยู่
-        print('onMessage ==> $message');
+        //print('onMessage ==> $message');
         normalToast('มี Notification คะ');
       },
       onResume: (message) {
         // ปิดเครื่อง หรือ หน้าจอ
-        print('onResume ==> $message');
+        // print('onResume ==> $message');
         routeToShowOrder();
       },
       onBackgroundMessage: (message) {
-        print('onBackgroundMessage ==> $message');
+        // print('onBackgroundMessage ==> $message');
       },
     );
   }
@@ -137,7 +138,7 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Future<void> checkAmount() async {
-    print('checkAmount Work');
+    //print('checkAmount Work');
     try {
       List<OrderModel> list = await SQLiteHelper().readDatabase();
       setState(() {
@@ -152,7 +153,7 @@ class _MainHomeState extends State<MainHome> {
 
     if (idUser != null) {
       String token = await findToken();
-      print('idUser = $idUser, token = $token');
+      //print('idUser = $idUser, token = $token');
 
       String url =
           'http://movehubs.com/app/editTokenUserWhereId.php?isAdd=true&id=$idUser&Token=$token';
@@ -164,19 +165,26 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Future<void> readShopThread(double lat1, double lng1) async {
-    print('ที่อ่าน $lat1, $lng1');
+    //print('ที่อ่าน $lat1, $lng1');
     String url = MyConstant().urlGetAllShop;
+
+    statusDistance = true;
+    statusLoad = true;
+    statusShowCard = false;
 
     try {
       await Dio().get(url).then((value) {
         var result = json.decode(value.data);
-        print('result ===>>> $result');
+        //print('result ===>>> $result');
 
         if (showWidgets.length != 0) {
           showWidgets.clear();
         }
 
+        int i = 0;
+
         for (var map in result) {
+          i++;
           UserShopModel model = UserShopModel.fromJson(map);
 
           double distance = MyAPI().calculateDistance(
@@ -186,7 +194,9 @@ class _MainHomeState extends State<MainHome> {
             double.parse(model.lng.trim()),
           );
 
-          print('distance ===>>>>> $distance');
+          //print('distance ===>>>>> $distance');
+          print('statusDistance ก่อน setState $statusDistance');
+          print('statusLoad ก่อน sets ==>> $statusLoad');
 
           var myFormat = NumberFormat('##0.0#', 'en_US');
 
@@ -194,6 +204,9 @@ class _MainHomeState extends State<MainHome> {
             userShopModels.add(model);
             statusLoad = false;
             if (distance <= 10.0) {
+              statusDistance = false;
+              print('statusDistance หลัง setState $statusDistance');
+              print('statusLoad หลัง sets ==>> $statusLoad');
               showWidgets
                   .add(createCard(model, '${myFormat.format(distance)}'));
               statusShowCard = true;
@@ -591,7 +604,8 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
                 icon: Icon(
                   Icons.location_searching,
-                  size: 30, color: Theme.of(context).primaryColor,
+                  size: 30,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/guestMap').then((value) {
@@ -601,11 +615,13 @@ class _MainHomeState extends State<MainHome> {
             SizedBox(
               width: 10.0,
             ),
-            Text('ส่งที่ :',style: MyStyle().h3Style,),
+            Text(
+              'ส่งที่ :',
+              style: MyStyle().h3Style,
+            ),
             SizedBox(
               width: 10.0,
             ),
-
             buildDropDown(context),
           ],
         ),
