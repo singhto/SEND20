@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/utility/my_api.dart';
+import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
-import 'package:foodlion/utility/normal_toast.dart';
+import 'package:foodlion/widget/user_home.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,14 +26,9 @@ class GuestMapState extends State<GuestMap> {
 
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(16.755140, 101.215890),
-    zoom: 14.4746,
-  );
-
   static final CameraPosition myPosition = CameraPosition(
-    target: LatLng(13.8449339, 100.5793709),
-    zoom: 16,
+    target: LatLng(16.751608, 101.215754),
+    zoom: 10,
   );
 
   Future gotoCurrentPosition() async {
@@ -53,8 +49,8 @@ class GuestMapState extends State<GuestMap> {
     print(position);
 
     setState(() {
-      lat = position.latitude ?? 16.7516811;
-      lng = position.longitude ?? 101.215812;
+      lat = position.latitude;
+      lng = position.longitude;
     });
   }
 
@@ -94,7 +90,7 @@ class GuestMapState extends State<GuestMap> {
         bearing: 192.8334901395799,
         target: LatLng(currentLat, currentLng),
         tilt: 59.440717697143555,
-        zoom: 16);
+        zoom: 19);
     print('=====>>>> $currentLat, $currentLng');
 
     final GoogleMapController controller = await _controller.future;
@@ -105,7 +101,10 @@ class GuestMapState extends State<GuestMap> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('ที่ส่งใหม่'),
+        title: Text(
+          'สถานที่จัดส่ง',
+          style: MyStyle().h1PrimaryStyle,
+        ),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -115,13 +114,18 @@ class GuestMapState extends State<GuestMap> {
                 child: TextField(
                   onChanged: (value) => nameLocation = value.trim(),
                   decoration: InputDecoration(
-                    labelText: 'ชื่อที่จัดส่ง :',
-                    //border: OutlineInputBorder(),
+                    labelText: 'กรุณาตั้งชื่อ เช่น บ้าน/ที่ทำงาน/อื่นๆ :',
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 200.0,
+                    )),
                   ),
                 ),
               ),
             ],
           ),
+          MyStyle().mySizeBox(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -137,7 +141,10 @@ class GuestMapState extends State<GuestMap> {
                     }
                   },
                   icon: Icon(Icons.save),
-                  label: Text('บันทึก'),
+                  label: Text(
+                    'บันทึก',
+                    style: MyStyle().h2Style,
+                  ),
                 ),
               ),
             ],
@@ -152,27 +159,92 @@ class GuestMapState extends State<GuestMap> {
 
     String idUser = preferences.getString('id');
 
-    print(
-        ' onSave idUser $idUser lat = $currentLat, lng $currentLng , nameLocation $nameLocation,');
-
     await MyAPI()
-        .addSendLocation(idUser, lat.toString(), lng.toString(), nameLocation)
+        .addSendLocation(
+            idUser, currentLat.toString(), currentLng.toString(), nameLocation)
         .then((value) {
-          Navigator.pop(context);
-        });
+      Navigator.pop(context);
+    });
+  }
+
+  Widget _buildContainer() {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 20.0),
+        height: 150.0,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            SizedBox(width: 10.0),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _boxes(),
+            ),
+            SizedBox(width: 10.0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _boxes() {
+    return GestureDetector(
+      onTap: () {
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) => UserHome(),
+        );
+        Navigator.pushAndRemoveUntil(context, route, (route) => false);
+      },
+      child: Container(
+        margin: EdgeInsets.all(10.0),
+        height: 100.0,
+        width: 100.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.orange,
+                //offset: Offset(0, 3),
+                //blurRadius: 6.0,
+              )
+            ],
+            border: Border.all(
+              //width: 2.0,
+              color: Theme.of(context).primaryColor,
+            )),
+        child: ClipOval(
+          child: Center(
+              child: Text('Exe.',
+                  style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white))),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('เลื่อนหน้าจอเพื่อปักหมุด'),
+          title: Center(
+            child: Text(
+              'ขยับหน้าจอเพื่อปักหมุด',
+              style: TextStyle(
+                fontSize: 22.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
         ),
         body: Stack(
           children: <Widget>[
             GoogleMap(
               mapType: MapType.normal,
-              initialCameraPosition: _kGooglePlex,
+              initialCameraPosition: myPosition,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
@@ -200,23 +272,25 @@ class GuestMapState extends State<GuestMap> {
                         icon:
                             Icon(Icons.location_searching, color: Colors.white),
                         onPressed: () {
-                          gotoCurrentPosition();
-                          _add();
-                          normalToast('ตำแหน่งปัจจุบัน');
+                          setState(() {
+                              gotoCurrentPosition();
+                          });
+                        
+                          //_add();
                         },
                       ),
                       decoration: BoxDecoration(
                           shape: BoxShape.circle, color: Colors.green),
                     ),
                     SizedBox(
-                      height: 30.0,
+                      height: 40.0,
                     ),
                     Container(
                       child: IconButton(
                         icon: Icon(Icons.save, color: Colors.white),
                         onPressed: () {
                           updateLatLng();
-                          //normalToast('พิกัด $currentLng, $currentLng');
+                          //normalToast('พิกัด $lat, $lng สำเร็จ');
                           insertMapForm();
                         },
                       ),
@@ -227,6 +301,7 @@ class GuestMapState extends State<GuestMap> {
                 ),
               ),
             ),
+            //_buildContainer(),
           ],
         ));
   }

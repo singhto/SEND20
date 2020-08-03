@@ -7,12 +7,12 @@ import 'package:foodlion/widget/guestV1.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class GuestMap extends StatefulWidget {
+class GuestMapV1 extends StatefulWidget {
   @override
-  GuestMapState createState() => GuestMapState();
+  GuestMapV1State createState() => GuestMapV1State();
 }
 
-class GuestMapState extends State<GuestMap> {
+class GuestMapV1State extends State<GuestMapV1> {
   double lat;
   double lng;
   double currentLat;

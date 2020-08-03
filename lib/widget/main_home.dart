@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:foodlion/models/banner_model.dart';
 import 'package:foodlion/models/order_model.dart';
 import 'package:foodlion/models/send_location_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
@@ -35,8 +32,6 @@ class _MainHomeState extends State<MainHome> {
   // Field
   List<UserShopModel> userShopModels = List();
   List<Widget> showWidgets = List();
-  List<BannerModel> bannerModels = List();
-  List<Widget> showBanners = List();
   String idUser, nameLogin;
   int amount = 0;
   double lat, lng;
@@ -57,7 +52,7 @@ class _MainHomeState extends State<MainHome> {
     editToken();
     findLatLng();
 
-    // findSendLocationWhereIdUser();
+    //findSendLocationWhereIdUser();
   }
 
   Future<Null> findSendLocationWhereIdUser() async {
@@ -82,15 +77,15 @@ class _MainHomeState extends State<MainHome> {
   Future<Null> findLatLng() async {
     LocationData locationData = await findLocationData();
 
+
     setState(() {
       lat = locationData.latitude;
       lng = locationData.longitude;
 
-      //readBanner();
       readShopThread(lat, lng);
       checkAmount();
       findUser();
-      updateLatLng(lat, lng);
+      //updateLatLng(lat, lng);
       findSendLocationWhereIdUser();
     });
   }
@@ -99,6 +94,7 @@ class _MainHomeState extends State<MainHome> {
     String url =
         'http://movehubs.com/app/editLatLngUserWhereId.php?isAdd=true&id=$idUser&Lat=$lat&Lng=$lng';
     Response response = await Dio().get(url);
+    //print('edit $response');
   }
 
   Future<LocationData> findLocationData() async {
@@ -167,26 +163,6 @@ class _MainHomeState extends State<MainHome> {
     }
   }
 
-  Future<void> readBanner() async {
-    String url = MyConstant().urlGetAllBanner;
-    try {
-      Response response = await Dio().get(url);
-      var result = json.decode(response.data);
-      for (var map in result) {
-        BannerModel model = BannerModel.fromJson(map);
-        Widget bannerWieget = createBanner(model);
-        setState(() {
-          bannerModels.add(model);
-          showBanners.add(bannerWieget);
-        });
-      }
-    } catch (e) {}
-  }
-
-  Widget createBanner(BannerModel model) {
-    return CachedNetworkImage(imageUrl: model.pathImage);
-  }
-
   Future<void> readShopThread(double lat1, double lng1) async {
     print('ที่อ่าน $lat1, $lng1');
     String url = MyConstant().urlGetAllShop;
@@ -194,7 +170,7 @@ class _MainHomeState extends State<MainHome> {
     try {
       await Dio().get(url).then((value) {
         var result = json.decode(value.data);
-        //print('result ===>>> $result');
+        print('result ===>>> $result');
 
         if (showWidgets.length != 0) {
           showWidgets.clear();
@@ -210,19 +186,17 @@ class _MainHomeState extends State<MainHome> {
             double.parse(model.lng.trim()),
           );
 
-          //print('distance ===>>>>> $distance');
+          print('distance ===>>>>> $distance');
 
           var myFormat = NumberFormat('##0.0#', 'en_US');
 
           setState(() {
             userShopModels.add(model);
             statusLoad = false;
-            if (distance <= 5.0) {
+            if (distance <= 10.0) {
               showWidgets
                   .add(createCard(model, '${myFormat.format(distance)}'));
               statusShowCard = true;
-              //print('showWidgets.lenght ====>>> ${showWidgets.length}');
-              //print('${model.name} distanceไม่เกิน 1 กม ==>>>>> $distance');
             }
           });
         }
@@ -249,12 +223,9 @@ class _MainHomeState extends State<MainHome> {
           );
           Navigator.of(context).push(route).then((value) => checkAmount());
         } else {
-          normalDialog(context, 'ร้านปิดแล้ว',
-              'ต้องขอ อภัยมากๆ ครับ ร้านเปิดบริการ 8.00- 18.00');
+          normalDialog(context, 'SEND ปิดแล้ว',
+              'ต้องขอ อภัยมากๆ ครับ บริการส่ง 8.00- 18.00');
         }
-
-        // normalDialog(context, 'เปิดทำการ 23 ก.ค.นี้���รับ',
-        //     'โหลดแอพ SEND อีกครั้งหลังเปิดทำการ เพื่อ���ช้งาน ขอบคุณครับ');
       },
       child: Card(
         child: Column(
@@ -262,10 +233,12 @@ class _MainHomeState extends State<MainHome> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             showImageShop(model),
-            MyStyle().mySizeBox(),
+            SizedBox(
+              height: 8.0,
+            ),
             Expanded(
               child: showName(model),
             ),
@@ -281,36 +254,11 @@ class _MainHomeState extends State<MainHome> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 14.0,
-              color: Colors.yellow.shade400,
-            ),
-            Icon(
-              Icons.star,
-              size: 14.0,
-              color: Colors.yellow.shade400,
-            ),
-            Icon(
-              Icons.star,
-              size: 14.0,
-              color: Colors.yellow.shade400,
-            ),
-            Icon(
-              Icons.star,
-              size: 14.0,
-              color: Colors.yellow.shade400,
-            ),
-            Icon(
-              Icons.star,
-              size: 14.0,
-              color: Colors.yellow.shade400,
-            ),
-          ],
+        MyStyle().showRatting(),
+        Text(
+          '$distance กม.',
+          style: TextStyle(color: Colors.grey),
         ),
-        Text('$distance กม.',style: TextStyle(color: Colors.grey),),
       ],
     );
   }
@@ -341,19 +289,6 @@ class _MainHomeState extends State<MainHome> {
               maxCrossAxisExtent: 260.0,
               children: showWidgets,
             ),
-          );
-  }
-
-  Widget showBanner() {
-    return showBanners.length == 0
-        ? MyStyle().showProgress()
-        : CarouselSlider(
-            items: showBanners,
-            enlargeCenterPage: true,
-            aspectRatio: 16 / 7.5,
-            pauseAutoPlayOnTouch: Duration(seconds: 3),
-            autoPlay: true,
-            autoPlayAnimationDuration: Duration(seconds: 3),
           );
   }
 
@@ -404,9 +339,6 @@ class _MainHomeState extends State<MainHome> {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.clear();
-
-      // exit(0);
-
       MaterialPageRoute route = MaterialPageRoute(builder: (value) => Home());
       Navigator.of(context).pushAndRemoveUntil(route, (value) => false);
     } catch (e) {}
@@ -579,33 +511,6 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // return showShop();
-
-    return Scaffold(
-      drawer: Drawer(
-        child: userList(),
-      ),
-      appBar: buildAppBar(),
-      body: Column(
-        children: <Widget>[
-          statusLoad
-              ? MyStyle().showProgress()
-              : //showBanner(),
-              //buildChooseSenLocation(context),
-              statusShowCard
-                  ? showShop()
-                  : Center(
-                      child: MyStyle()
-                          .showTitleH2Dark('ขออภัยคะ ไม่มี ร้านอาหารใกล้คุณ'),
-                    ),
-        ],
-      ),
-      //bottomSheet: buildBottomSheet(context),
-    );
-  }
-
   Widget buildBottomSheet(BuildContext context) {
     return Container(
       height: 40.0,
@@ -625,6 +530,10 @@ class _MainHomeState extends State<MainHome> {
           onPressed: () async {},
           child: Column(
             children: <Widget>[
+              LinearProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.orange),
+              ),
               Text(
                 'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
                 style: TextStyle(
@@ -667,11 +576,10 @@ class _MainHomeState extends State<MainHome> {
         icon: Icon(Icons.search),
         onPressed: () {
           routeToShowSearch();
-          //normalToast('เปิดทำการ 1 ก.ค.นี้ครับ');
         });
   }
 
-  Row buildChooseSenLocation(BuildContext context) {
+  Widget buildChooseSenLocation(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
@@ -683,7 +591,7 @@ class _MainHomeState extends State<MainHome> {
             IconButton(
                 icon: Icon(
                   Icons.location_searching,
-                  size: 30,
+                  size: 30, color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/guestMap').then((value) {
@@ -691,8 +599,13 @@ class _MainHomeState extends State<MainHome> {
                   });
                 }),
             SizedBox(
-              width: 20.0,
+              width: 10.0,
             ),
+            Text('ส่งที่ :',style: MyStyle().h3Style,),
+            SizedBox(
+              width: 10.0,
+            ),
+
             buildDropDown(context),
           ],
         ),
@@ -710,7 +623,6 @@ class _MainHomeState extends State<MainHome> {
       i++;
       //print('$indexs');
     }
-
     return indexs.length == 0
         ? MyStyle().showProgress()
         : DropdownButton<int>(
@@ -722,7 +634,7 @@ class _MainHomeState extends State<MainHome> {
                   ),
                 )
                 .toList(),
-            hint: Text('ส่งไปที่อยู่ปัจจุบัน'),
+            hint: Text('ตำแหน่งปัจจุบัน'),
             value: indexChooseLocation,
             onChanged: (value) {
               setState(() {
@@ -735,11 +647,36 @@ class _MainHomeState extends State<MainHome> {
                 double lng3 =
                     double.parse(sendLocationModels[indexChooseLocation].lng);
 
-                print('$lat3, $lng3');
-
+                //print('$lat3, $lng3');
                 readShopThread(lat3, lng3);
               });
             },
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: userList(),
+      ),
+      appBar: buildAppBar(),
+      body: Column(
+        children: <Widget>[
+          buildChooseSenLocation(context),
+          statusLoad
+              ? MyStyle().showProgress()
+              : statusShowCard
+                  ? showShop()
+                  : Container(
+                      child: Center(
+                        child: MyStyle()
+                            .showTitleH2Dark('ขออภัยคะ ไม่พบร้านอาหารใกล้คุณ'),
+                      ),
+                    ),
+        ],
+      ),
+      //bottomSheet: buildBottomSheet(context),
+    );
   }
 }

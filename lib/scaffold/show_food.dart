@@ -72,7 +72,7 @@ class _ShowFoodState extends State<ShowFood> {
     } catch (e) {}
   }
 
-  Text showName() {
+  Widget showName() {
     return Text(
       foodModel.nameFood,
       style: MyStyle().h1Style,
@@ -160,41 +160,49 @@ class _ShowFoodState extends State<ShowFood> {
   Widget showListFood() {
     return Column(
       children: <Widget>[
-        ListTile(
-          title: Text(
-            'รายละเอียด :',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.grey,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.0,
-            ),
-          ),
-          subtitle: Text(
-            '${foodModel.detailFood}',
-            style: TextStyle(
-              fontSize: 22,
-              color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.0,
-            ),
-          ),
-        ),
-
         Card(
           child: ListTile(
-            trailing: Text(
-              '${foodModel.priceFood} บาท',
+            title: Text(
+              '${foodModel.nameFood} ${foodModel.detailFood}',
               style: TextStyle(
-                fontSize: 24,
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 3.0,
+                fontSize: 20,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
+            ),
+            //subtitle: showAmountFood(),
+            trailing: Text(
+              'รวม ...',
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
               ),
             ),
           ),
         ),
-        //showListSubMunu(),
+        showListSubMunu(),
+        Padding(padding: EdgeInsets.only(top: 20.0)),
+        Text(
+          'คำขอพิเศษ',
+          style:
+              TextStyle(color: Theme.of(context).primaryColor, fontSize: 25.0),
+        ),
+        Padding(padding: EdgeInsets.only(top: 20.0)),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: "คำขอ",
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25.0),
+              borderSide: BorderSide(),
+            ),
+          ),
+
+  
+        ),
       ],
     );
   }
@@ -204,13 +212,6 @@ class _ShowFoodState extends State<ShowFood> {
         ? Text('ไม่มีเมนูย่อย')
         : Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'เมนูย่อย',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
@@ -228,6 +229,7 @@ class _ShowFoodState extends State<ShowFood> {
                       },
                     ),
                     Text(subFoodModels[index].nameFood),
+                    showAmountFood(),
                     Text(subFoodModels[index].priceFood),
                   ],
                 ),
@@ -239,17 +241,14 @@ class _ShowFoodState extends State<ShowFood> {
   Widget showAmountFood() {
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: 50.0,
-        ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             MyStyle().mySizeBox(),
             IconButton(
                 icon: Icon(
                   Icons.remove_circle,
-                  size: 50.0,
+                  size: 20.0,
                   color: Colors.red,
                 ),
                 onPressed: () {
@@ -262,13 +261,14 @@ class _ShowFoodState extends State<ShowFood> {
             MyStyle().mySizeBox(),
             Text('$amountFood',
                 style: TextStyle(
-                  fontSize: 50.0,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
                 )),
             MyStyle().mySizeBox(),
             IconButton(
                 icon: Icon(
                   Icons.add_circle,
-                  size: 50.0,
+                  size: 20.0,
                   color: Colors.green,
                 ),
                 onPressed: () {
@@ -276,12 +276,8 @@ class _ShowFoodState extends State<ShowFood> {
                     amountFood++;
                   });
                 }),
-            MyStyle().mySizeBox(),
           ],
         ),
-        SizedBox(
-          height: 20.0,
-        )
       ],
     );
   }
@@ -297,7 +293,6 @@ class _ShowFoodState extends State<ShowFood> {
               MyStyle().mySizeBox(),
               showName(),
               showListFood(),
-              showAmountFood(),
               SizedBox(
                 height: 90.0,
               )

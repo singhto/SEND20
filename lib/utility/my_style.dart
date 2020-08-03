@@ -286,5 +286,37 @@ class MyStyle {
     );
   }
 
+    Widget showRatting() {
+    return Row(
+        children: <Widget>[
+          Icon(
+            Icons.star,
+            size: 14.0,
+            color: Colors.yellow.shade400,
+          ),
+          Icon(
+            Icons.star,
+            size: 14.0,
+            color: Colors.yellow.shade400,
+          ),
+          Icon(
+            Icons.star,
+            size: 14.0,
+            color: Colors.yellow.shade400,
+          ),
+          Icon(
+            Icons.star,
+            size: 14.0,
+            color: Colors.yellow.shade400,
+          ),
+          Icon(
+            Icons.star,
+            size: 14.0,
+            color: Colors.yellow.shade400,
+          ),
+        ],
+      );
+  }
+
   MyStyle();
 }
