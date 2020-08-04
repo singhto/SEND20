@@ -32,9 +32,9 @@ class _MainHomeState extends State<MainHome> {
   // Field
   List<UserShopModel> userShopModels = List();
   List<Widget> showWidgets = List();
-  String idUser, nameLogin;
+  String idUser, nameLogin, nameLocalChoose = 'ตำแหน่งปัจจุบัน';
   int amount = 0;
-  double lat, lng;
+  double lat, lng, latChoose, lngChoose;
   bool statusShowCard = false;
 
   List<SendLocationModeil> sendLocationModels = List();
@@ -82,6 +82,9 @@ class _MainHomeState extends State<MainHome> {
     setState(() {
       lat = locationData.latitude;
       lng = locationData.longitude;
+
+      latChoose = lat;
+      lngChoose = lng;
 
       readShopThread(lat, lng);
       checkAmount();
@@ -195,8 +198,8 @@ class _MainHomeState extends State<MainHome> {
           );
 
           //print('distance ===>>>>> $distance');
-          print('statusDistance ก่อน setState $statusDistance');
-          print('statusLoad ก่อน sets ==>> $statusLoad');
+          //print('statusDistance ก่อน setState $statusDistance');
+          //print('statusLoad ก่อน sets ==>> $statusLoad');
 
           var myFormat = NumberFormat('##0.0#', 'en_US');
 
@@ -205,8 +208,8 @@ class _MainHomeState extends State<MainHome> {
             statusLoad = false;
             if (distance <= 10.0) {
               statusDistance = false;
-              print('statusDistance หลัง setState $statusDistance');
-              print('statusLoad หลัง sets ==>> $statusLoad');
+              //print('statusDistance หลัง setState $statusDistance');
+              //print('statusLoad หลัง sets ==>> $statusLoad');
               showWidgets
                   .add(createCard(model, '${myFormat.format(distance)}'));
               statusShowCard = true;
@@ -232,7 +235,13 @@ class _MainHomeState extends State<MainHome> {
       onTap: () {
         if (MyAPI().checkTimeShop()) {
           MaterialPageRoute route = MaterialPageRoute(
-            builder: (cont) => MyFood(idShop: model.id),
+            builder: (cont) => MyFood(
+              idShop: model.id,
+              nameLocalChoose: nameLocalChoose,
+              lat: latChoose,
+              lng: lngChoose,
+              distance: distance,
+            ),
           );
           Navigator.of(context).push(route).then((value) => checkAmount());
         } else {
@@ -292,7 +301,7 @@ class _MainHomeState extends State<MainHome> {
       ));
 
   Widget showShop() {
-    print('ขนาดของ showWinget ที่ showShop = ${showWidgets.length}');
+    //print('ขนาดของ showWinget ที่ showShop = ${showWidgets.length}');
     return showWidgets.length == 0
         ? MyStyle().showProgress()
         : Expanded(
@@ -655,8 +664,15 @@ class _MainHomeState extends State<MainHome> {
             onChanged: (value) {
               setState(() {
                 indexChooseLocation = value;
+
+                nameLocalChoose = sendLocationModels[value].nameLocation;
+                latChoose =
+                    double.parse(sendLocationModels[indexChooseLocation].lat);
+                lngChoose =
+                    double.parse(sendLocationModels[indexChooseLocation].lng);
+
                 print(
-                    'คุณเลือก ${sendLocationModels[indexChooseLocation].lat}, ${sendLocationModels[indexChooseLocation].lng}');
+                    'nameLocal === $nameLocalChoose, latChooose = $latChoose, $lngChoose');
 
                 double lat3 =
                     double.parse(sendLocationModels[indexChooseLocation].lat);

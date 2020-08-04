@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
 import 'package:foodlion/models/order_model.dart';
 import 'package:foodlion/models/sub_food_model.dart';
+import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
@@ -14,7 +15,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowFood extends StatefulWidget {
   final FoodModel foodModel;
-  ShowFood({Key key, this.foodModel});
+  final nameLocalChoose, distance;
+  final lat, lng;
+  ShowFood(
+      {Key key,
+      this.foodModel,
+      this.nameLocalChoose,
+      this.lat,
+      this.lng,
+      this.distance});
   @override
   _ShowFoodState createState() => _ShowFoodState();
 }
@@ -47,17 +56,48 @@ class _ShowFoodState extends State<ShowFood> {
   List<int> idOfChoose = List();
   List<String> nameOptions = List();
   List<String> sizeOptions = List();
+  List<String> priceOptions = List();
+  List<String> sumOptions = List();
 
-  int indexChoose = 0;
+  String remake = '';
+  String nameLocalChoose, distance;
+  double latChoose, lngChoose, latShop, lngShop;
+
+  int transport;
 
   // Method
   @override
   void initState() {
     super.initState();
     foodModel = widget.foodModel;
+    nameLocalChoose = widget.nameLocalChoose;
+    latChoose = widget.lat;
+    lngChoose = widget.lng;
+    distance = widget.distance;
 
     setupVariable();
     readSubMenu();
+    findLocationShop();
+    findTransport();
+  }
+
+  Future<Null> findTransport() async {
+    print('disss  === $distance');
+    double distanceDou = double.parse(distance.trim());
+    int distanceInt = distanceDou.round();
+    print('disssInt  === $distanceInt');
+    transport = await MyAPI().checkTransport(distanceInt);
+    print('transport === $transport');
+  }
+
+  Future<Null> findLocationShop() async {
+    Map<String, dynamic> map =
+        await MyAPI().findLocationShopWhere(foodModel.idShop);
+    UserShopModel model = UserShopModel.fromJson(map);
+    latShop = double.parse(model.lat);
+    lngShop = double.parse(model.lng);
+
+    print('${model.name} === $latShop $lngShop');
   }
 
   Future<void> setupVariable() async {
@@ -191,6 +231,7 @@ class _ShowFoodState extends State<ShowFood> {
         ),
         Padding(padding: EdgeInsets.only(top: 20.0)),
         TextFormField(
+          onChanged: (value) => remake = value.trim(),
           decoration: InputDecoration(
             labelText: "คำขอ",
             fillColor: Colors.white,
@@ -254,23 +295,27 @@ class _ShowFoodState extends State<ShowFood> {
   }
 
   Widget showSumPriceOption(int index) {
-    //print('listsSumOption[$index] == ${listSumOption[index]}');
-    //print('listsSumAmountOption[$index] == ${listAmountOption[index]}');
+    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
+    // print('listAmountOption[$index] ==>> ${listAmountOption[index]}');
 
     listSumOption[index] = factorPriceOption[index] * listAmountOption[index];
 
-    //print('listSumOption[$index] ==>> ${listSumOption[index]}');
+    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
     return Text('${listSumOption[index]}');
   }
 
+  int indexChoose = 0;
+
   Widget checkOption(int index) {
-    //print('isCheck $isCheckeds');
-    //print('index $index');
+    // print('isChecks ==>> $isCheckeds');
+    // print('index ==>> $index');
     return Container(
-      width: 80.0,
+      width: 80,
       child: CheckboxListTile(
         value: isCheckeds[index],
         onChanged: (value) {
+          print('You Click Index = $index');
+
           setState(() {
             isCheckeds[index] = value;
 
@@ -280,20 +325,41 @@ class _ShowFoodState extends State<ShowFood> {
 
               idOfChoose.add(indexChoose);
               indexChoose++;
+
               nameOptions.add(subFoodModels[index].nameFood);
-              //print('nameOptions === $nameOptions');
-              sizeOptions.add(subFoodModels[index].priceFood);
+              sizeOptions.add(listAmountOption[index].toString());
+              priceOptions.add(subFoodModels[index].priceFood);
+
+              int sum = listAmountOption[index] *
+                  int.parse(subFoodModels[index].priceFood);
+              sumOptions.add(sum.toString());
             } else {
               listAmountOption[index] = 0;
               total = calculatrTotal();
 
-              nameOptions.removeWhere(
-                  (element) => (element == subFoodModels[index].nameFood));
+              print('idChoose ==>> $idOfChoose');
+              print('nameOption ==>> $nameOptions');
 
-              //print('nameOptions === $nameOptions');
-              String id = subFoodModels[index].id;
-              //sizeOptions.removeAt(int)
-              //sizeOptions.removeWhere((element) => (element == subFoodModels[index].priceFood));
+              int y = 0;
+              for (var name in nameOptions) {
+                if (name == subFoodModels[index].nameFood) {
+                  print('$name index ===>>> ${idOfChoose[y]}');
+
+                  idOfChoose
+                      .removeWhere((element) => (element == idOfChoose[y]));
+
+                  nameOptions.removeAt(y);
+                  sizeOptions.removeAt(y);
+                  priceOptions.removeAt(y);
+                  sumOptions.removeAt(y);
+
+                  setState(() {});
+
+                  print('idChoose 222 ==>> $idOfChoose');
+                  print('nameOption 222 ==>> $nameOptions');
+                }
+                y++;
+              }
             }
           });
         },
@@ -318,6 +384,19 @@ class _ShowFoodState extends State<ShowFood> {
                   if (listAmountOption[index] != 0) {
                     setState(() {
                       listAmountOption[index]--;
+
+                      int y = 0;
+                      for (var name in nameOptions) {
+                        if (name == subFoodModels[index].nameFood) {
+                          print('y ==>> $y');
+                          sizeOptions[y] = listAmountOption[index].toString();
+                          int sum = listAmountOption[index] *
+                              int.parse(subFoodModels[index].priceFood);
+                          sumOptions[y] = sum.toString();
+                        }
+                        y++;
+                      }
+
                       total = calculatrTotal();
                       if (listAmountOption[index] == 0) {
                         isCheckeds[index] = false;
@@ -341,6 +420,19 @@ class _ShowFoodState extends State<ShowFood> {
                 onPressed: () {
                   setState(() {
                     listAmountOption[index]++;
+
+                    int y = 0;
+                    for (var name in nameOptions) {
+                      if (name == subFoodModels[index].nameFood) {
+                        print('y ==>> $y');
+                        sizeOptions[y] = listAmountOption[index].toString();
+                        int sum = listAmountOption[index] *
+                            int.parse(subFoodModels[index].priceFood);
+                        sumOptions[y] = sum.toString();
+                      }
+                      y++;
+                    }
+
                     total = calculatrTotal();
                     isCheckeds[index] = true;
                   });
@@ -395,24 +487,42 @@ class _ShowFoodState extends State<ShowFood> {
                 normalDialog(
                     context, 'ยังไม่ได้ Login', 'กรุณา Login ก่อน Order คะ');
               } else {
-                print(
-                    'idFood=$idFood, idShop=$idShop,nameShop=$nameshop, nameFood=$nameFood, urlFood=$urlFood, priceFood=$priceFood, amountFood=$amountFood');
+                int sumPrice = 0;
+                for (var num in sumOptions) {
+                  sumPrice = sumPrice + int.parse(num.trim());
+                }
 
                 print(
-                    'nameOption = $nameOptions, sizeOption = $sizeOptions, priceOption = ?, sumOption = ?, remark = ?');
+                    'idFood=$idFood, idShop=$idShop,nameShop=$nameshop, nameFood=$nameFood, urlFood=$urlFood, priceFood=$priceFood, amountFood=$amountFood');
                 print(
-                    'latUser = ?, lngUser = ? latShop = ?, lngShop = ?, sumPrice = ?, transport = ?, distance = ?');
-                // OrderModel model = OrderModel(
-                //   idFood: idFood,
-                //   idShop: idShop,
-                //   nameShop: nameshop,
-                //   nameFood: nameFood,
-                //   urlFood: urlFood,
-                //   priceFood: priceFood,
-                //   amountFood: amountFood.toString(),
-                // );
-                // SQLiteHelper().insertDatabase(model);
-                // Navigator.of(context).pop();
+                    'nameOption = $nameOptions, sizeOption = $sizeOptions, priceOption = $priceOptions, sumOption = $sumOptions, remark = $remake');
+                print(
+                    'latUser = $latChoose, lngUser = $lngChoose, nameLocal = $nameLocalChoose, latShop = $latShop, lngShop = $lngShop, sumPrice = $sumPrice, transport = $transport, distance = $distance');
+                OrderModel model = OrderModel(
+                    idFood: idFood,
+                    idShop: idShop,
+                    nameShop: nameshop,
+                    nameFood: nameFood,
+                    urlFood: urlFood,
+                    priceFood: priceFood,
+                    amountFood: amountFood.toString(),
+                    nameOption: nameOptions.toString(),
+                    sizeOption: sizeOptions.toString(),
+                    priceOption: priceOptions.toString(),
+                    sumOption: sumOptions.toString(),
+                    remark: remake,
+                    latUser: latChoose.toString(),
+                    lngUser: lngChoose.toString(),
+                    nameLocal: nameLocalChoose,
+                    latShop: latShop.toString(),
+                    lngShop: lngShop.toString(),
+                    sumPrice: sumPrice.toString(),
+                    transport: transport.toString(),
+                    distance: distance
+                    );
+                    print('model  ======= ${model.toJson()}');
+                SQLiteHelper().insertDatabase(model);
+                Navigator.of(context).pop();
               }
             },
             child: Text(
@@ -433,12 +543,12 @@ class _ShowFoodState extends State<ShowFood> {
   int calculatrTotal() {
     int index = 0;
     int totalInt = 0;
-    print('listAmount === $listAmountOption');
-    print('factorPrice === $factorPriceOption');
+    print('listAmount ===> $listAmountOption');
+    print('factorPrice ===> $factorPriceOption');
+
     for (var j in listAmountOption) {
       int total = listAmountOption[index] * factorPriceOption[index];
       totalInt = totalInt + total;
-
       index++;
     }
     return totalInt;

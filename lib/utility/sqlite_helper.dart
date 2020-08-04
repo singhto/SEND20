@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class SQLiteHelper {
   // Field
-  String nameDatabase = 'foodData2.db';
+  String nameDatabase = 'foodData3.db';
   String tableDatabase = 'orderTABLE';
   int versionDatabase = 1;
   String idColumn = 'id';
@@ -24,6 +24,7 @@ class SQLiteHelper {
 
   String latUser = 'latUser';
   String lngUser = 'lngUser';
+  String nameLocal = 'nameLocal';
   String latShop = 'latShop';
   String lngShop = 'lngShop';
   String sumPrice = 'sumPrice';
@@ -41,7 +42,7 @@ class SQLiteHelper {
     await openDatabase(join(await getDatabasesPath(), nameDatabase),
         onCreate: (Database database, int version) {
       return database.execute(
-          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $urlFood TEXT, $priceFood TEXT, $amountFood TEXT, $nameOption TEXT,$sizeOption TEXT,$priceOption TEXT,$sumOption TEXT,$remark TEXT,$latUser TEXT,$lngUser TEXT,$latShop TEXT,$lngShop TEXT,$sumPrice TEXT,$transport TEXT,$distance TEXT)');
+          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $urlFood TEXT, $priceFood TEXT, $amountFood TEXT, $nameOption TEXT,$sizeOption TEXT,$priceOption TEXT,$sumOption TEXT,$remark TEXT,$latUser TEXT,$lngUser TEXT,$nameLocal TEXT,$latShop TEXT,$lngShop TEXT,$sumPrice TEXT,$transport TEXT,$distance TEXT)');
     }, version: versionDatabase);
   }
 
@@ -52,13 +53,16 @@ class SQLiteHelper {
   }
 
   Future<void> insertDatabase(OrderModel orderModel) async {
+    
     Database database = await connectedDatabase();
     try {
       database.insert(
         tableDatabase,
         orderModel.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      ).then((value) {
+        print('Insert Database สำเร็จ');
+      });
       // database.close();
     } catch (e) {
       print('e insertDatabase ==>> ${e.toString()}');

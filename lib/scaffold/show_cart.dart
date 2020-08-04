@@ -77,7 +77,7 @@ class _ShowCartState extends State<ShowCart> {
 
     try {
       var object = await SQLiteHelper().readDatabase();
-      // print("object length ==>> ${object.length}");
+      print("แสดงจำนวน Record SQLite ==>> ${object.length}");
       if (object.length != 0) {
         orderModels = object;
 
@@ -391,23 +391,16 @@ class _ShowCartState extends State<ShowCart> {
                               child: Container(
                                 child: Column(
                                   children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Text(
-                                          orderModels[index].nameFood,
-                                          style: MyStyle().h2NormalStyle,
-                                        ),
-                                      ],
+                                    Text(
+                                      orderModels[index].nameFood,
+                                      style: MyStyle().h2NormalStyle,
                                     ),
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Text(
-                                            orderModels[index].nameShop,
-                                            style: MyStyle().h3StylePrimary,
-                                          ),
-                                        ),
-                                      ],
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: ScrollPhysics(),
+                                      itemCount: 3,
+                                      itemBuilder: (context, index2) =>
+                                          Text(orderModels[index].nameOption),
                                     ),
                                   ],
                                 ),

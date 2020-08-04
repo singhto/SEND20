@@ -14,6 +14,7 @@ class OrderModel {
   String remark;
   String latUser;
   String lngUser;
+  String nameLocal;
   String latShop;
   String lngShop;
   String sumPrice;
@@ -36,6 +37,7 @@ class OrderModel {
       this.remark,
       this.latUser,
       this.lngUser,
+      this.nameLocal,
       this.latShop,
       this.lngShop,
       this.sumPrice,
@@ -58,6 +60,7 @@ class OrderModel {
     remark = json['remark'];
     latUser = json['latUser'];
     lngUser = json['lngUser'];
+    nameLocal = json['nameLocal'];
     latShop = json['latShop'];
     lngShop = json['lngShop'];
     sumPrice = json['sumPrice'];
@@ -82,6 +85,7 @@ class OrderModel {
     data['remark'] = this.remark;
     data['latUser'] = this.latUser;
     data['lngUser'] = this.lngUser;
+    data['nameLocal'] = this.nameLocal;
     data['latShop'] = this.latShop;
     data['lngShop'] = this.lngShop;
     data['sumPrice'] = this.sumPrice;
@@ -90,7 +94,6 @@ class OrderModel {
     return data;
   }
 }
-
 
 // {
 //     "id": 1,
@@ -108,6 +111,7 @@ class OrderModel {
 //     "remark": "",
 //     "latUser": "",
 //     "lngUser": "",
+//     "nameLocal": "",
 //     "latShop": "",
 //     "lngShop": "",
 //     "sumPrice": "",
