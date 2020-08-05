@@ -140,8 +140,8 @@ class _DetailOrderState extends State<DetailOrder> {
 
       nameUser = userModel.name;
       tokenUser = userModel.token;
-      userLatLng = LatLng(double.parse(userModel.lat.trim()),
-          double.parse(userModel.lng.trim()));
+      userLatLng = LatLng(double.parse(orderUserModel.latUser.trim()),
+          double.parse(orderUserModel.lngUser.trim()));
     });
   }
 
@@ -309,14 +309,14 @@ class _DetailOrderState extends State<DetailOrder> {
 
     //Send Notification to User
     MyAPI().notificationAPI(
-        tokenUser, 'Rider รับ Order', 'คนส่งอาหาร กำลังไปรับอาหาร คะ');
+        tokenUser, 'RIDER รับ Order', 'คนส่งอาหาร กำลังไปรับอาหาร คะ');
 
     //Send Notification to Shop
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
     String tokenShop = userShopModel.token;
-    MyAPI().notificationAPI(tokenShop, 'Rider กำลังไปรับอาหาร',
-        'Rider กำลังไปที่ ร้านเพื่อรับอาหาร');
+    MyAPI().notificationAPI(tokenShop, 'RIDER กำลังไปรับอาหาร',
+        'RIDER กำลังไปที่ ร้านเพื่อรับอาหาร');
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => RiderSuccess(
@@ -379,7 +379,7 @@ class _DetailOrderState extends State<DetailOrder> {
   Widget showNameUser() {
     return nameUser == null
         ? MyStyle().showTitle('ผู้สั่งอาหาร ')
-        : MyStyle().showTitle('ผู้สั่งอาหาร $nameUser');
+        : MyStyle().showTitle('ชื่อลูกค้า คุณ$nameUser');
   }
 
   Set<Marker> createMarker(
@@ -429,43 +429,66 @@ class _DetailOrderState extends State<DetailOrder> {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Column(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       nameFoods[index],
                       style: MyStyle().h3StyleDark,
                     ),
-                    Text(
-                      detailFoods[index],
-                      style: MyStyle().h2NormalStyleGrey,
-                    ),
-                    Divider(),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          detailFoods[index],
+                          style: MyStyle().h2NormalStyleGrey,
+                        ),
+                        SizedBox(width: 10.0,),
+                        Text(orderUserModel.remarke,style: TextStyle(color: Colors.red),)
+                      ],
+                    ),                 
                   ],
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  amounts[index].toString(),
-                  style: MyStyle().h3StyleDark,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      amounts[index].toString(),
+                      style: MyStyle().h3StyleDark,
+                    ),
+                    Text(''),
+                  ],
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  prices[index].toString(),
-                  style: MyStyle().h3StyleDark,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      prices[index].toString(),
+                      style: MyStyle().h3StyleDark,
+                    ),
+                    Text(''),
+                  ],
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  '${amounts[index] * prices[index]}',
-                  style: MyStyle().h3StyleDark,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '${amounts[index] * prices[index]}',
+                      style: MyStyle().h3StyleDark,
+                    ),
+                    Text(''),
+                  ],
                 ),
               ),
+              
             ],
+            
           ),
+          
         ),
       );
 
@@ -486,7 +509,7 @@ class _DetailOrderState extends State<DetailOrder> {
       floatingActionButton: stateStatus ? acceptJob() : successJob(),
       appBar: AppBar(
         title: Text(
-          'ระยะทาง $distance กม.',
+          'ระยะทาง ${orderUserModel.distance} กม.',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             letterSpacing: 3.0,
@@ -501,6 +524,7 @@ class _DetailOrderState extends State<DetailOrder> {
           showMap(userLatLng, nameUser, 'สถานที่ส่งอาหาร', 310.0),
           //MyStyle().showTitle('รายการอาหารที่สั่ง'),
           showListOrder(),
+          Divider(),
           showSumFood(),
           showSumDistance(),
           SizedBox(

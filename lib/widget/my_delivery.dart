@@ -26,14 +26,30 @@ class _MyDeliveryState extends State<MyDelivery> {
   List<int> distances = List();
   List<int> transports = List();
   String idRider;
+  OrderUserModel orderUserModel;
+  List<String> nameLocal = List();
 
   // Method
   @override
   void initState() {
     super.initState();
+
     aboutNotification();
     updateToken();
     readOrder();
+    findSum();
+  }
+
+  Future<Null> findSum() async {
+    String idShop = orderUserModel.idShop;
+    String idFoods = orderUserModel.idFoods;
+    String amounes = orderUserModel.amountFoods;
+
+    print('idShop ==> $idShop, idFoods ==> $idFoods, amounts ==> $amounes');
+
+    //List<int> amountIntFoods = changeToArray(amounes);
+    //List<int> idFoodInt = changeToArray(idFoods);
+    // List<int> priceIntFoods = List();
   }
 
   Future<Null> aboutNotification() async {
@@ -65,6 +81,8 @@ class _MyDeliveryState extends State<MyDelivery> {
     int distance = preferences.getInt('distance');
     int transport = preferences.getInt('transport');
     String token = await findToken();
+
+    print('distance $distance');
 
     String url =
         'http://movehubs.com/app/editTokenRiderWhereId.php?isAdd=true&id=$idRider&Token=$token';
@@ -157,43 +175,47 @@ class _MyDeliveryState extends State<MyDelivery> {
         onTap: () => rountToDetailOrder(index),
         child: Card(
           color: index % 2 == 0 ? Colors.grey.shade300 : Colors.white,
-          child: Column(
-            children: <Widget>[
-              MyStyle().showTitle(nameShops[index]),
-              Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      orderUserModels[index].dateTime,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      ' ร้าน${nameShops[index]}',
                       style: MyStyle().h2Style,
                     ),
-                  ),
-                  MyStyle().showTitleH2Primary('เลขที่ :'),
-                  MyStyle().showTitleH2Primary(orderUserModels[index].id),
-              
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'ระยะทาง = ${distances[index]} กิโลเมตร',
-                      style: MyStyle().h2NormalStyle,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: 16.0),
-                    child: Text(
-                      'ค่าขนส่ง = ${transports[index]} บาท',
+                    Text(
+                      'เลขที่${orderUserModels[index].id}',
                       style: MyStyle().h2Style,
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(' เมื่อ ${orderUserModels[index].dateTime}',
+                        style: MyStyle().h2NormalStyleGrey),
+                    Text(
+                      '${orderUserModels[index].distance} กม.',
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(' ส่งที่ ${orderUserModels[index].nameLocal}',
+                        style: MyStyle().h2NormalStyleGrey),
+                    Icon(
+                      Icons.pin_drop,
+                      color: Colors.orange,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -216,13 +238,19 @@ class _MyDeliveryState extends State<MyDelivery> {
     return Center(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 150.0,),
-          Image.asset('images/time.png',width: 100.0,height: 100.0,) ,
+          SizedBox(
+            height: 150.0,
+          ),
+          Image.asset(
+            'images/time.png',
+            width: 100.0,
+            height: 100.0,
+          ),
           Text(
             'ยังไม่มี ใครสั่งอาหารคะ',
             style: MyStyle().h1PrimaryStyle,
           ),
-           Text(
+          Text(
             'โปรดรอ...',
             style: MyStyle().h1PrimaryStyle,
           ),

@@ -222,7 +222,7 @@ class _ShowFoodState extends State<ShowFood> {
     return Column(
       children: <Widget>[
         showTotal(),
-        showListSubMunu(),
+        //showListSubMunu(),
         Padding(padding: EdgeInsets.only(top: 20.0)),
         Text(
           'คำขอพิเศษ',
@@ -241,6 +241,56 @@ class _ShowFoodState extends State<ShowFood> {
             ),
           ),
         ),
+        Column(
+          children: <Widget>[
+            SizedBox(
+              height: 50.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                MyStyle().mySizeBox(),
+                IconButton(
+                    icon: Icon(
+                      Icons.remove_circle,
+                      size: 36.0,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      if (amountFood != 0) {
+                        setState(() {
+                          amountFood--;
+                        });
+                      }
+                    }),
+                MyStyle().mySizeBox(),
+                Text(
+                  '$amountFood',
+                  style: MyStyle().h1PrimaryStyle,
+                ),
+                MyStyle().mySizeBox(),
+                IconButton(
+                    icon: Icon(
+                      Icons.add_circle,
+                      size: 36.0,
+                      color: Colors.green,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        amountFood++;
+                      });
+                    }),
+                MyStyle().mySizeBox(),
+              ],
+            ),
+            SizedBox(
+              height: 20.0,
+            )
+          ],
+        ),
+        SizedBox(
+          height: 90.0,
+        ),
       ],
     );
   }
@@ -249,7 +299,7 @@ class _ShowFoodState extends State<ShowFood> {
     return Card(
       child: ListTile(
         title: Text(
-          '${foodModel.nameFood} ${foodModel.detailFood}',
+          '${foodModel.nameFood}',
           style: TextStyle(
             fontSize: 20,
             color: Colors.grey,
@@ -257,9 +307,9 @@ class _ShowFoodState extends State<ShowFood> {
             letterSpacing: 2.0,
           ),
         ),
-        //subtitle: showAmountFood(),
+        subtitle: Text('${foodModel.detailFood}'),
         trailing: Text(
-          'รวม $total',
+          '฿ ${foodModel.priceFood}',
           style: TextStyle(
             fontSize: 22,
             color: Colors.red,
@@ -518,9 +568,8 @@ class _ShowFoodState extends State<ShowFood> {
                     lngShop: lngShop.toString(),
                     sumPrice: sumPrice.toString(),
                     transport: transport.toString(),
-                    distance: distance
-                    );
-                    print('model  ======= ${model.toJson()}');
+                    distance: distance);
+                print('model  ======= ${model.toJson()}');
                 SQLiteHelper().insertDatabase(model);
                 Navigator.of(context).pop();
               }

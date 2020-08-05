@@ -107,6 +107,7 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
                 showDateTime(index),
                 headTitle(),
                 showListViewOrder(index),
+                Divider(),
                 showTotalPrice(index),
                 showTotalDelivery(index),
                 showSumTotal(index),
@@ -123,7 +124,7 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
           Container(
             margin: EdgeInsets.only(right: 16.0),
             child: MyStyle().showTitleH2Dark(
-                'ราคาอาหาร ${orderUserModels[index].totalPrice} บาท'),
+                'ค่าอาหาร ${orderUserModels[index].totalPrice} บาท'),
           ),
         ],
       );
@@ -207,16 +208,9 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
   Widget headTitle() => Row(
         children: <Widget>[
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Text(
               'รายการอาหาร',
-              style: MyStyle().h3StyleDark,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'ราคา',
               style: MyStyle().h3StyleDark,
             ),
           ),
@@ -244,27 +238,49 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
         itemBuilder: (value, index2) => Row(
           children: <Widget>[
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(listFoodModels[index][index2].nameFood,style: TextStyle(fontSize: 20.0,),),
-                  Text(listFoodModels[index][index2].detailFood,style: TextStyle(fontSize: 16.0,),),
-                  Divider(),
+                  //Text(listFoodModels[index][index2].nameFood,style: TextStyle(fontSize: 18.0,),),
+                  //Text(listFoodModels[index][index2].detailFood,style: TextStyle(fontSize: 18.0,),),
+                  Text(
+                    '${listFoodModels[index][index2].nameFood} ${listFoodModels[index][index2].detailFood}',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text('${orderUserModels[index].remarke}'),
                 ],
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(listFoodModels[index][index2].priceFood,style: TextStyle(fontSize: 20.0,),),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    listAmounts[index][index2],
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(''),
+                ],
+              ),
             ),
             Expanded(
               flex: 1,
-              child: Text(listAmounts[index][index2],style: TextStyle(fontSize: 20.0,),),
-            ),
-            Expanded(
-              flex: 1,
-              child: Text(
-                  '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',style: TextStyle(fontSize: 20.0,),),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  Text(''),
+                ],
+              ),
             ),
           ],
         ),

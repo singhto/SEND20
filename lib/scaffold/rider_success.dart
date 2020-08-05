@@ -77,8 +77,8 @@ class _RiderSuccessState extends State<RiderSuccess> {
       nameUser = userModel.name;
       idUser = userModel.id;
       tokenUser = userModel.token;
-      userLatLng = LatLng(double.parse(userModel.lat.trim()),
-          double.parse(userModel.lng.trim()));
+      userLatLng = LatLng(double.parse(orderUserModel.latUser.trim()),
+          double.parse(orderUserModel.lngUser.trim()));
     });
   }
 
@@ -116,7 +116,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
         ),
         child: FloatingActionButton(
           backgroundColor:
-              statusReceive ? Colors.lightGreenAccent.shade700 : Colors.purple,
+              statusReceive ? Colors.red : Colors.purple,
           onPressed: () {
             if (statusReceive) {
               confirmReceiveFood();
@@ -124,7 +124,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
               confirmSuccessDialog();
             }
           },
-          child: stateStatus ? Icon(Icons.home) : Icon(Icons.account_box),
+          child: stateStatus ? Icon(Icons.store_mall_directory) : Icon(Icons.account_box),
         ),
       );
 
@@ -132,7 +132,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('รับอาหารจากร้านค้าแล้ว ?'),
+        title: Text('รับอาหารจากร้านค้าแล้ว!!'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -170,7 +170,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('ส่งอาหารถึง ลูกค้าแล้ว ?'),
+        title: Text('ส่งอาหารถึงลูกค้าแล้ว ^^'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -207,8 +207,8 @@ class _RiderSuccessState extends State<RiderSuccess> {
     await Dio().get(url).then((value) {
       print(
           'value from orderSuccess ################===========>>>>> $value and tokenUser ---->>> $tokenUser');
-      MyAPI().notificationAPI(tokenUser, 'รับอาหาร เรียบร้อย นะคะ',
-          'Rider มาส่งอาหารเรียบร้อยนะคะ ขอบคุณที่ใช้บริการของ Send คะ');
+      MyAPI().notificationAPI(tokenUser, 'รับอาหารเรียบร้อย',
+          'SEND ส่งอาหารเรียบร้อย ขอบคุณที่ใช้บริการครับ');
 
       // exit(0);
 
@@ -224,11 +224,11 @@ class _RiderSuccessState extends State<RiderSuccess> {
     return Scaffold(
       floatingActionButton: successJob(),
       appBar: AppBar(
-        title: Text('ไปรับอาหารจาก ร้าน และ ส่งให้ลูกค้า'),
+        title: Text('GO ร้าน$nameShop',style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 2.0),),
       ),
       body: Column(
         children: <Widget>[
-          MyStyle().showTitle(nameShop == null ? '' : nameShop),
+          //MyStyle().showTitle(nameShop == null ? '' : nameShop),
           // Text('${orderUserModel.idShop}'),
           showListOrder(),
           Expanded(
@@ -338,30 +338,35 @@ class _RiderSuccessState extends State<RiderSuccess> {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Text(
-                  nameFoods[index],
-                  style: MyStyle().h3StylePrimary,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      nameFoods[index],
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                    Text(orderUserModel.remarke, style: TextStyle(color: Colors.red),)
+                  ],
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: Text(
                   amounts[index].toString(),
-                  style: MyStyle().h3StyleDark,
+                  style: MyStyle().h2NormalStyleGrey,
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: Text(
                   prices[index].toString(),
-                  style: MyStyle().h3StyleDark,
+                  style: MyStyle().h2NormalStyleGrey,
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: Text(
                   '${amounts[index] * prices[index]}',
-                  style: MyStyle().h3StyleDark,
+                  style: MyStyle().h2NormalStyleGrey,
                 ),
               ),
             ],
@@ -372,8 +377,8 @@ class _RiderSuccessState extends State<RiderSuccess> {
   Future<Null> sendNotiToUser() async {
     UserModel userModel =
         await MyAPI().findDetailUserWhereId(orderUserModel.idUser);
-    MyAPI().notificationAPI(userModel.token, 'Rider รับอาหารแล้ว',
-        'Rider รับอาหารจาก ร้านค้าแล้ว คะ ? รออีกนิดนะ คะ');
+    MyAPI().notificationAPI(userModel.token, 'RIDER รับอาหารแล้ว',
+        'RIDER รับอาหารจากร้านค้าแล้ว รออีกแป๊บเดียวครับ');
   }
 
   Future<Null> callPhoneThread(String phoneNumber) async {

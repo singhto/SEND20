@@ -201,6 +201,25 @@ class MyStyle {
       ],
     );
   }
+    Widget showTitleH2Green(String string) {
+    return Row(
+      children: <Widget>[
+        Container(
+          //padding: EdgeInsets.only(left: 8.0),
+          child: Text(
+            string,
+            style: TextStyle(
+              fontFamily: 'ThaiSansNeue',
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget showTitleH2Dark(String string) {
     return Row(

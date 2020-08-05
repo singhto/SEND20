@@ -236,51 +236,36 @@ class _OrderShopState extends State<OrderShop> {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    MyStyle().showTitleH2Primary('วันที่ :'),
-                    MyStyle()
-                        .showTitleH2Primary(orderUserModels[index1].dateTime),
-                    MyStyle().showTitleH2Primary('  เลขที่ :'),
-                    MyStyle().showTitleH2Primary(orderUserModels[index1].id),
+                    Text(
+                      'เมื่อ : ${orderUserModels[index1].dateTime}',
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                    Text(
+                      'เลขที่ : ${orderUserModels[index1].id} ',
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
                   ],
                 ),
               ),
               Container(
                 decoration: BoxDecoration(color: Colors.orange.shade100),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          'รายการอาหาร',
-                          style: MyStyle().h3StyleDark,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'ราคา',
-                          style: MyStyle().h3StyleDark,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'จำนวน',
-                          style: MyStyle().h3StyleDark,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'ผลรวม',
-                          style: MyStyle().h3StyleDark,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: MyStyle().showTitle('รายการ'),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: MyStyle().showTitle('จำนวน'),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: MyStyle().showTitle('รวม'),
+                    ),
+                  ],
                 ),
               ),
               ListView.builder(
@@ -294,45 +279,46 @@ class _OrderShopState extends State<OrderShop> {
                       Expanded(
                         flex: 3,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              listFoodModels[index1][index2].nameFood,
-                              style: MyStyle().h2Style,
-                            ),
-                            Text(
-                              listFoodModels[index1][index2].detailFood,
-                              style: MyStyle().h2NormalStyleGrey,
-                            ),
-                            Divider()
+                                '${listFoodModels[index1][index2].nameFood} ${listFoodModels[index1][index2].detailFood}',
+                                style: MyStyle().h2Style), 
+                    
+                            Text('${orderUserModels[index1].remarke}',style: MyStyle().h2NormalStyleGrey,)
                           ],
                         ),
                       ),
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          listFoodModels[index1][index2].priceFood,
-                          style: MyStyle().h2Style,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              listAmounts[index1][index2].trim(),
+                              style: MyStyle().h2Style,
+                            ),
+                            Text('')
+                          ],
                         ),
                       ),
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          listAmounts[index1][index2].trim(),
-                          style: MyStyle().h2Style,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          '${int.parse(listFoodModels[index1][index2].priceFood) * int.parse(listAmounts[index1][index2].trim())}',
-                          style: MyStyle().h2Style,
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              '${int.parse(listFoodModels[index1][index2].priceFood) * int.parse(listAmounts[index1][index2].trim())}',
+                              style: MyStyle().h2Style,
+                            ),
+                            Text('')
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+              Divider(),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -424,7 +410,7 @@ class _OrderShopState extends State<OrderShop> {
               ),
             ),
             SizedBox(
-              width: 80.0,
+              width: 50.0,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -610,6 +596,7 @@ class _OrderShopState extends State<OrderShop> {
     } catch (e) {}
     normalToast('ปิดร้าน');
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -625,6 +612,13 @@ class _OrderShopState extends State<OrderShop> {
           //? Colors.pink.shade300
           //: Colors.grey.shade300
           ),
+
+          
+
+
+
+
+
     );
   }
 }

@@ -39,6 +39,7 @@ class _ShowCartState extends State<ShowCart> {
 
   int totalPrice = 0, totalDelivery = 0, sumTotal = 0;
   String phone;
+  String remake = '';
 
   // Method
   @override
@@ -54,7 +55,7 @@ class _ShowCartState extends State<ShowCart> {
   Future<void> findLocationUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String idUser = preferences.getString('id');
-    print('idUser = $idUser');
+    //print('idUser = $idUser');
 
     String url =
         'http://movehubs.com/app/getUserWhereId.php?isAdd=true&id=$idUser';
@@ -77,7 +78,7 @@ class _ShowCartState extends State<ShowCart> {
 
     try {
       var object = await SQLiteHelper().readDatabase();
-      print("แสดงจำนวน Record SQLite ==>> ${object.length}");
+      //print("แสดงจำนวน Record SQLite ==>> ${object.length}");
       if (object.length != 0) {
         orderModels = object;
 
@@ -149,7 +150,7 @@ class _ShowCartState extends State<ShowCart> {
 
     int transport = await MyAPI().checkTransport(distanceAint);
 
-    print('transport ===>>> $transport');
+    //print('transport ===>>> $transport');
     setState(() {
       transports.add(transport);
       sumTotals.add(transport);
@@ -231,7 +232,7 @@ class _ShowCartState extends State<ShowCart> {
     DateTime dateTime = DateTime.now();
     List<String> idFoods = List();
     List<String> amountFoods = List();
-    String tokenShop;
+    String tokenShop, remarke, latUser, lngUser, nameLocal, transportSQLite, distanceSQLite;
 
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(idShopOnSQLites[0].toString());
@@ -240,14 +241,22 @@ class _ShowCartState extends State<ShowCart> {
     for (var model in orderModels) {
       idFoods.add(model.idFood);
       amountFoods.add(model.amountFood);
+      remarke = model.remark;
+      latUser = model.latUser;
+      lngUser = model.lngUser;
+      nameLocal = model.nameLocal;
+      transportSQLite = model.transport;
+      distanceSQLite = model.distance;
+
     }
 
     String url =
-        'http://movehubs.com/app/addOrder.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal';
+        'http://movehubs.com/app/addOrder.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal&remarke=$remarke&latUser=${latUser.toString()}&lngUser=${lngUser.toString()}&nameLocal=$nameLocal&distance=$distanceSQLite';
 
     Response response = await Dio().get(url);
     if (response.toString() == 'true') {
-      print('===============.....Success Order');
+      print(' amoutFood ===>> $amountFoods remarke ==>> $remarke  latUser ==>> $latUser lngUser ==>> $lngUser nameLocal==>> $nameLocal');
+      //print('===============.....Success Order');
 
       await SQLiteHelper().deleteSQLiteAll().then((value) {
         MyAPI().notificationAPI(
@@ -319,6 +328,7 @@ class _ShowCartState extends State<ShowCart> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
+  
           showSum('ค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
           showSum('ค่าขนส่ง', totalDelivery.toString(), MyStyle().primaryColor),
           showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
@@ -377,93 +387,81 @@ class _ShowCartState extends State<ShowCart> {
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: orderModels.length,
-                  itemBuilder: (value, index) => Container(
-                        decoration: BoxDecoration(
-                            color: index % 2 == 0
-                                ? Colors.grey.shade300
-                                : Colors.white),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                itemCount: orderModels.length,
+                itemBuilder: (value, index) => Container(
+                  decoration: BoxDecoration(
+                      color:
+                          index % 2 == 0 ? Colors.grey.shade300 : Colors.white),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                orderModels[index].nameFood,
+                                style: MyStyle().h2Style,
+                              ),
+                              Text(
+                                orderModels[index].remark,
+                              )
+                              // ListView.builder(
+                              //   shrinkWrap: true,
+                              //   physics: ScrollPhysics(),
+                              //   itemCount: 1,
+                              //   itemBuilder: (context, index2) =>
+                              //       Text(orderModels[index].nameShop),
+                              // ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Expanded(
-                              flex: 3,
-                              child: Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      orderModels[index].nameFood,
-                                      style: MyStyle().h2NormalStyle,
-                                    ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: ScrollPhysics(),
-                                      itemCount: 3,
-                                      itemBuilder: (context, index2) =>
-                                          Text(orderModels[index].nameOption),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                orderModels[index].priceFood,
-                                style: MyStyle().h2NormalStyle,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    orderModels[index].amountFood,
-                                    style: MyStyle().h2NormalStyle,
-                                  ),
-//                                  Text(
-//                                    '${distances[index].toString()} km',
-//                                    style: MyStyle().h3StylePrimary,
-//                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    calculateTotal(orderModels[index].priceFood,
-                                        orderModels[index].amountFood),
-                                    style: MyStyle().h2NormalStyle,
-                                  ),
-//                                  Text(
-//                                    transports[index].toString(),
-//                                    style: MyStyle().h3StylePrimary,
-//                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Row(
-                                children: <Widget>[
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.delete_forever,
-                                        color: MyStyle().dartColor,
-                                      ),
-                                      onPressed: () {
-                                        confirmAnDelete(orderModels[index]);
-                                      }),
-                                ],
-                              ),
+                            Text(
+                              orderModels[index].amountFood,
+                              style: MyStyle().h2NormalStyle,
                             ),
                           ],
                         ),
-                      )),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              calculateTotal(orderModels[index].priceFood,
+                                  orderModels[index].amountFood),
+                              style: MyStyle().h2NormalStyle,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: <Widget>[
+                            IconButton(
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: MyStyle().dartColor,
+                                ),
+                                onPressed: () {
+                                  confirmAnDelete(orderModels[index]);
+                                }),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -521,13 +519,6 @@ class _ShowCartState extends State<ShowCart> {
           flex: 3,
           child: Text(
             'รายการอาหาร',
-            style: MyStyle().h2Style,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            'ราคา',
             style: MyStyle().h2Style,
           ),
         ),

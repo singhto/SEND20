@@ -108,9 +108,9 @@ class _HandleShopState extends State<HandleShop> {
                 headTitle(),
                 showListViewOrder(index),
                 showTotalPrice(index),
-                //showTotalDelivery(index),
+                showTotalDelivery(index),
                 //showSumTotal(index),
-                //showProcessOrder(index),
+                showProcessOrder(index),
               ],
             ),
           ),
@@ -123,7 +123,7 @@ class _HandleShopState extends State<HandleShop> {
           Container(
             margin: EdgeInsets.only(right: 16.0),
             child: MyStyle().showTitleH2Dark(
-                'ราคารวม ${orderUserModels[index].totalPrice} บาท'),
+                'รวม  ${orderUserModels[index].totalPrice} บาท'),
           ),
         ],
       );
@@ -133,8 +133,8 @@ class _HandleShopState extends State<HandleShop> {
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(right: 16.0),
-            child: MyStyle().showTitleH2Primary(
-                'ค่าขนส่ง ${orderUserModels[index].totalDelivery} บาท'),
+            child: MyStyle().showTitleH2Green(
+                'คอมมิชชั่น 0 บาท'),
           ),
         ],
       );
@@ -209,29 +209,26 @@ class _HandleShopState extends State<HandleShop> {
           Expanded(
             flex: 3,
             child: Text(
-              'รายการอาหาร',
+              'รายการ',
               style: MyStyle().h3StyleDark,
             ),
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              'ราคา',
-              style: MyStyle().h3StyleDark,
+            child: Center(
+              child: Text(
+                'จำนวน',
+                style: MyStyle().h3StyleDark,
+              ),
             ),
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              'จำนวน',
-              style: MyStyle().h3StyleDark,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'รวม',
-              style: MyStyle().h3StyleDark,
+            child: Center(
+              child: Text(
+                'รวม',
+                style: MyStyle().h3StyleDark,
+              ),
             ),
           ),
         ],
@@ -246,58 +243,40 @@ class _HandleShopState extends State<HandleShop> {
             Expanded(
               flex: 3,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    listFoodModels[index][index2].nameFood,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+                      '${listFoodModels[index][index2].nameFood} ${listFoodModels[index][index2].detailFood}',
+                      style: MyStyle().h2NormalStyleGrey),
                   Text(
-                    listFoodModels[index][index2].detailFood,
+                    '${orderUserModels[index].remarke}',
                     style: MyStyle().h2NormalStyleGrey,
-                  ),
-                  Divider(),
+                  )
                 ],
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(
-                listFoodModels[index][index2].priceFood,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                  color: Theme.of(context).primaryColor,
-                ),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    listAmounts[index][index2].trim(),
+                    style: MyStyle().h2NormalStyleGrey,
+                  ),
+                  Text('')
+                ],
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(
-                listAmounts[index][index2],
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Text(
-                '${(int.parse(listFoodModels[index][index2].priceFood)) * (int.parse(listAmounts[index][index2]))}',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.0,
-                  color: Theme.of(context).primaryColor,
-                ),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    '${int.parse(listFoodModels[index][index2].priceFood) * int.parse(listAmounts[index][index2].trim())}',
+                    style: MyStyle().h2NormalStyleGrey,
+                  ),
+                  Text('')
+                ],
               ),
             ),
           ],
@@ -305,6 +284,7 @@ class _HandleShopState extends State<HandleShop> {
       );
 
   Widget showDateTime(int index) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
             'วันที่ ${orderUserModels[index].dateTime} : เลขที่ ${orderUserModels[index].id}',
