@@ -4,13 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
-import 'package:foodlion/scaffold/noti_location.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
-import 'package:foodlion/widget/guestMap.dart';
-import 'package:foodlion/widget/guestMapV1.dart';
 import 'package:foodlion/widget/guestV1.dart';
 import 'package:foodlion/widget/handle_shop.dart';
 import 'package:foodlion/widget/info_shop.dart';
@@ -80,6 +77,8 @@ class _HomeState extends State<Home> {
 
     //findLatLng2();
   }
+
+
 
   Future<Null> checkPermission() async {
     try {

@@ -184,14 +184,11 @@ class _RegisterShopState extends State<RegisterShop> {
 
   Future<void> chooseImage(ImageSource source) async {
     try {
-      var object = await ImagePicker.pickImage(
-        source: source,
-        maxWidth: 800.00,
-        maxHeight: 800.00,
-      );
+       var object = await ImagePicker()
+          .getImage(source: source, maxWidth: 800.0, maxHeight: 800.0);
 
       setState(() {
-        file = object;
+        file = File(object.path);
       });
     } catch (e) {}
   }

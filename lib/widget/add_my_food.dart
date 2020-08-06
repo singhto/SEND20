@@ -7,7 +7,6 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
-import 'package:foodlion/widget/my_food_shop.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,7 +41,6 @@ class _AddMyFoodState extends State<AddMyFood> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.2,
       child: file == null ? Image.asset('images/food2.png') : Image.file(file),
-      
     );
   }
 
@@ -120,14 +118,11 @@ class _AddMyFoodState extends State<AddMyFood> {
 
   Future<void> chooseImage(ImageSource source) async {
     try {
-      var object = await ImagePicker.pickImage(
-        source: source,
-        maxWidth: 800.00,
-        maxHeight: 800.00,
-      );
+      var object = await ImagePicker()
+          .getImage(source: source, maxWidth: 800.0, maxHeight: 800.0);
 
       setState(() {
-        file = object;
+        file = File(object.path);
       });
     } catch (e) {}
   }
@@ -160,7 +155,6 @@ class _AddMyFoodState extends State<AddMyFood> {
           if (file == null) {
             normalDialog(
                 context, 'Non Choose Image', 'Please Click Camera or Gallery');
-     
           } else if (nameFood == null ||
               nameFood.isEmpty ||
               detailFood == null ||
@@ -208,23 +202,21 @@ class _AddMyFoodState extends State<AddMyFood> {
   }
 
   Future<void> saveFoodThread() async {
-     isLoading = true;
+    isLoading = true;
     try {
       String url =
           'http://movehubs.com/app/addFoodShop.php?isAdd=true&idShop=$idShop&NameFood=$nameFood&DetailFood=$detailFood&UrlFood=$urlFood&PriceFood=$priceFood&Score=$score';
 
       Response response = await Dio().get(url);
- 
+
       if (response.toString() == 'true') {
-        MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => Home());
-            normalToast('เพิ่มข้อมูลเรียบร้อย');
+        MaterialPageRoute route = MaterialPageRoute(builder: (value) => Home());
+        normalToast('เพิ่มข้อมูลเรียบร้อย');
         Navigator.of(context).pushAndRemoveUntil(route, (value) => false);
       } else {
         normalDialog(context, 'Cannot Add Food', 'Please Try Again');
       }
     } catch (e) {}
-    
   }
 
   @override
@@ -249,9 +241,9 @@ class _AddMyFoodState extends State<AddMyFood> {
           priceForm(),
           MyStyle().mySizeBox(),
           Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: isLoading ? MyStyle().showProgress() : null,
-        ),
+            padding: const EdgeInsets.all(8.0),
+            child: isLoading ? MyStyle().showProgress() : null,
+          ),
           saveButton(),
           MyStyle().mySizeBox(),
         ],

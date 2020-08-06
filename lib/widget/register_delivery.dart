@@ -45,9 +45,7 @@ class _RegisterDeliveryState extends State<RegisterDelivery> {
     try {
       return await location.getLocation();
     } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        
-      }
+      if (e.code == 'PERMISSION_DENIED') {}
       return null;
     }
   }
@@ -147,14 +145,11 @@ class _RegisterDeliveryState extends State<RegisterDelivery> {
 
   Future<void> chooseImage(ImageSource source) async {
     try {
-      var object = await ImagePicker.pickImage(
-        source: source,
-        maxWidth: 800.00,
-        maxHeight: 800.00,
-      );
+      var object = await ImagePicker()
+          .getImage(source: source, maxWidth: 800.0, maxHeight: 800.0);
 
       setState(() {
-        file = object;
+        file = File(object.path);
       });
     } catch (e) {}
   }
@@ -180,8 +175,9 @@ class _RegisterDeliveryState extends State<RegisterDelivery> {
   Widget showPicture() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.2,
-      child:
-          file == null ? Image.asset('images/deliveryProfile.png') : Image.file(file),
+      child: file == null
+          ? Image.asset('images/deliveryProfile.png')
+          : Image.file(file),
     );
   }
 
@@ -296,7 +292,11 @@ class _RegisterDeliveryState extends State<RegisterDelivery> {
       padding: EdgeInsets.all(16.0),
       children: <Widget>[
         showPicture(),
-        Center(child: Text('ภาพถ่ายหน้าตรง',style: MyStyle().h2NormalStyle,)),
+        Center(
+            child: Text(
+          'ภาพถ่ายหน้าตรง',
+          style: MyStyle().h2NormalStyle,
+        )),
         showButton(),
         MyStyle().mySizeBox(),
         nameForm(),

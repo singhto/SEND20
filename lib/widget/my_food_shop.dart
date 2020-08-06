@@ -19,8 +19,8 @@ class _MyFoodShopState extends State<MyFoodShop> {
   bool statusData = true;
   List<FoodModel> foodModels = List();
   String myIdShop;
-   bool isSwitched = true;
-     Widget currentWidget;
+  bool isSwitched = true;
+  Widget currentWidget;
 
   // Method
   @override
@@ -38,7 +38,6 @@ class _MyFoodShopState extends State<MyFoodShop> {
   }
 
   Future<void> readAllFood() async {
-  
     String idShop = await getIdShop();
     if (myIdShop != null) {
       idShop = myIdShop;
@@ -68,7 +67,11 @@ class _MyFoodShopState extends State<MyFoodShop> {
                     'โปรดเพิ่ม  ',
                     style: MyStyle().h1PrimaryStyle,
                   ),
-                  Icon(Icons.playlist_add, size: 30.0, color: Colors.grey,)
+                  Icon(
+                    Icons.playlist_add,
+                    size: 30.0,
+                    color: Colors.grey,
+                  )
                 ],
               ),
             ],
@@ -235,12 +238,14 @@ class _MyFoodShopState extends State<MyFoodShop> {
       children: <Widget>[
         Container(
           //width: MediaQuery.of(context).size.width * 0.5 - 30,
-          child: Text(
-            foodModels[index].nameFood,
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColorDark,
+          child: Expanded(
+            child: Text(
+              foodModels[index].nameFood,
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColorDark,
+              ),
             ),
           ),
         ),
@@ -266,11 +271,8 @@ class _MyFoodShopState extends State<MyFoodShop> {
 
   @override
   Widget build(BuildContext context) {
-    return 
- 
-    Scaffold(
+    return Scaffold(
       body: currentWidget == null ? MyStyle().showProgress() : currentWidget,
     );
-   
   }
 }
