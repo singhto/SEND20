@@ -16,7 +16,6 @@ import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class GuestV1 extends StatefulWidget {
   final double lat, lng;
   GuestV1({Key key, this.lat, this.lng}) : super(key: key);
@@ -33,8 +32,8 @@ class _GuestV1State extends State<GuestV1> {
   String idUser, nameLogin;
   int amount = 0;
   double lat, lng;
-    bool statusLoad = true;
-      bool statusShowCard = false;
+  bool statusLoad = true;
+  bool statusShowCard = false;
 
   @override
   void initState() {
@@ -72,45 +71,40 @@ class _GuestV1State extends State<GuestV1> {
     }
   }
 
-  Widget showImageShop(UserShopModel model) {
-    return Container(
-      width: 80.0,
-      height: 80.0,
-      child: CircleAvatar(
-        backgroundImage: NetworkImage(model.urlShop),
-      ),
-    );
-  }
+  Widget showImageShop(UserShopModel model) => Container(
+        child: CachedNetworkImage(
+          height: 100.0,
+          width: MediaQuery.of(context).size.width,
+          imageUrl: model.urlShop,
+          placeholder: (value, string) => MyStyle().showProgress(),
+          fit: BoxFit.cover,
+        ),
+      );
 
-  Text showName(UserShopModel model) => Text(
-        model.name,
-        style: TextStyle(
+  Text showName(UserShopModel model) => Text(model.name,
+      style: TextStyle(
         fontWeight: FontWeight.w900,
         color: Theme.of(context).primaryColor,
         letterSpacing: 2.0,
-      )
-      );
+      ));
 
   Widget createCard(UserShopModel model, String distance) {
     return GestureDetector(
       onTap: () {
         //print('You Click ${model.id}');
 
-      
-          normalDialog(context, 'คุณยังไม่ได้เป็นสมาชิก',
-              'กรุณาสมัครสมาชิกก่อนเข้าสู่ระบบครับ');
-        
+        normalDialog(context, 'คุณยังไม่ได้เป็นสมาชิก',
+            'กรุณาสมัครสมาชิกก่อนเข้าสู่ระบบครับ');
       },
       child: Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
             showImageShop(model),
-             MyStyle().mySizeBox(),
+            SizedBox(
+              height: 4.0,
+            ),
             Expanded(child: showName(model)),
             showDistance(distance),
           ],
@@ -127,28 +121,35 @@ class _GuestV1State extends State<GuestV1> {
           children: <Widget>[
             Icon(
               Icons.star,
-              size: 14.0,color: Colors.yellow.shade400,
+              size: 14.0,
+              color: Colors.yellow.shade400,
             ),
             Icon(
               Icons.star,
-              size: 14.0,color: Colors.yellow.shade400,
+              size: 14.0,
+              color: Colors.yellow.shade400,
             ),
             Icon(
               Icons.star,
-              size: 14.0,color: Colors.yellow.shade400,
+              size: 14.0,
+              color: Colors.yellow.shade400,
             ),
             Icon(
               Icons.star,
-              size: 14.0,color: Colors.yellow.shade400,
+              size: 14.0,
+              color: Colors.yellow.shade400,
             ),
             Icon(
               Icons.star,
-              size: 14.0,color: Colors.yellow.shade400,
+              size: 14.0,
+              color: Colors.yellow.shade400,
             ),
-
           ],
         ),
-        Text('$distance กม.',style: TextStyle(color: Colors.grey),),
+        Text(
+          '$distance กม.',
+          style: TextStyle(color: Colors.grey),
+        ),
       ],
     );
   }
@@ -178,7 +179,7 @@ class _GuestV1State extends State<GuestV1> {
           statusLoad = false;
           if (distance <= 10.00) {
             showWidgets.add(createCard(model, '${myFormat.format(distance)}'));
-             statusShowCard = true;
+            statusShowCard = true;
           }
         });
       }
@@ -238,8 +239,6 @@ class _GuestV1State extends State<GuestV1> {
     } catch (e) {}
   }
 
-
-
   Widget showShop() {
     return showWidgets.length == 0
         ? MyStyle().showProgress()
@@ -261,10 +260,8 @@ class _GuestV1State extends State<GuestV1> {
       // ),
       body: Column(
         children: <Widget>[
-
           showBanner(),
           MyStyle().showTitle('ร้านอาหารใกล้คุณ'),
-
           statusLoad
               ? MyStyle().showProgress()
               : //showBanner(),

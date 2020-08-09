@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:foodlion/models/food_model.dart';
@@ -206,7 +207,7 @@ class _MyFoodState extends State<MyFood> {
       child: Column(
         children: <Widget>[
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15.0),
@@ -217,15 +218,7 @@ class _MyFoodState extends State<MyFood> {
             ),
             child: Row(
               children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0),
-                  child: Image(
-                    height: 150.0,
-                    width: 150.0,
-                    image: NetworkImage(searchFoodModels[index].urlFood),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                showImagefood(index),
                 Expanded(
                   child: Container(
                     margin: EdgeInsets.all(12.0),
@@ -268,6 +261,17 @@ class _MyFoodState extends State<MyFood> {
       ),
     );
   }
+
+  Widget showImagefood(int index) => ClipRRect(
+    borderRadius: BorderRadius.circular(15.0),
+        child: CachedNetworkImage(
+          height: 100.0,
+          width: 100.0,
+          imageUrl: searchFoodModels[index].urlFood,
+          placeholder: (value, string) => MyStyle().showProgress(),
+          fit: BoxFit.cover,
+        ),
+      );
 
   Widget showPrice(int index) => Row(
         mainAxisAlignment: MainAxisAlignment.end,

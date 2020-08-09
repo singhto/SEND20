@@ -248,7 +248,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
     return Marker(
       onTap: () {
         print('You Tap Shop');
-        confirmCall(nameShop, 'Shop', idShop);
+        confirmCallShop(nameShop, 'Shop', idShop);
       },
       markerId: MarkerId('shopID'),
       icon: BitmapDescriptor.defaultMarkerWithHue(100.0),
@@ -271,6 +271,41 @@ class _RiderSuccessState extends State<RiderSuccess> {
       infoWindow: InfoWindow(
         title: 'สถานที่ส่งอาหาร',
         snippet: nameUser,
+      ),
+    );
+  }
+
+  Future<Null> confirmCallShop(String nameCall, String type, String idCall) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text('คุณต้องการโทรหาร $nameCall'),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              OutlineButton.icon(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await MyAPI().findPhone(idShop, 'Shop').then((value) {
+                      callPhoneThread(value);
+                    });
+                  },
+                  icon: Icon(
+                    Icons.phone,
+                    color: Colors.green,
+                  ),
+                  label: Text('โทร')),
+              OutlineButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.clear,
+                    color: Colors.red,
+                  ),
+                  label: Text('ไม่โทร')),
+            ],
+          )
+        ],
       ),
     );
   }

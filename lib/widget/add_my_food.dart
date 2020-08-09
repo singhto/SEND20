@@ -214,7 +214,7 @@ class _AddMyFoodState extends State<AddMyFood> {
         normalToast('เพิ่มข้อมูลเรียบร้อย');
         Navigator.of(context).pushAndRemoveUntil(route, (value) => false);
       } else {
-        normalDialog(context, 'Cannot Add Food', 'Please Try Again');
+        normalDialog(context, 'ไม่สามารถลงเมนูได้ครับ', 'กรุณาติดต่อ 089-7037118');
       }
     } catch (e) {}
   }

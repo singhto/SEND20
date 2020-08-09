@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -230,6 +231,18 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 
+  Widget showImageShop2(UserShopModel model) => Container(
+    
+    child: CachedNetworkImage(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      imageUrl: model.urlShop,
+      placeholder: (value, string) => MyStyle().showProgress(),
+      fit: BoxFit.cover,
+    ),
+  );
+
+
   Widget createCard(UserShopModel model, String distance) {
     return GestureDetector(
       onTap: () {
@@ -246,7 +259,7 @@ class _MainHomeState extends State<MainHome> {
           Navigator.of(context).push(route).then((value) => checkAmount());
         } else {
           normalDialog(context, 'SEND ปิดแล้ว',
-              'ต้องขอ อภัยมากๆ ครับ บริการส่ง 8.00- 18.00');
+              'ต้องขอ อภัยมากๆ ครับ บริการส่งเวลา 8.00- 18.00 น.');
         }
       },
       child: Card(
@@ -254,16 +267,11 @@ class _MainHomeState extends State<MainHome> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            showImageShop2(model),
             SizedBox(
-              height: 10,
+              height: 4.0,
             ),
-            showImageShop(model),
-            SizedBox(
-              height: 8.0,
-            ),
-            Expanded(
-              child: showName(model),
-            ),
+            showName(model),
             //showStatus(model),
             showDistance(distance),
           ],
@@ -285,12 +293,14 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 
-  Widget showName(UserShopModel model) => Text(model.name,
-      style: TextStyle(
-        fontWeight: FontWeight.w900,
-        color: Theme.of(context).primaryColor,
-        letterSpacing: 2.0,
-      ));
+  Widget showName(UserShopModel model) => Expanded(
+      child: Text(model.name,
+        style: TextStyle(
+          fontWeight: FontWeight.w900,
+          color: Theme.of(context).primaryColor,
+          letterSpacing: 2.0,
+        )),
+  );
 
   Text showStatus(UserShopModel model) => Text(model.status,
       style: TextStyle(
@@ -577,7 +587,7 @@ class _MainHomeState extends State<MainHome> {
       title: Center(
         child: GestureDetector(
           onTap: () {
-            routeToShowSearch();
+            //routeToShowSearch();
           },
           child: Text(
             'ค้นหาร้านค้า',
@@ -589,7 +599,10 @@ class _MainHomeState extends State<MainHome> {
           ),
         ),
       ),
-      actions: <Widget>[showSearch(), showCart()],
+      actions: <Widget>[
+        //showSearch(), 
+        
+        showCart()],
     );
   }
 
@@ -612,7 +625,7 @@ class _MainHomeState extends State<MainHome> {
             ),
             IconButton(
                 icon: Icon(
-                  Icons.location_searching,
+                  Icons.add_circle,
                   size: 30,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -649,17 +662,17 @@ class _MainHomeState extends State<MainHome> {
       //print('$indexs');
     }
     return indexs.length == 0
-        ? MyStyle().showProgress()
+        ? Text('กด + เพิ่มสถานที่ส่งของคุณ',style: MyStyle().h2Stylegreen,)
         : DropdownButton<int>(
             items: indexs
                 .map(
                   (e) => DropdownMenuItem(
-                    child: Text(sendLocationModels[e].nameLocation),
+                    child: Text(sendLocationModels[e].nameLocation,style: MyStyle().h2Stylegreen,),
                     value: e,
                   ),
                 )
                 .toList(),
-            hint: Text('ตำแหน่งปัจจุบัน'),
+            hint: Text('ตำแหน่งปัจจุบัน',style: MyStyle().h2Stylegreen,),
             value: indexChooseLocation,
             onChanged: (value) {
               setState(() {

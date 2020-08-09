@@ -13,6 +13,7 @@ import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyDelivery extends StatefulWidget {
   @override
@@ -28,12 +29,12 @@ class _MyDeliveryState extends State<MyDelivery> {
   String idRider;
   OrderUserModel orderUserModel;
   List<String> nameLocal = List();
+  String nameShop, nameUser, tokenUser, idUser, idShop;
 
   // Method
   @override
   void initState() {
     super.initState();
-
     aboutNotification();
     updateToken();
     readOrder();
@@ -157,6 +158,8 @@ class _MyDeliveryState extends State<MyDelivery> {
         nameShops.add(nameShop);
         distances.add(distanceToInt);
         transports.add(transport);
+        nameShop = userShopModel.name;
+        idShop = userShopModel.id;
       });
     }
   }
@@ -172,7 +175,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     return ListView.builder(
       itemCount: orderUserModels.length,
       itemBuilder: (value, index) => GestureDetector(
-        onTap: () => rountToDetailOrder(index),
+        //onTap: () => rountToDetailOrder(index),
         child: Card(
           color: index % 2 == 0 ? Colors.grey.shade300 : Colors.white,
           child: Padding(
@@ -208,10 +211,14 @@ class _MyDeliveryState extends State<MyDelivery> {
                   children: <Widget>[
                     Text(' ส่งที่ ${orderUserModels[index].nameLocal}',
                         style: MyStyle().h2NormalStyleGrey),
-                    Icon(
-                      Icons.pin_drop,
-                      color: Colors.orange,
-                    ),
+                    IconButton(
+                        icon: Icon(Icons.phone_android, size: 30.0, color: Colors.red,),
+                        onPressed: () {
+                          //print('You Tap Shop namep $nameShops');
+                          confirmCallShop(nameShop, 'Shop', idShop);
+                        }),
+
+                        
                   ],
                 ),
               ],
@@ -220,6 +227,51 @@ class _MyDeliveryState extends State<MyDelivery> {
         ),
       ),
     );
+  }
+
+  Future<Null> confirmCallShop(
+      String nameCall, String type, String idCall) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text('โทรหา $nameShops'),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              OutlineButton.icon(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await MyAPI().findPhone(idShop, 'Shop').then((value) {
+                      callPhoneThread(value);
+                    });
+                  },
+                  icon: Icon(
+                    Icons.phone,
+                    color: Colors.green,
+                  ),
+                  label: Text('โทร')),
+              OutlineButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(
+                    Icons.clear,
+                    color: Colors.red,
+                  ),
+                  label: Text('ไม่โทร')),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<Null> callPhoneThread(String phoneNumber) async {
+    String url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Cannot Launch $url';
+    }
   }
 
   rountToDetailOrder(int index) {

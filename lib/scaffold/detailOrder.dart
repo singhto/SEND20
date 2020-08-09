@@ -38,7 +38,7 @@ class _DetailOrderState extends State<DetailOrder> {
   LatLng shopLatLng, userLatLng;
   IconData shopMarkerIcon;
   List<String> nameFoods = List();
-   List<String> detailFoods = List();
+  List<String> detailFoods = List();
   List<int> amounts = List();
   List<int> prices = List();
   List<int> sums = List();
@@ -309,14 +309,14 @@ class _DetailOrderState extends State<DetailOrder> {
 
     //Send Notification to User
     MyAPI().notificationAPI(
-        tokenUser, 'RIDER รับ Order', 'คนส่งอาหาร กำลังไปรับอาหาร คะ');
+        tokenUser, 'RIDER รับ Order', 'กำลังไปรับอาหารที่ร้านครับ');
 
     //Send Notification to Shop
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
     String tokenShop = userShopModel.token;
     MyAPI().notificationAPI(tokenShop, 'RIDER กำลังไปรับอาหาร',
-        'RIDER กำลังไปที่ ร้านเพื่อรับอาหาร');
+        'RIDER กำลังไปที่ร้านเพื่อรับอาหาร');
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => RiderSuccess(
@@ -343,38 +343,38 @@ class _DetailOrderState extends State<DetailOrder> {
   }
 
   Widget showSumFood() => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Text(
               'ค่าอาหาร  ',
               style: MyStyle().h2StylePrimary,
             ),
             Text(
-              '${orderUserModel.totalPrice} บาท',
+              '${orderUserModel.totalPrice}',
               style: MyStyle().h2StylePrimary,
             ),
           ],
         ),
-  );
+      );
 
   Widget showSumDistance() => Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Text(
               'ค่าขนส่ง  ',
               style: MyStyle().h2StylePrimary,
             ),
             Text(
-              '$transport บาท',
+              '$transport',
               style: MyStyle().h2StylePrimary,
             ),
           ],
         ),
-  );
+      );
 
   Widget showNameUser() {
     return nameUser == null
@@ -429,22 +429,24 @@ class _DetailOrderState extends State<DetailOrder> {
             children: <Widget>[
               Expanded(
                 flex: 3,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       nameFoods[index],
                       style: MyStyle().h3StyleDark,
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          detailFoods[index],
-                          style: MyStyle().h2NormalStyleGrey,
-                        ),
-                        SizedBox(width: 10.0,),
-                        Text(orderUserModel.remarke,style: TextStyle(color: Colors.red),)
-                      ],
-                    ),                 
+                    Text(
+                      detailFoods[index],
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      orderUserModel.remarke,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ],
                 ),
               ),
@@ -465,18 +467,6 @@ class _DetailOrderState extends State<DetailOrder> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      prices[index].toString(),
-                      style: MyStyle().h3StyleDark,
-                    ),
-                    Text(''),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: <Widget>[
-                    Text(
                       '${amounts[index] * prices[index]}',
                       style: MyStyle().h3StyleDark,
                     ),
@@ -484,11 +474,8 @@ class _DetailOrderState extends State<DetailOrder> {
                   ],
                 ),
               ),
-              
             ],
-            
           ),
-          
         ),
       );
 

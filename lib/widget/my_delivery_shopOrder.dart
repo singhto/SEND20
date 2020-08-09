@@ -151,42 +151,46 @@ class _MyDeliveryShopOrderState extends State<MyDeliveryShopOrder> {
         onTap: () => rountToDetailOrder(index),
         child: Card(
           color: index % 2 == 0 ? Colors.grey.shade300 : Colors.white,
-          child: Column(
-            children: <Widget>[
-              MyStyle().showTitle(nameShops[index]),
-              Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      orderUserModels[index].dateTime,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      ' ร้าน${nameShops[index]}',
                       style: MyStyle().h2Style,
                     ),
-                  ),
-                   MyStyle().showTitleH2Primary('เลขที่ :'),
-                  MyStyle().showTitleH2Primary(orderUserModels[index].id),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0),
-                    child: Text(
-                      'ระยะทาง = ${distances[index]} กิโลเมตร',
-                      style: MyStyle().h2NormalStyle,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: 16.0),
-                    child: Text(
-                      'ค่าขนส่ง = ${transports[index]} บาท',
+                    Text(
+                      'เลขที่${orderUserModels[index].id}',
                       style: MyStyle().h2Style,
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(' เมื่อ ${orderUserModels[index].dateTime}',
+                        style: MyStyle().h2NormalStyleGrey),
+                    Text(
+                      '${orderUserModels[index].distance} กม.',
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(' ส่งที่ ${orderUserModels[index].nameLocal}',
+                        style: MyStyle().h2NormalStyleGrey),
+                    Icon(Icons.pin_drop, color: Colors.deepOrange,),
+
+                        
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

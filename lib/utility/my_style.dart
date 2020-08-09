@@ -110,6 +110,14 @@ class MyStyle {
     letterSpacing: 1.0,
   );
 
+    TextStyle h2Stylegreen = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Colors.green,
+    fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+    letterSpacing: 1.0,
+  );
+
     TextStyle h3Style = TextStyle(
     fontFamily: 'ThaiSansNeue',
     color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),

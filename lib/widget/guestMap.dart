@@ -28,7 +28,7 @@ class GuestMapState extends State<GuestMap> {
 
   static final CameraPosition myPosition = CameraPosition(
     target: LatLng(16.751608, 101.215754),
-    zoom: 10,
+    zoom: 16,
   );
 
   Future gotoCurrentPosition() async {

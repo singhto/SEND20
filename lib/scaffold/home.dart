@@ -27,7 +27,6 @@ import 'package:foodlion/widget/signin_shop.dart';
 import 'package:foodlion/widget/signin_user.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../utility/my_style.dart';
 
 class Home extends StatefulWidget {
@@ -59,10 +58,10 @@ class _HomeState extends State<Home> {
   int amount = 0, distance, transport;
   OrderUserModel orderUserModel;
   double lat, lng;
+  
 
   Location location = Location();
   bool serviceLocationEnable;
-  PermissionStatus permissionStatus;
 
   // Method
   @override
@@ -73,14 +72,15 @@ class _HomeState extends State<Home> {
     nameShop = widget.nameShop;
     distance = widget.distance;
     transport = widget.transport;
+
+   
     checkPermission();
 
     //findLatLng2();
   }
 
-
-
   Future<Null> checkPermission() async {
+    
     try {
       serviceLocationEnable = await location.serviceEnabled();
       print('servcicerEnable111 =====>>> $serviceLocationEnable');
@@ -134,10 +134,10 @@ class _HomeState extends State<Home> {
   }
 
   Future<Null> findLatLng2() async {
-     LocationData locationData = await callculateFindLatLngOneTime();
-     print('locationDataData $locationData');
+    LocationData locationData = await callculateFindLatLngOneTime();
+    print('locationDataData $locationData');
 
-     setState(() {
+    setState(() {
       lat = locationData.latitude;
       lng = locationData.longitude;
 
@@ -146,8 +146,6 @@ class _HomeState extends State<Home> {
       checkLogin();
       checkWidget();
     });
-
-
   }
 
   Future<LocationData> callculateFindLatLngOneTime() async {
@@ -159,7 +157,6 @@ class _HomeState extends State<Home> {
       currentLocation = null;
       if (currentLocation == null) {
         exit(0);
-       
       }
     }
     return currentLocation;
@@ -226,7 +223,7 @@ class _HomeState extends State<Home> {
         }
       } else {
         setState(() {
-          cuttentWidget = SingInUser();
+          cuttentWidget = GuestV1();
         });
       }
     } catch (e) {}

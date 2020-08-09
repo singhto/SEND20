@@ -22,6 +22,8 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
   List<List<FoodModel>> listFoodModels = List();
   List<List<String>> listAmounts = List();
 
+  final GlobalKey<RefreshIndicatorState> _refresh = GlobalKey<RefreshIndicatorState>();
+
   // Method
   @override
   void initState() {
@@ -297,7 +299,21 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
       appBar: AppBar(
         title: Text('รายการสั่งอาหาร'),
       ),
-      body: currentWidget == null ? MyStyle().showProgress() : currentWidget,
+      body: RefreshIndicator(
+        key: _refresh,
+        child: currentWidget == null ? MyStyle().showProgress() : currentWidget,
+        onRefresh: _handleRefresh,
+      ),
+      
     );
+  }
+
+  Future<Null> _handleRefresh() async {
+    await Future.delayed(
+      Duration(seconds: 2),
+    );
+    setState(() {
+    });
+    return null;
   }
 }
