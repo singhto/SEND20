@@ -90,7 +90,7 @@ class GuestMapState extends State<GuestMap> {
         bearing: 192.8334901395799,
         target: LatLng(currentLat, currentLng),
         tilt: 59.440717697143555,
-        zoom: 19);
+        zoom: 16);
     print('=====>>>> $currentLat, $currentLng');
 
     final GoogleMapController controller = await _controller.future;

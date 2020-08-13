@@ -49,23 +49,23 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
           await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
       String nameShop = userShopModel.name;
 
-      double distance = MyAPI().calculateDistance(
-          double.parse(userModel.lat),
-          double.parse(userModel.lng),
-          double.parse(userShopModel.lat),
-          double.parse(userShopModel.lng));
-      print('distance ==>>> $distance');
+      // double distance = MyAPI().calculateDistance(
+      //     double.parse(userModel.lat),
+      //     double.parse(userModel.lng),
+      //     double.parse(userShopModel.lat),
+      //     double.parse(userShopModel.lng));
+      // print('distance ==>>> $distance');
 
-      int distanceToInt = distance.round();
-      print('distanceToInt ==>>> $distanceToInt');
+      // int distanceToInt = distance.round();
+      // print('distanceToInt ==>>> $distanceToInt');
 
-      int transport = await MyAPI().checkTransport(distanceToInt);
+      // int transport = await MyAPI().checkTransport(distanceToInt);
 
       setState(() {
         orderUserModels.add(orderUserModel);
         nameShops.add(nameShop);
-        distances.add(distanceToInt);
-        transports.add(transport);
+        //distances.add(distanceToInt);
+        //transports.add(transport);
       });
     }
   }
@@ -95,7 +95,7 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
                       style: MyStyle().h2Style,
                     ),
                   ),
-                  MyStyle().showTitleH2Primary('เลขที่ :'),
+                  MyStyle().showTitleH2Primary(' เลขที่ :'),
                   MyStyle().showTitleH2Primary(orderUserModels[index].id),
                 ],
               ),
@@ -105,14 +105,14 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
                   Container(
                     margin: EdgeInsets.only(left: 16.0),
                     child: Text(
-                      'ระยะทาง = ${distances[index]} กิโลเมตร',
+                      'ระยะทาง = ${orderUserModels[index].distance} กม.',
                       style: MyStyle().h2NormalStyle,
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(right: 16.0),
                     child: Text(
-                      'ค่าขนส่ง = ${transports[index]} บาท',
+                      'ค่าส่ง = ${orderUserModels[index].totalDelivery} บาท',
                       style: MyStyle().h2Style,
                     ),
                   ),

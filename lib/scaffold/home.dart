@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
+import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -90,7 +91,7 @@ class _HomeState extends State<Home> {
         print('servcicerEnable22222 =====>>> $serviceLocationEnable');
 
         if (!serviceLocationEnable) {
-          exit(0);
+          normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
         } else {
           findLatLng2();
         }
@@ -156,7 +157,7 @@ class _HomeState extends State<Home> {
       print('e  calut ====>>> ${e.toString()}');
       currentLocation = null;
       if (currentLocation == null) {
-        exit(0);
+        normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
       }
     }
     return currentLocation;

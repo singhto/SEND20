@@ -14,12 +14,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utility/my_style.dart';
 
-class DetailOrder extends StatefulWidget {
+class ReadDetailOrder extends StatefulWidget {
   final OrderUserModel orderUserModel;
   final String nameShop;
   final int distance;
   final int transport;
-  DetailOrder(
+  ReadDetailOrder(
       {Key key,
       this.orderUserModel,
       this.nameShop,
@@ -27,10 +27,10 @@ class DetailOrder extends StatefulWidget {
       this.transport})
       : super(key: key);
   @override
-  _DetailOrderState createState() => _DetailOrderState();
+  _ReadDetailOrderState createState() => _ReadDetailOrderState();
 }
 
-class _DetailOrderState extends State<DetailOrder> {
+class _ReadDetailOrderState extends State<ReadDetailOrder> {
   // Field
   OrderUserModel orderUserModel;
   String nameShop, nameUser, tokenUser;
@@ -145,20 +145,8 @@ class _DetailOrderState extends State<DetailOrder> {
     });
   }
 
-  Widget successJob() => FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: null,
-        child: Icon(Icons.android),
-      );
 
-  FloatingActionButton acceptJob() => FloatingActionButton(
-        child: Icon(Icons.directions_bike),
-        backgroundColor: orderUserModel.idDelivery.isEmpty
-            ? MyStyle().primaryColor
-            : Colors.green,
-        onPressed: () =>
-            orderUserModel.idDelivery.isEmpty ? confirmAccepp() : nearSuccess(),
-      );
+
 
   Future<Null> nearSuccess() async {
     showDialog(
@@ -376,6 +364,23 @@ class _DetailOrderState extends State<DetailOrder> {
         ),
       );
 
+        Widget sumTotalPrice() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'รวม  ',
+              style: MyStyle().h2StylePrimary,
+            ),
+            Text(
+              '${orderUserModel.sumTotal}',
+              style: MyStyle().h2StylePrimary,
+            ),
+          ],
+        ),
+      );
+
   Widget showNameUser() {
     return nameUser == null
         ? MyStyle().showTitle('ผู้สั่งอาหาร ')
@@ -493,7 +498,6 @@ class _DetailOrderState extends State<DetailOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: stateStatus ? acceptJob() : successJob(),
       appBar: AppBar(
         title: Text(
           'ระยะทาง ${orderUserModel.distance} กม.',
@@ -514,36 +518,13 @@ class _DetailOrderState extends State<DetailOrder> {
           Divider(),
           showSumFood(),
           showSumDistance(),
+          sumTotalPrice(),
           SizedBox(
-            height: 200.0,
+            height: 50.0,
           ),
         ],
       ),
-      bottomSheet: Container(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: Text(
-            'เริ่มภาระกิจ',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-            ),
-          ),
-        ),
-      ),
+
     );
   }
 }

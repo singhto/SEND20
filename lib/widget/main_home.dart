@@ -207,7 +207,7 @@ class _MainHomeState extends State<MainHome> {
           setState(() {
             userShopModels.add(model);
             statusLoad = false;
-            if (distance <= 10.0) {
+            if (distance <= 600.0) {
               statusDistance = false;
               //print('statusDistance หลัง setState $statusDistance');
               //print('statusLoad หลัง sets ==>> $statusLoad');
@@ -259,7 +259,7 @@ class _MainHomeState extends State<MainHome> {
           Navigator.of(context).push(route).then((value) => checkAmount());
         } else {
           normalDialog(context, 'SEND ปิดแล้ว',
-              'ต้องขอ อภัยมากๆ ครับ บริการส่งเวลา 8.00- 18.00 น.');
+              'SEND DRIVE บริการส่งเวลา 7.30- 20.00 น.');
         }
       },
       child: Card(

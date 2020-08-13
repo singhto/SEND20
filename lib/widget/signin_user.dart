@@ -7,8 +7,6 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
-import 'package:foodlion/widget/curve_clipper.dart';
-import 'package:foodlion/widget/register_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 

@@ -115,8 +115,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
           bottom: 120.0,
         ),
         child: FloatingActionButton(
-          backgroundColor:
-              statusReceive ? Colors.red : Colors.purple,
+          backgroundColor: statusReceive ? Colors.red : Colors.purple,
           onPressed: () {
             if (statusReceive) {
               confirmReceiveFood();
@@ -124,7 +123,9 @@ class _RiderSuccessState extends State<RiderSuccess> {
               confirmSuccessDialog();
             }
           },
-          child: stateStatus ? Icon(Icons.store_mall_directory) : Icon(Icons.account_box),
+          child: stateStatus
+              ? Icon(Icons.store_mall_directory)
+              : Icon(Icons.account_box),
         ),
       );
 
@@ -224,13 +225,19 @@ class _RiderSuccessState extends State<RiderSuccess> {
     return Scaffold(
       floatingActionButton: successJob(),
       appBar: AppBar(
-        title: Text('GO ร้าน$nameShop',style: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 2.0),),
+        title: Text(
+          'GO ร้าน$nameShop',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2.0),
+        ),
       ),
       body: Column(
         children: <Widget>[
           //MyStyle().showTitle(nameShop == null ? '' : nameShop),
           // Text('${orderUserModel.idShop}'),
           showListOrder(),
+          showSumFood(),
+          showSumDistance(),
+          sumTotalPrice(),
           Expanded(
             child: Container(
               child: lat == null || shopLatLng == null || userLatLng == null
@@ -275,7 +282,8 @@ class _RiderSuccessState extends State<RiderSuccess> {
     );
   }
 
-  Future<Null> confirmCallShop(String nameCall, String type, String idCall) async {
+  Future<Null> confirmCallShop(
+      String nameCall, String type, String idCall) async {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
@@ -369,46 +377,125 @@ class _RiderSuccessState extends State<RiderSuccess> {
         itemCount: nameFoods.length,
         itemBuilder: (value, index) => Container(
           padding: EdgeInsets.only(left: 16.0),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 3,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      nameFoods[index],
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          nameFoods[index],
+                          style: MyStyle().h2NormalStyleGrey,
+                        ),
+                        Text(
+                          orderUserModel.remarke,
+                          style: TextStyle(color: Colors.red),
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      amounts[index].toString(),
                       style: MyStyle().h2NormalStyleGrey,
                     ),
-                    Text(orderUserModel.remarke, style: TextStyle(color: Colors.red),)
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      prices[index].toString(),
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      '${amounts[index] * prices[index]}',
+                      style: MyStyle().h2NormalStyleGrey,
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  amounts[index].toString(),
-                  style: MyStyle().h2NormalStyleGrey,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  prices[index].toString(),
-                  style: MyStyle().h2NormalStyleGrey,
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  '${amounts[index] * prices[index]}',
-                  style: MyStyle().h2NormalStyleGrey,
-                ),
-              ),
+              
+              // Row(mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Text('ค่าขนส่ง ',style: MyStyle().h2NormalStyle,),
+              //     Text(
+              //       orderUserModel.totalDelivery,
+              //             style: MyStyle().h2NormalStyle,
+              //     ),
+              //    Text(' บาท',style: MyStyle().h2NormalStyle,),
+              //   ],
+              // ),
+              //  Row(mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     Text('รวมทั้งหมด ',style: MyStyle().h2NormalStyle,),
+              //     Text(
+              //       orderUserModel.sumTotal,
+              //             style: MyStyle().h2NormalStyle,
+              //     ),
+              //    Text(' บาท',style: MyStyle().h2NormalStyle,),
+              //   ],
+              // ),
             ],
           ),
         ),
       );
 
+      Widget showSumDistance() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'ค่าขนส่ง  ',
+              style: MyStyle().h2StylePrimary,
+            ),
+            Text(
+              '${orderUserModel.totalDelivery}',
+              style: MyStyle().h2StylePrimary,
+            ),
+          ],
+        ),
+      );
+
+  Widget sumTotalPrice() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'รวม  ',
+              style: MyStyle().h2StylePrimary,
+            ),
+            Text(
+              '${orderUserModel.sumTotal}',
+              style: MyStyle().h2StylePrimary,
+            ),
+          ],
+        ),
+      );
+
+  Widget showSumFood() => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              'ค่าอาหาร  ',
+              style: MyStyle().h2StylePrimary,
+            ),
+            Text(
+              '${orderUserModel.totalPrice}',
+              style: MyStyle().h2StylePrimary,
+            ),
+          ],
+        ),
+      );
   Future<Null> sendNotiToUser() async {
     UserModel userModel =
         await MyAPI().findDetailUserWhereId(orderUserModel.idUser);

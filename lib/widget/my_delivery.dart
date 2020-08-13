@@ -8,6 +8,7 @@ import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/detailOrder.dart';
 import 'package:foodlion/scaffold/home.dart';
+import 'package:foodlion/scaffold/readDetailOrder.dart';
 import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
@@ -209,16 +210,29 @@ class _MyDeliveryState extends State<MyDelivery> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(' ส่งที่ ${orderUserModels[index].nameLocal}',
-                        style: MyStyle().h2NormalStyleGrey),
+                    Expanded(
+                      child: Text(' ส่งที่ ${orderUserModels[index].nameLocal}',
+                          style: MyStyle().h2NormalStyleGrey),
+                    ),
                     IconButton(
-                        icon: Icon(Icons.phone_android, size: 30.0, color: Colors.red,),
+                        icon: Icon(
+                          Icons.remove_red_eye,
+                          size: 30.0,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          rountToReadDetailOrder(index);
+                        }),
+                    IconButton(
+                        icon: Icon(
+                          Icons.phone_android,
+                          size: 30.0,
+                          color: Colors.green,
+                        ),
                         onPressed: () {
                           //print('You Tap Shop namep $nameShops');
                           confirmCallShop(nameShop, 'Shop', idShop);
                         }),
-
-                        
                   ],
                 ),
               ],
@@ -227,6 +241,18 @@ class _MyDeliveryState extends State<MyDelivery> {
         ),
       ),
     );
+  }
+
+    rountToReadDetailOrder(int index) {
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (value) => ReadDetailOrder(
+        orderUserModel: orderUserModels[index],
+        nameShop: nameShops[index],
+        distance: distances[index],
+        transport: transports[index],
+      ),
+    );
+    Navigator.push(context, route).then((value) => readOrder());
   }
 
   Future<Null> confirmCallShop(

@@ -11,6 +11,7 @@ import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_toast.dart';
+import 'package:foodlion/widget/view_shop.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderShop extends StatefulWidget {
@@ -284,9 +285,11 @@ class _OrderShopState extends State<OrderShop> {
                           children: <Widget>[
                             Text(
                                 '${listFoodModels[index1][index2].nameFood} ${listFoodModels[index1][index2].detailFood}',
-                                style: MyStyle().h2Style), 
-                    
-                            Text('${orderUserModels[index1].remarke}',style: MyStyle().h2NormalStyleGrey,)
+                                style: MyStyle().h2Style),
+                            Text(
+                              '${orderUserModels[index1].remarke}',
+                              style: MyStyle().h2NormalStyleGrey,
+                            )
                           ],
                         ),
                       ),
@@ -596,29 +599,54 @@ class _OrderShopState extends State<OrderShop> {
     } catch (e) {}
     normalToast('ปิดร้าน');
   }
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: orderUserModels.length == 0 ? waitOrder() : showListOrder(),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showMyDialog();
-            //getShopWhrerId();
-          },
-          child: Icon(Icons.power_settings_new)
-          //backgroundColor: userShopModels[index].name == 'on'
-          //? Colors.pink.shade300
-          //: Colors.grey.shade300
+        body: Stack(
+      children: [
+        orderUserModels.length == 0 ? waitOrder() : showListOrder(),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10.0, right: 10.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  child: IconButton(
+                    icon: Icon(Icons.alarm_on, color: Colors.white),
+                    onPressed: () {
+                      _showMyDialog();
+                    },
+                  ),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.green),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Container(
+                  child: IconButton(
+                    icon: Icon(Icons.remove_red_eye, color: Colors.white),
+                    onPressed: () {
+                      MaterialPageRoute materialPageRoute = MaterialPageRoute(
+                        builder: (context) => ViewShop(),
+                      );
+                      Navigator.push(context, materialPageRoute);
+                    },
+                  ),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.orange),
+                ),
+              ],
+            ),
           ),
-
-          
-
-
-
-
-
-    );
+        ),
+      ],
+    ));
   }
 }
