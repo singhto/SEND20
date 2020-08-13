@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -7,11 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_model.dart';
 import 'package:foodlion/models/send_location_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
+import 'package:foodlion/scaffold/have_problem.dart';
 import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_constant.dart';
+import 'package:foodlion/utility/my_duration.dart';
 import 'package:foodlion/utility/my_search.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
@@ -50,12 +53,28 @@ class _MainHomeState extends State<MainHome> {
   @override
   void initState() {
     super.initState();
-
+    myDuration();
     aboutNotification();
     editToken();
     findLatLng();
 
     //findSendLocationWhereIdUser();
+  }
+
+  Future<Null> myDuration() async {
+    print('my Dutation ทำงาน');
+    Duration duration = Duration(seconds: 10);
+    await Timer(duration, () {
+      if (showWidgets.length == 0) {
+        //normalToast('ครบ 10 วินาทีแล้ว shopWidget.lengtho ==>0');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
+      }
+    });
   }
 
   Future<Null> findSendLocationWhereIdUser() async {
@@ -232,16 +251,14 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Widget showImageShop2(UserShopModel model) => Container(
-    
-    child: CachedNetworkImage(
-      height: 100.0,
-      width: MediaQuery.of(context).size.width,
-      imageUrl: model.urlShop,
-      placeholder: (value, string) => MyStyle().showProgress(),
-      fit: BoxFit.cover,
-    ),
-  );
-
+        child: CachedNetworkImage(
+          height: 100.0,
+          width: MediaQuery.of(context).size.width,
+          imageUrl: model.urlShop,
+          placeholder: (value, string) => MyStyle().showProgress(),
+          fit: BoxFit.cover,
+        ),
+      );
 
   Widget createCard(UserShopModel model, String distance) {
     return GestureDetector(
@@ -294,13 +311,13 @@ class _MainHomeState extends State<MainHome> {
   }
 
   Widget showName(UserShopModel model) => Expanded(
-      child: Text(model.name,
-        style: TextStyle(
-          fontWeight: FontWeight.w900,
-          color: Theme.of(context).primaryColor,
-          letterSpacing: 2.0,
-        )),
-  );
+        child: Text(model.name,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Theme.of(context).primaryColor,
+              letterSpacing: 2.0,
+            )),
+      );
 
   Text showStatus(UserShopModel model) => Text(model.status,
       style: TextStyle(
@@ -311,7 +328,6 @@ class _MainHomeState extends State<MainHome> {
       ));
 
   Widget showShop() {
-    //print('ขนาดของ showWinget ที่ showShop = ${showWidgets.length}');
     return showWidgets.length == 0
         ? MyStyle().showProgress()
         : Expanded(
@@ -324,6 +340,7 @@ class _MainHomeState extends State<MainHome> {
           );
   }
 
+ 
   Widget showCart() {
     return GestureDetector(
       onTap: () {
@@ -600,9 +617,10 @@ class _MainHomeState extends State<MainHome> {
         ),
       ),
       actions: <Widget>[
-        //showSearch(), 
-        
-        showCart()],
+        //showSearch(),
+
+        showCart()
+      ],
     );
   }
 
@@ -662,17 +680,26 @@ class _MainHomeState extends State<MainHome> {
       //print('$indexs');
     }
     return indexs.length == 0
-        ? Text('กด + เพิ่มสถานที่ส่งของคุณ',style: MyStyle().h2Stylegreen,)
+        ? Text(
+            'กด + เพิ่มสถานที่ส่งของคุณ',
+            style: MyStyle().h2Stylegreen,
+          )
         : DropdownButton<int>(
             items: indexs
                 .map(
                   (e) => DropdownMenuItem(
-                    child: Text(sendLocationModels[e].nameLocation,style: MyStyle().h2Stylegreen,),
+                    child: Text(
+                      sendLocationModels[e].nameLocation,
+                      style: MyStyle().h2Stylegreen,
+                    ),
                     value: e,
                   ),
                 )
                 .toList(),
-            hint: Text('ตำแหน่งปัจจุบัน',style: MyStyle().h2Stylegreen,),
+            hint: Text(
+              'ตำแหน่งปัจจุบัน',
+              style: MyStyle().h2Stylegreen,
+            ),
             value: indexChooseLocation,
             onChanged: (value) {
               setState(() {

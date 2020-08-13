@@ -1,12 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
+import 'package:foodlion/scaffold/have_problem.dart';
+import 'package:foodlion/scaffold/location_have_problem.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
-import 'package:foodlion/utility/normal_dialog.dart';
+import 'package:foodlion/scaffold/warning_internet.dart';
+import 'package:foodlion/utility/my_duration.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -59,7 +63,6 @@ class _HomeState extends State<Home> {
   int amount = 0, distance, transport;
   OrderUserModel orderUserModel;
   double lat, lng;
-  
 
   Location location = Location();
   bool serviceLocationEnable;
@@ -68,6 +71,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    
+    print('initState work');
+    checkInternet();
 
     orderUserModel = widget.orderUserModel;
     nameShop = widget.nameShop;
@@ -75,13 +81,30 @@ class _HomeState extends State<Home> {
     transport = widget.transport;
 
    
+
     checkPermission();
 
     //findLatLng2();
   }
 
+  Future<Null> myDuration() async {
+    print('my Dutation ทำงาน');
+    Duration duration = Duration(seconds: 10);
+    await Timer(duration, () {
+      if (lat == null) {
+        //normalToast('ครบ 10 วินาทีแล้ว shopWidget.lengtho ==>0');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
+      }
+    });
+  }
+
   Future<Null> checkPermission() async {
-    
+    print('checkPermission');
     try {
       serviceLocationEnable = await location.serviceEnabled();
       print('servcicerEnable111 =====>>> $serviceLocationEnable');
@@ -91,7 +114,13 @@ class _HomeState extends State<Home> {
         print('servcicerEnable22222 =====>>> $serviceLocationEnable');
 
         if (!serviceLocationEnable) {
-          normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
+          //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
+           Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LocationHaveProblem(),
+            ),
+            (route) => false);
         } else {
           findLatLng2();
         }
@@ -157,7 +186,16 @@ class _HomeState extends State<Home> {
       print('e  calut ====>>> ${e.toString()}');
       currentLocation = null;
       if (currentLocation == null) {
-        normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
+        //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
+
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
+
+
       }
     }
     return currentLocation;
@@ -948,5 +986,29 @@ class _HomeState extends State<Home> {
       ),
       body: cuttentWidget,
     );
+  }
+
+  Future<Null> checkInternet() async {
+    try {
+      var result = await InternetAddress.lookup('google.com');
+      if ((result.isNotEmpty) && (result[0].rawAddress.isNotEmpty)) {
+        print('มี Internet');
+      } else {
+        print('ใน IF Inter False หรือ ไม่มี Internet');
+        routeToWarningInternet();
+      }
+    } catch (e) {
+      print('Inter False หรือ ไม่มี Internet');
+      routeToWarningInternet();
+    }
+  }
+
+  void routeToWarningInternet() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WarningInternet(),
+        ),
+        (route) => false);
   }
 }

@@ -8,15 +8,15 @@ import 'package:foodlion/utility/my_constant.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 import 'main_home.dart';
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: <String>[
-    'email',
-  ],
-);
+// GoogleSignIn _googleSignIn = GoogleSignIn(
+//   scopes: <String>[
+//     'email',
+//   ],
+// );
 
 class SingInUser extends StatefulWidget {
   @override
@@ -25,22 +25,22 @@ class SingInUser extends StatefulWidget {
 
 class _SingInUserState extends State<SingInUser> {
   // Filed
-  GoogleSignInAccount _currentUser;
+  //GoogleSignInAccount _currentUser;
   String user, password;
   bool isLoading = false;
 
   // Method
 
-  Future<void> _handleSignIn() async {
-    try {
-      _currentUser = await _googleSignIn.signIn();
-      print(_currentUser);
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => MainHome()));
-    } catch (error) {
-      print(error);
-    }
-  }
+  // Future<void> _handleSignIn() async {
+  //   try {
+  //     _currentUser = await _googleSignIn.signIn();
+  //     print(_currentUser);
+  //     Navigator.of(context)
+  //         .pushReplacement(MaterialPageRoute(builder: (context) => MainHome()));
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
 
   Widget loginGoogle() {
     return Column(
@@ -49,7 +49,7 @@ class _SingInUserState extends State<SingInUser> {
         FlatButton.icon(
             color: Colors.red,
             textColor: Colors.white,
-            onPressed: () => _handleSignIn(),
+            onPressed: () {},
             icon: Text(
               'G',
               style: TextStyle(
