@@ -20,6 +20,7 @@ import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/utility/sqlite_helper.dart';
+import 'package:foodlion/widget/guestMap.dart';
 import 'package:foodlion/widget/my_food.dart';
 import 'package:foodlion/widget/notification_user.dart';
 import 'package:foodlion/widget/show_order_user.dart';
@@ -340,7 +341,6 @@ class _MainHomeState extends State<MainHome> {
           );
   }
 
- 
   Widget showCart() {
     return GestureDetector(
       onTap: () {
@@ -648,7 +648,14 @@ class _MainHomeState extends State<MainHome> {
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/guestMap').then((value) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GuestMap(
+                          myLat: lat,
+                          myLng: lng,
+                        ),
+                      )).then((value) {
                     findSendLocationWhereIdUser();
                   });
                 }),
@@ -685,17 +692,27 @@ class _MainHomeState extends State<MainHome> {
             style: MyStyle().h2Stylegreen,
           )
         : DropdownButton<int>(
-            items: indexs
-                .map(
-                  (e) => DropdownMenuItem(
+            items: indexs.map(
+              (e) {
+
+                String string = sendLocationModels[e].nameLocation;
+                if (string.length >=20) {
+                  string = string.substring(0, 19);
+                  string = '$string ...';
+                }
+
+                return DropdownMenuItem(
+                  child: Container(
+                    width: 180,
                     child: Text(
-                      sendLocationModels[e].nameLocation,
+                      string,
                       style: MyStyle().h2Stylegreen,
                     ),
-                    value: e,
                   ),
-                )
-                .toList(),
+                  value: e,
+                );
+              },
+            ).toList(),
             hint: Text(
               'ตำแหน่งปัจจุบัน',
               style: MyStyle().h2Stylegreen,

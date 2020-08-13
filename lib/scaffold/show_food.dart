@@ -15,15 +15,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowFood extends StatefulWidget {
   final FoodModel foodModel;
-  final nameLocalChoose, distance;
+  final String nameLocalChoose, distance;
   final lat, lng;
+  final int transportInt;
+
   ShowFood(
       {Key key,
       this.foodModel,
       this.nameLocalChoose,
       this.lat,
       this.lng,
-      this.distance});
+      this.distance,
+      this.transportInt});
   @override
   _ShowFoodState createState() => _ShowFoodState();
 }
@@ -570,7 +573,7 @@ class _ShowFoodState extends State<ShowFood> {
                     transport: transport.toString(),
                     distance: distance);
                 print('model  ======= ${model.toJson()}');
-                SQLiteHelper().insertDatabase(model);
+                //SQLiteHelper().insertDatabase(model);
                 Navigator.of(context).pop();
               }
             },

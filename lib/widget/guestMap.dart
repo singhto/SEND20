@@ -10,6 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GuestMap extends StatefulWidget {
+  final double myLat, myLng;
+  GuestMap({Key key, this.myLat, this.myLng}) : super(key: key);
   @override
   GuestMapState createState() => GuestMapState();
 }
@@ -26,10 +28,7 @@ class GuestMapState extends State<GuestMap> {
 
   Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition myPosition = CameraPosition(
-    target: LatLng(16.751608, 101.215754),
-    zoom: 16,
-  );
+  CameraPosition myPosition;
 
   Future gotoCurrentPosition() async {
     CameraPosition ps23 = CameraPosition(
@@ -39,18 +38,29 @@ class GuestMapState extends State<GuestMap> {
         zoom: 16);
     print('=====>>>> $lat, $lng');
 
+    double mylat = widget.myLat;
+    double mylng = widget.myLng;
+
+    CameraPosition position = CameraPosition(
+      target: LatLng(mylat, mylng),
+      zoom: 16,
+    );
+
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(ps23));
+    controller.animateCamera(CameraUpdate.newCameraPosition(position));
   }
 
   Future getLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
+    // Position position = await Geolocator()
+    //     .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    // print(position);
+
+    double myLat = widget.myLat;
+    double myLng = widget.myLng;
 
     setState(() {
-      lat = position.latitude;
-      lng = position.longitude;
+      lat = myLat;
+      lng = myLng;
     });
   }
 
@@ -65,7 +75,9 @@ class GuestMapState extends State<GuestMap> {
 
     final Marker marker = Marker(
       markerId: markerId,
-      position: LatLng(currentLat, currentLng),
+      position: currentLat == null
+          ? LatLng(widget.myLat, widget.myLng)
+          : LatLng(currentLat, currentLng),
       infoWindow:
           InfoWindow(title: 'จุดส่งอาหาร', snippet: 'เลื่อนจอเพื่อปักหมุด'),
       icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -137,6 +149,7 @@ class GuestMapState extends State<GuestMap> {
                       normalDialog(context, 'ยังไม่ใส่ชื่อที่จัดส่ง',
                           'กรุณากำหนดชื่อที่จัดส่ง');
                     } else {
+                      Navigator.pop(context);
                       uploadValuToSendLocation();
                     }
                   },
@@ -242,22 +255,7 @@ class GuestMapState extends State<GuestMap> {
         ),
         body: Stack(
           children: <Widget>[
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: myPosition,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-              onCameraMove: (CameraPosition position) {
-                print(position);
-                setState(() {
-                  currentLat = position.target.latitude;
-                  currentLng = position.target.longitude;
-                });
-                _add();
-              },
-              markers: Set<Marker>.of(markers.values),
-            ),
+            buildGoogleMap(),
             Padding(
               padding: const EdgeInsets.only(top: 10.0, right: 10.0),
               child: Align(
@@ -273,9 +271,9 @@ class GuestMapState extends State<GuestMap> {
                             Icon(Icons.location_searching, color: Colors.white),
                         onPressed: () {
                           setState(() {
-                              gotoCurrentPosition();
+                            gotoCurrentPosition();
                           });
-                        
+
                           //_add();
                         },
                       ),
@@ -304,5 +302,41 @@ class GuestMapState extends State<GuestMap> {
             //_buildContainer(),
           ],
         ));
+  }
+
+  GoogleMap buildGoogleMap() {
+    if (lat != null) {
+      myPosition = CameraPosition(
+        target: LatLng(lat, lng),
+        zoom: 16,
+      );
+    }
+
+    Set<Marker> myMarker() {
+      return <Marker>[
+        Marker(
+          markerId: MarkerId('1'),
+          position: LatLng(widget.myLat, widget.myLng),
+        ),
+      ].toSet();
+    }
+
+    return GoogleMap(
+      mapType: MapType.normal,
+      initialCameraPosition: myPosition,
+      onMapCreated: (GoogleMapController controller) {
+        _controller.complete(controller);
+      },
+      onCameraMove: (CameraPosition position) {
+        print(position);
+        setState(() {
+          currentLat = position.target.latitude;
+          currentLng = position.target.longitude;
+        });
+        _add();
+      },
+      markers:
+          markers.length == 0 ? myMarker() : Set<Marker>.of(markers.values),
+    );
   }
 }

@@ -20,6 +20,7 @@ class MyFood extends StatefulWidget {
   final double lat;
   final double lng;
 
+
   MyFood(
       {Key key,
       this.idShop,
@@ -64,6 +65,9 @@ class _MyFoodState extends State<MyFood> {
   String nameShop, nameLocalChoose, distance;
   double latChoose, lngChoose;
 
+  UserShopModel myUserShopModel;
+  int transportInt;
+
   // Method
   @override
   void initState() {
@@ -77,6 +81,22 @@ class _MyFoodState extends State<MyFood> {
 
     readAllFood();
     checkAmount();
+    calculateTransportFromDistance();
+  }
+
+  Future<Null> calculateTransportFromDistance () async {
+
+    print('distance  ==== ==  $distance');
+
+    double distanceDou = double.parse(distance);
+    int distanceInt = distanceDou.ceil();
+
+    int i = await MyAPI().checkTransport(distanceInt);
+
+    print('i ###### $i');
+    setState(() {
+      transportInt = i;
+    });
   }
 
   Future<void> checkAmount() async {
@@ -98,11 +118,17 @@ class _MyFoodState extends State<MyFood> {
   Future<void> readAllFood() async {
     String idShop = await getIdShop();
 
+    // myUserShopModel = await MyAPI().findDetailShopWhereId(idShop);
+
     if (myIdShop != null) {
       idShop = myIdShop;
     }
 
-    // print('idShop ===> $idShop');
+    print('idShop ===> $idShop');
+    myUserShopModel = await MyAPI().findDetailShopWhereId(idShop);
+
+
+    print('idshop $idShop, url === ${myUserShopModel.urlShop}');
 
     String url =
         'http://movehubs.com/app/getFoodWhereIdShop.php?isAdd=true&idShop=$idShop';
@@ -116,14 +142,19 @@ class _MyFoodState extends State<MyFood> {
 
       for (var map in result) {
         FoodModel model = FoodModel.fromJson(map);
+        print('mappppp ==== $map');
 
         if (nameShop == null) {
           nameShop = await MyAPI().findNameShopWhere(model.idShop);
         }
+        userShopModel = UserShopModel.fromJson(map);
+        
+        print('url Image = ${userShopModel.urlShop}');
+
         setState(() {
           foodModels.add(model);
           searchFoodModels = foodModels;
-          userShopModel = UserShopModel.fromJson(map);
+
           userShopModels.add(userShopModel);
           statusData = false;
         });
@@ -144,46 +175,54 @@ class _MyFoodState extends State<MyFood> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Container(
-              margin: EdgeInsets.only(top: 5, bottom: 5),
-              //width: 250.0,
-              child: TextField(
-                onChanged: (value) {
-                  dedouncer.run(() {
-                    setState(() {
-                      searchFoodModels =
-                          foodModels.where((FoodModel foodModel) {
-                        return (foodModel.nameFood
-                            .toLowerCase()
-                            .contains(value.toLowerCase()));
-                      }).toList();
-                    });
-                  });
-                },
-                decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 30.0,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        borderSide: BorderSide(
-                            width: 0.8, color: Theme.of(context).primaryColor)),
-                    hintText: 'ค้นหารายการอาหาร'),
-              ),
-            ),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: ScrollPhysics(),
-            itemCount: searchFoodModels.length,
-            itemBuilder: (value, index) {
-              return showContent(index);
-            },
-          ),
+          infoShop(),
+          showSearch(),
+          listMenuFood(),
         ],
+      ),
+    );
+  }
+
+  ListView listMenuFood() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemCount: searchFoodModels.length,
+      itemBuilder: (value, index) {
+        return showContent(index);
+      },
+    );
+  }
+
+  Padding showSearch() {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+        margin: EdgeInsets.only(top: 5, bottom: 5),
+        //width: 250.0,
+        child: TextField(
+          onChanged: (value) {
+            dedouncer.run(() {
+              setState(() {
+                searchFoodModels = foodModels.where((FoodModel foodModel) {
+                  return (foodModel.nameFood
+                      .toLowerCase()
+                      .contains(value.toLowerCase()));
+                }).toList();
+              });
+            });
+          },
+          decoration: InputDecoration(
+              prefixIcon: Icon(
+                Icons.search,
+                size: 30.0,
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                      width: 0.8, color: Theme.of(context).primaryColor)),
+              hintText: 'ค้นหารายการอาหาร'),
+        ),
       ),
     );
   }
@@ -198,6 +237,7 @@ class _MyFoodState extends State<MyFood> {
             lat: latChoose,
             lng: lngChoose,
             distance: distance,
+            transportInt: transportInt,
           ),
         );
         Navigator.of(context).push(route).then(
@@ -263,7 +303,7 @@ class _MyFoodState extends State<MyFood> {
   }
 
   Widget showImagefood(int index) => ClipRRect(
-    borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(15.0),
         child: CachedNetworkImage(
           height: 100.0,
           width: 100.0,
@@ -308,4 +348,28 @@ class _MyFoodState extends State<MyFood> {
       body: statusData ? showNoData() : showListFood(),
     );
   }
+
+  Widget infoShop() {
+    return Column(
+      children: [
+        showImageShop(),
+        Text('ระยะ $distance'),
+        Text('สถานที่ส่ง $nameLocalChoose'),
+        Text(transportInt == null ?'' : 'ค่าขนส่ง $transportInt'),
+      ],
+    );
+  }
+
+  Widget showImageShop() => Container(
+        width: 100,
+        child: myUserShopModel == null
+            ? MyStyle().showProgress()
+            : CachedNetworkImage(
+                imageUrl: myUserShopModel.urlShop,
+                placeholder: (context, url) => MyStyle().showProgress(),
+                errorWidget: (context, url, error) => Center(
+                  child: Text('ไม่มีรูปภาพ'),
+                ),
+              ),
+      );
 }
