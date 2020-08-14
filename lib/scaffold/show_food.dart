@@ -87,7 +87,7 @@ class _ShowFoodState extends State<ShowFood> {
   Future<Null> findTransport() async {
     print('disss  === $distance');
     double distanceDou = double.parse(distance.trim());
-    int distanceInt = distanceDou.round();
+    int distanceInt = distanceDou.ceil();
     print('disssInt  === $distanceInt');
     transport = await MyAPI().checkTransport(distanceInt);
     print('transport === $transport');
@@ -573,7 +573,7 @@ class _ShowFoodState extends State<ShowFood> {
                     transport: transport.toString(),
                     distance: distance);
                 print('model  ======= ${model.toJson()}');
-                //SQLiteHelper().insertDatabase(model);
+                SQLiteHelper().insertDatabase(model);
                 Navigator.of(context).pop();
               }
             },

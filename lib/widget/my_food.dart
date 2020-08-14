@@ -20,7 +20,6 @@ class MyFood extends StatefulWidget {
   final double lat;
   final double lng;
 
-
   MyFood(
       {Key key,
       this.idShop,
@@ -84,8 +83,7 @@ class _MyFoodState extends State<MyFood> {
     calculateTransportFromDistance();
   }
 
-  Future<Null> calculateTransportFromDistance () async {
-
+  Future<Null> calculateTransportFromDistance() async {
     print('distance  ==== ==  $distance');
 
     double distanceDou = double.parse(distance);
@@ -127,7 +125,6 @@ class _MyFoodState extends State<MyFood> {
     print('idShop ===> $idShop');
     myUserShopModel = await MyAPI().findDetailShopWhereId(idShop);
 
-
     print('idshop $idShop, url === ${myUserShopModel.urlShop}');
 
     String url =
@@ -148,7 +145,7 @@ class _MyFoodState extends State<MyFood> {
           nameShop = await MyAPI().findNameShopWhere(model.idShop);
         }
         userShopModel = UserShopModel.fromJson(map);
-        
+
         print('url Image = ${userShopModel.urlShop}');
 
         setState(() {
@@ -353,23 +350,36 @@ class _MyFoodState extends State<MyFood> {
     return Column(
       children: [
         showImageShop(),
-        Text('ระยะ $distance'),
-        Text('สถานที่ส่ง $nameLocalChoose'),
-        Text(transportInt == null ?'' : 'ค่าขนส่ง $transportInt'),
+        showDistanceNameLocal(),
       ],
     );
   }
 
-  Widget showImageShop() => Container(
-        width: 100,
-        child: myUserShopModel == null
-            ? MyStyle().showProgress()
-            : CachedNetworkImage(
-                imageUrl: myUserShopModel.urlShop,
-                placeholder: (context, url) => MyStyle().showProgress(),
-                errorWidget: (context, url, error) => Center(
-                  child: Text('ไม่มีรูปภาพ'),
-                ),
-              ),
-      );
+  Widget showDistanceNameLocal() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10,),
+      child: Row(
+        
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+
+          Text('ส่งที่ $nameLocalChoose',style: MyStyle().h2Stylegreen,),
+          Text(transportInt == null ? '' : 'ค่าส่ง $transportInt บาท', style: MyStyle().h2Stylegreen,),
+        ],
+      ),
+    );
+  }
+
+  Widget showImageShop() => myUserShopModel == null
+      ? MyStyle().showProgress()
+      : CachedNetworkImage(
+          height: 200.0,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+          imageUrl: myUserShopModel.urlShop,
+          placeholder: (context, url) => MyStyle().showProgress(),
+          errorWidget: (context, url, error) => Center(
+            child: Text('ไม่มีรูปภาพ'),
+          ),
+        );
 }

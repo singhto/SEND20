@@ -233,7 +233,14 @@ class _OrderShopState extends State<OrderShop> {
         child: Card(
           child: Column(
             children: <Widget>[
-              MyStyle().showTitle('คุณ${nameUsers[index1]}'),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  MyStyle().showTitle('คุณ${nameUsers[index1]}'),
+                  IconButton(icon: Icon(Icons.phone_android, color: Colors.green,), onPressed: (){
+                    //โทรหาลูกค้า
+                  })
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Row(
@@ -469,6 +476,7 @@ class _OrderShopState extends State<OrderShop> {
       onPressed: () {
         editStatusByShop(index, 'ShopOrder');
         Navigator.pop(context);
+        
       },
       icon: Icon(
         Icons.check,

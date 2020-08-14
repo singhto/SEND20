@@ -32,10 +32,10 @@ class GuestMapState extends State<GuestMap> {
 
   Future gotoCurrentPosition() async {
     CameraPosition ps23 = CameraPosition(
-        bearing: 192.8334901395799,
+        //bearing: 192.8334901395799,
         target: LatLng(lat, lng),
-        tilt: 59.440717697143555,
-        zoom: 16);
+        //tilt: 59.440717697143555,
+        zoom: 18);
     print('=====>>>> $lat, $lng');
 
     double mylat = widget.myLat;
@@ -43,7 +43,7 @@ class GuestMapState extends State<GuestMap> {
 
     CameraPosition position = CameraPosition(
       target: LatLng(mylat, mylng),
-      zoom: 16,
+      zoom: 18,
     );
 
     final GoogleMapController controller = await _controller.future;
@@ -99,10 +99,10 @@ class GuestMapState extends State<GuestMap> {
 
   Future updateLatLng() async {
     CameraPosition ps23 = CameraPosition(
-        bearing: 192.8334901395799,
+        //bearing: 192.8334901395799,
         target: LatLng(currentLat, currentLng),
-        tilt: 59.440717697143555,
-        zoom: 16);
+        //tilt: 59.440717697143555,
+        zoom: 18);
     print('=====>>>> $currentLat, $currentLng');
 
     final GoogleMapController controller = await _controller.future;
@@ -180,63 +180,6 @@ class GuestMapState extends State<GuestMap> {
     });
   }
 
-  Widget _buildContainer() {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20.0),
-        height: 150.0,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            SizedBox(width: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _boxes(),
-            ),
-            SizedBox(width: 10.0),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _boxes() {
-    return GestureDetector(
-      onTap: () {
-        MaterialPageRoute route = MaterialPageRoute(
-          builder: (context) => UserHome(),
-        );
-        Navigator.pushAndRemoveUntil(context, route, (route) => false);
-      },
-      child: Container(
-        margin: EdgeInsets.all(10.0),
-        height: 100.0,
-        width: 100.0,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.orange,
-                //offset: Offset(0, 3),
-                //blurRadius: 6.0,
-              )
-            ],
-            border: Border.all(
-              //width: 2.0,
-              color: Theme.of(context).primaryColor,
-            )),
-        child: ClipOval(
-          child: Center(
-              child: Text('Exe.',
-                  style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white))),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +242,6 @@ class GuestMapState extends State<GuestMap> {
                 ),
               ),
             ),
-            //_buildContainer(),
           ],
         ));
   }
@@ -308,7 +250,7 @@ class GuestMapState extends State<GuestMap> {
     if (lat != null) {
       myPosition = CameraPosition(
         target: LatLng(lat, lng),
-        zoom: 16,
+        zoom: 18,
       );
     }
 

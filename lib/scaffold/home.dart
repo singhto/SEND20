@@ -10,7 +10,6 @@ import 'package:foodlion/scaffold/location_have_problem.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/scaffold/warning_internet.dart';
-import 'package:foodlion/utility/my_duration.dart';
 import 'package:foodlion/widget/add_my_food.dart';
 import 'package:foodlion/widget/guest.dart';
 import 'package:foodlion/widget/guestV1.dart';
@@ -71,7 +70,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    
+
     print('initState work');
     checkInternet();
 
@@ -80,10 +79,8 @@ class _HomeState extends State<Home> {
     distance = widget.distance;
     transport = widget.transport;
 
-   
-
     checkPermission();
-
+    //myDuration();
     //findLatLng2();
   }
 
@@ -115,12 +112,12 @@ class _HomeState extends State<Home> {
 
         if (!serviceLocationEnable) {
           //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
-           Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LocationHaveProblem(),
-            ),
-            (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationHaveProblem(),
+              ),
+              (route) => false);
         } else {
           findLatLng2();
         }
@@ -194,8 +191,6 @@ class _HomeState extends State<Home> {
               builder: (context) => HaveProblem(),
             ),
             (route) => false);
-
-
       }
     }
     return currentLocation;

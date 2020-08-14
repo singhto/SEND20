@@ -576,7 +576,10 @@ class _MainHomeState extends State<MainHome> {
       ),
       child: Center(
         child: FlatButton(
-          onPressed: () async {},
+          onPressed: () async {
+      
+           
+          },
           child: Column(
             children: <Widget>[
               LinearProgressIndicator(
@@ -714,7 +717,7 @@ class _MainHomeState extends State<MainHome> {
               },
             ).toList(),
             hint: Text(
-              'ตำแหน่งปัจจุบัน',
+              'พิกัดเครื่อง',
               style: MyStyle().h2Stylegreen,
             ),
             value: indexChooseLocation,
@@ -765,7 +768,7 @@ class _MainHomeState extends State<MainHome> {
                     ),
         ],
       ),
-      //bottomSheet: buildBottomSheet(context),
+      bottomSheet: buildBottomSheet(context),
     );
   }
 }

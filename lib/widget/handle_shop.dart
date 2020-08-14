@@ -226,7 +226,7 @@ class _HandleShopState extends State<HandleShop> {
             flex: 1,
             child: Center(
               child: Text(
-                'รวม',
+                'ราคา',
                 style: MyStyle().h3StyleDark,
               ),
             ),
