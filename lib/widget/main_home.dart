@@ -101,7 +101,7 @@ class _MainHomeState extends State<MainHome> {
 
   Future<Null> myDuration() async {
     print('my Dutation ทำงาน');
-    Duration duration = Duration(seconds: 10);
+    Duration duration = Duration(seconds: 12);
     await Timer(duration, () {
       if (showWidgets.length == 0) {
         //normalToast('ครบ 10 วินาทีแล้ว shopWidget.lengtho ==>0');
@@ -244,9 +244,9 @@ class _MainHomeState extends State<MainHome> {
 
         int i = 0;
 
-         if (nearShopModels.length != 0) {
-            nearShopModels.clear();
-          }
+        if (nearShopModels.length != 0) {
+          nearShopModels.clear();
+        }
 
         for (var map in result) {
           i++;
@@ -261,12 +261,12 @@ class _MainHomeState extends State<MainHome> {
 
           var myFormat = NumberFormat('##0.0#', 'en_US');
 
-         String distanceString = myFormat.format(distance);
+          String distanceString = myFormat.format(distance);
 
           setState(() {
             userShopModels.add(model);
             statusLoad = false;
-            if (distance <= 600.0) {
+            if (distance <= 10.0) {
               distances.add(distanceString);
               nearShopModels.add(model);
 
@@ -651,20 +651,24 @@ class _MainHomeState extends State<MainHome> {
     return AppBar(
       title: Text('ค้นหาร้านค้า'),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.search, color: Colors.white),
-          onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchViewShop(
-                  userShopModels: nearShopModels,
-                  nameLocalChoose: nameLocalChoose,
-                  distances: distances,
-                ),
-              )),
-        ),
+        //buildISearchViewShop(),
         showCart(),
       ],
+    );
+  }
+
+  Widget buildISearchViewShop() {
+    return IconButton(
+      icon: Icon(Icons.search, color: Colors.white),
+      onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SearchViewShop(
+              userShopModels: nearShopModels,
+              nameLocalChoose: nameLocalChoose,
+              distances: distances,
+            ),
+          )),
     );
   }
 
@@ -680,42 +684,38 @@ class _MainHomeState extends State<MainHome> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            SizedBox(
-              width: 20.0,
-            ),
-            IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  size: 30,
-                  color: Theme.of(context).primaryColor,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GuestMap(
-                          myLat: lat,
-                          myLng: lng,
-                        ),
-                      )).then((value) {
-                    findSendLocationWhereIdUser();
-                  });
-                }),
-            SizedBox(
-              width: 10.0,
-            ),
-            Text(
-              'ส่งที่ :',
-              style: MyStyle().h3Style,
-            ),
-            SizedBox(
-              width: 10.0,
-            ),
-            buildDropDown(context),
-          ],
+        SizedBox(
+          width: 20.0,
         ),
+        IconButton(
+            icon: Icon(
+              Icons.add_circle,
+              size: 30,
+              color: Colors.green,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GuestMap(
+                      myLat: lat,
+                      myLng: lng,
+                    ),
+                  )).then((value) {
+                findSendLocationWhereIdUser();
+              });
+            }),
+        SizedBox(
+          width: 10.0,
+        ),
+        Text(
+          'ส่งที่ :',
+          style: MyStyle().h3Style,
+        ),
+        SizedBox(
+          width: 10.0,
+        ),
+        buildDropDown(context),
       ],
     );
   }

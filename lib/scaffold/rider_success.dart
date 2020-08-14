@@ -32,6 +32,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
   int sumPrice = 0;
   bool stateStatus = true, statusReceive = true;
   double lat, lng;
+   List<String> detailFoods = List();
 
   @override
   void initState() {
@@ -106,6 +107,8 @@ class _RiderSuccessState extends State<RiderSuccess> {
       setState(() {
         nameFoods.add(foodModel.nameFood);
         prices.add(int.parse(foodModel.priceFood));
+        detailFoods.add(foodModel.detailFood);
+
       });
     }
   }
@@ -322,7 +325,7 @@ class _RiderSuccessState extends State<RiderSuccess> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('คุณต้องการโทรหาร $nameCall'),
+        title: Text('คุณต้องการโทรหา $nameCall'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -391,9 +394,9 @@ class _RiderSuccessState extends State<RiderSuccess> {
                           style: MyStyle().h2NormalStyleGrey,
                         ),
                         Text(
-                          orderUserModel.remarke,
-                          style: TextStyle(color: Colors.red),
-                        )
+                      detailFoods[index],
+                      style: TextStyle(fontSize: 16,color: Colors.grey,letterSpacing: 1)
+                    ),
                       ],
                     ),
                   ),

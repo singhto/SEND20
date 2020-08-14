@@ -22,6 +22,8 @@ class _HandleShopState extends State<HandleShop> {
   List<List<FoodModel>> listFoodModels = List();
   List<List<String>> listAmounts = List();
 
+  List<List<String>> listRemark = List();
+
   // Method
   @override
   void initState() {
@@ -51,6 +53,20 @@ class _HandleShopState extends State<HandleShop> {
       var result = json.decode(response.data);
       for (var map in result) {
         OrderUserModel orderUserModel = OrderUserModel.fromJson(map);
+
+        String remarkString = orderUserModel.remarke;
+        remarkString = remarkString.substring(1, remarkString.length - 1);
+        List<String> remarks = remarkString.split(',');
+        if (remarks.length != 0) {
+          int index = 0;
+          for (var string in remarks) {
+            remarks[index] = string.trim();
+            index++;
+          }
+          listRemark.add(remarks);
+        } else {
+          remarks.add('');
+        }
 
         String amountString = orderUserModel.amountFoods;
         amountString = amountString.substring(1, (amountString.length - 1));
@@ -133,8 +149,7 @@ class _HandleShopState extends State<HandleShop> {
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(right: 16.0),
-            child: MyStyle().showTitleH2Green(
-                'คอมมิชชั่น 0 บาท'),
+            child: MyStyle().showTitleH2Green('คอมมิชชั่น 0 บาท'),
           ),
         ],
       );
@@ -248,10 +263,7 @@ class _HandleShopState extends State<HandleShop> {
                   Text(
                       '${listFoodModels[index][index2].nameFood} ${listFoodModels[index][index2].detailFood}',
                       style: MyStyle().h2NormalStyleGrey),
-                  Text(
-                    '${orderUserModels[index].remarke}',
-                    style: MyStyle().h2NormalStyleGrey,
-                  )
+                  Text(listRemark[index][index2]),
                 ],
               ),
             ),

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
+import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/widget/my_food.dart';
 
 class SearchViewShop extends StatefulWidget {
   final List<UserShopModel> userShopModels;
   final String nameLocalChoose;
   final List<String> distances;
+  
   SearchViewShop({this.userShopModels, this.nameLocalChoose, this.distances});
   @override
   _SearchViewShopState createState() => _SearchViewShopState();
@@ -110,14 +112,11 @@ class _SearchViewShopState extends State<SearchViewShop> {
           if (MyAPI().checkTimeShop()) {
           MaterialPageRoute route = MaterialPageRoute(
             builder: (cont) => MyFood(
-              idShop: model.id,
+              idShop: idShop,
               nameLocalChoose: nameLocalChoose,
-              lat: latChoose,
-              lng: lngChoose,
-              distance: distance,
             ),
           );
-          Navigator.of(context).push(route).then((value) => checkAmount());
+          Navigator.of(context).push(route).then((value) => (idShop));
         } else {
           normalDialog(context, 'SEND ปิดแล้ว',
               'SEND DRIVE บริการส่งเวลา 7.30- 20.00 น.');
@@ -126,4 +125,6 @@ class _SearchViewShopState extends State<SearchViewShop> {
           child: Text(filterUserShopModels[index].name),
         ),
       );
+
+      
 }

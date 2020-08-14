@@ -84,7 +84,7 @@ class _MyFoodState extends State<MyFood> {
   }
 
   Future<Null> calculateTransportFromDistance() async {
-    print('distance  ==== ==  $distance');
+    //print('distance  ==== ==  $distance');
 
     double distanceDou = double.parse(distance);
     int distanceInt = distanceDou.ceil();

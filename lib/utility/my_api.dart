@@ -73,12 +73,12 @@ class MyAPI {
 
   bool checkTimeShop() {
     DateTime now = DateTime.now();
-    print('now = ${now.toString()}');
+    //print('now = ${now.toString()}');
     DateTime open = now;
     DateTime close = now;
-    open = DateTime(now.year, now.month, now.day, 7, 0);
-    close = DateTime(now.year, now.month, now.day, 22, 0);
-    print('open = ${open.toString()}');
+    open = DateTime(now.year, now.month, now.day, 7, 30);
+    close = DateTime(now.year, now.month, now.day, 20, 00);
+    //print('open = ${open.toString()}');
 
     if (now.isAfter(open)) {
       if (now.isBefore(close)) {

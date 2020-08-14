@@ -145,9 +145,6 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
     });
   }
 
-
-
-
   Future<Null> nearSuccess() async {
     showDialog(
       context: context,
@@ -364,7 +361,7 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
         ),
       );
 
-        Widget sumTotalPrice() => Padding(
+  Widget sumTotalPrice() => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -448,10 +445,6 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
                     SizedBox(
                       width: 10.0,
                     ),
-                    Text(
-                      orderUserModel.remarke,
-                      style: TextStyle(color: Colors.red),
-                    ),
                   ],
                 ),
               ),
@@ -524,7 +517,6 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
           ),
         ],
       ),
-
     );
   }
 }

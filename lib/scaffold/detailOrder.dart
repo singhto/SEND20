@@ -324,57 +324,49 @@ class _DetailOrderState extends State<DetailOrder> {
       ),
     );
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
-
-    // setState(() {
-    //   stateStatus = false;
-    // });
-
-    // if (response.toString() == 'true') {
-    //   MaterialPageRoute route = MaterialPageRoute(
-    //     builder: (context) => Home(
-    //       orderUserModel: orderUserModel,
-    //       nameShop: nameShop,
-    //       distance: distance,
-    //       transport: transport,
-    //     ),
-    //   );
-    //   Navigator.pushAndRemoveUntil(context, route, (route) => false);
-    // }
   }
 
-  Widget showSumFood() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              'ค่าอาหาร  ',
-              style: MyStyle().h2StylePrimary,
-            ),
-            Text(
-              '${orderUserModel.totalPrice}',
-              style: MyStyle().h2StylePrimary,
-            ),
-          ],
-        ),
-      );
+  Widget showSumFood() => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: <Widget>[
+      Text(
+        'ค่าอาหาร  ',
+        style: MyStyle().h2StylePrimary,
+      ),
+      Text(
+        '${orderUserModel.totalPrice}',
+        style: MyStyle().h2StylePrimary,
+      ),
+    ],
+  );
 
-  Widget showSumDistance() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              'ค่าขนส่ง  ',
-              style: MyStyle().h2StylePrimary,
-            ),
-            Text(
-              '${orderUserModel.totalDelivery}',
-              style: MyStyle().h2StylePrimary,
-            ),
-          ],
-        ),
-      );
+  Widget showSumDistance() => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: <Widget>[
+      Text(
+        'ค่าส่ง  ',
+        style: MyStyle().h2StylePrimary,
+      ),
+      Text(
+        '${orderUserModel.totalDelivery}',
+        style: MyStyle().h2StylePrimary,
+      ),
+    ],
+  );
+
+  Widget sumTotalPrice() => Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: <Widget>[
+      Text(
+        'รวม  ',
+        style: MyStyle().h2StylePrimary,
+      ),
+      Text(
+        '${orderUserModel.sumTotal}',
+        style: MyStyle().h2StylePrimary,
+      ),
+    ],
+  );
 
   Widget showNameUser() {
     return nameUser == null
@@ -438,14 +430,7 @@ class _DetailOrderState extends State<DetailOrder> {
                     ),
                     Text(
                       detailFoods[index],
-                      style: MyStyle().h2NormalStyleGrey,
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                      orderUserModel.remarke,
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(fontSize: 16, color: Colors.grey)
                     ),
                   ],
                 ),
@@ -514,6 +499,7 @@ class _DetailOrderState extends State<DetailOrder> {
           Divider(),
           showSumFood(),
           showSumDistance(),
+          sumTotalPrice(),
           SizedBox(
             height: 200.0,
           ),

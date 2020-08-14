@@ -72,10 +72,10 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
         OrderUserModel orderUserModel = OrderUserModel.fromJson(map);
 
         String remarkString = orderUserModel.remarke;
-        remarkString = remarkString.substring(1, remarkString.length-1);
+        remarkString = remarkString.substring(1, remarkString.length - 1);
         List<String> remarks = remarkString.split(',');
         if (remarks.length != 0) {
-          int index=0;
+          int index = 0;
           for (var string in remarks) {
             remarks[index] = string.trim();
             index++;
@@ -84,8 +84,6 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
         } else {
           remarks.add('');
         }
-
-
 
         String amountString = orderUserModel.amountFoods;
         amountString = amountString.substring(1, (amountString.length - 1));
@@ -320,9 +318,18 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
       );
 
   Widget showDateTime(int index) =>
-      MyStyle().showTitleH2Primary(orderUserModels[index].dateTime);
+     Row(
+       children: [
+         Text(orderUserModels[index].dateTime, style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey),),
+       ],
+     );
 
-  Widget showShop(int index) => MyStyle().showTitle('ร้าน ${nameShops[index]}');
+  Widget showShop(int index) => Text(
+        'ร้าน${nameShops[index]}',
+        style: TextStyle(
+            fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey.shade700),
+      );
 
   Future<Null> _handleRefresh() async {
     await Future.delayed(

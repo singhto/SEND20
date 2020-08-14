@@ -29,6 +29,7 @@ class _OrderShopState extends State<OrderShop> {
   List<List<String>> listAmounts = List();
   List<int> totals = List();
   UserShopModel userShopModel;
+    List<List<String>> listRemark = List();
 
   // Method
   @override
@@ -95,12 +96,29 @@ class _OrderShopState extends State<OrderShop> {
       print('res on readOrder ##########################==> $response');
       // print(
       //     'lenagth =================================>>>>>> ${orderUserModels.length}');
-      var result = json.decode(response.data);
+    
+    
+    
+    var result = json.decode(response.data);
 
       for (var map in result) {
         OrderUserModel orderUserModel = OrderUserModel.fromJson(map);
         UserModel userModel =
             await MyAPI().findDetailUserWhereId(orderUserModel.idUser);
+
+String remarkString = orderUserModel.remarke;
+        remarkString = remarkString.substring(1, remarkString.length - 1);
+        List<String> remarks = remarkString.split(',');
+        if (remarks.length != 0) {
+          int index = 0;
+          for (var string in remarks) {
+            remarks[index] = string.trim();
+            index++;
+          }
+          listRemark.add(remarks);
+        } else {
+          remarks.add('');
+        }
 
         String idFoodString = orderUserModel.idFoods;
         idFoodString = idFoodString.substring(1, idFoodString.length - 1);
@@ -114,6 +132,10 @@ class _OrderShopState extends State<OrderShop> {
           foodModels.add(foodModel);
           priceInts.add(int.parse(foodModel.priceFood));
         }
+
+
+
+
 
         String amountString = orderUserModel.amountFoods;
         amountString = amountString.substring(1, amountString.length - 1);
@@ -293,10 +315,7 @@ class _OrderShopState extends State<OrderShop> {
                             Text(
                                 '${listFoodModels[index1][index2].nameFood} ${listFoodModels[index1][index2].detailFood}',
                                 style: MyStyle().h2Style),
-                            Text(
-                              '${orderUserModels[index1].remarke}',
-                              style: MyStyle().h2NormalStyleGrey,
-                            )
+                            Text(listRemark[index1][index2]),
                           ],
                         ),
                       ),
