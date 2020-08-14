@@ -86,10 +86,8 @@ class _ShowFoodState extends State<ShowFood> {
 
   Future<Null> findTransport() async {
     print('disss  === $distance');
-    double distanceDou = double.parse(distance.trim());
-    int distanceInt = distanceDou.ceil();
-    print('disssInt  === $distanceInt');
-    transport = await MyAPI().checkTransport(distanceInt);
+
+    transport = widget.transportInt;
     print('transport === $transport');
   }
 

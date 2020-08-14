@@ -6,15 +6,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_model.dart';
+import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/models/send_location_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/have_problem.dart';
 import 'package:foodlion/scaffold/home.dart';
+import 'package:foodlion/scaffold/search_view_shop.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/utility/find_token.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_constant.dart';
-import 'package:foodlion/utility/my_duration.dart';
 import 'package:foodlion/utility/my_search.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
@@ -36,7 +37,12 @@ class MainHome extends StatefulWidget {
 class _MainHomeState extends State<MainHome> {
   // Field
   List<UserShopModel> userShopModels = List();
+  List<UserShopModel> nearShopModels = List();
+
   List<Widget> showWidgets = List();
+
+  List<Widget> searchShowWidgets = List();
+
   String idUser, nameLogin, nameLocalChoose = 'ตำแหน่งปัจจุบัน';
   int amount = 0;
   double lat, lng, latChoose, lngChoose;
@@ -45,10 +51,13 @@ class _MainHomeState extends State<MainHome> {
   List<SendLocationModeil> sendLocationModels = List();
 
   String choosedLocation;
-
   bool statusLoad = true;
-
   bool statusDistance = true;
+  bool statusProcess = true;
+  int amountOrder = 0;
+  String searchShop;
+
+  List<String> distances = List();
 
   // Method
   @override
@@ -58,8 +67,36 @@ class _MainHomeState extends State<MainHome> {
     aboutNotification();
     editToken();
     findLatLng();
+    findProcess();
 
     //findSendLocationWhereIdUser();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: userList(),
+      ),
+      appBar: buildAppBar(),
+      body: Column(
+        children: <Widget>[
+          buildChooseSenLocation(context),
+          statusLoad
+              ? MyStyle().showProgress()
+              : statusShowCard
+                  ? showShop()
+                  : Container(
+                      child: Center(
+                        child: MyStyle()
+                            .showTitleH2Dark('ขออภัยคะ ไม่พบร้านอาหารใกล้คุณ'),
+                      ),
+                    ),
+        ],
+      ),
+      bottomSheet:
+          statusProcess ? MyStyle().mySizeBox() : buildBottomSheet(context),
+    );
   }
 
   Future<Null> myDuration() async {
@@ -207,6 +244,10 @@ class _MainHomeState extends State<MainHome> {
 
         int i = 0;
 
+         if (nearShopModels.length != 0) {
+            nearShopModels.clear();
+          }
+
         for (var map in result) {
           i++;
           UserShopModel model = UserShopModel.fromJson(map);
@@ -218,21 +259,21 @@ class _MainHomeState extends State<MainHome> {
             double.parse(model.lng.trim()),
           );
 
-          //print('distance ===>>>>> $distance');
-          //print('statusDistance ก่อน setState $statusDistance');
-          //print('statusLoad ก่อน sets ==>> $statusLoad');
-
           var myFormat = NumberFormat('##0.0#', 'en_US');
+
+         String distanceString = myFormat.format(distance);
 
           setState(() {
             userShopModels.add(model);
             statusLoad = false;
             if (distance <= 600.0) {
+              distances.add(distanceString);
+              nearShopModels.add(model);
+
               statusDistance = false;
-              //print('statusDistance หลัง setState $statusDistance');
-              //print('statusLoad หลัง sets ==>> $statusLoad');
               showWidgets
                   .add(createCard(model, '${myFormat.format(distance)}'));
+              searchShowWidgets = showWidgets;
               statusShowCard = true;
             }
           });
@@ -577,8 +618,12 @@ class _MainHomeState extends State<MainHome> {
       child: Center(
         child: FlatButton(
           onPressed: () async {
-      
-           
+            print('You Click');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShowOrderUser(),
+                ));
           },
           child: Column(
             children: <Widget>[
@@ -587,7 +632,7 @@ class _MainHomeState extends State<MainHome> {
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.orange),
               ),
               Text(
-                'คุณมี 1 คำสั่งซื้อ กำลังดำเนินการ...',
+                'คุณมี $amountOrder คำสั่งซื้อ กำลังดำเนินการ...',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14.0,
@@ -604,25 +649,21 @@ class _MainHomeState extends State<MainHome> {
 
   AppBar buildAppBar() {
     return AppBar(
-      title: Center(
-        child: GestureDetector(
-          onTap: () {
-            //routeToShowSearch();
-          },
-          child: Text(
-            'ค้นหาร้านค้า',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.0,
-            ),
-          ),
-        ),
-      ),
+      title: Text('ค้นหาร้านค้า'),
       actions: <Widget>[
-        //showSearch(),
-
-        showCart()
+        IconButton(
+          icon: Icon(Icons.search, color: Colors.white),
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchViewShop(
+                  userShopModels: nearShopModels,
+                  nameLocalChoose: nameLocalChoose,
+                  distances: distances,
+                ),
+              )),
+        ),
+        showCart(),
       ],
     );
   }
@@ -697,9 +738,8 @@ class _MainHomeState extends State<MainHome> {
         : DropdownButton<int>(
             items: indexs.map(
               (e) {
-
                 String string = sendLocationModels[e].nameLocation;
-                if (string.length >=20) {
+                if (string.length >= 20) {
                   string = string.substring(0, 19);
                   string = '$string ...';
                 }
@@ -746,29 +786,35 @@ class _MainHomeState extends State<MainHome> {
           );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: userList(),
-      ),
-      appBar: buildAppBar(),
-      body: Column(
-        children: <Widget>[
-          buildChooseSenLocation(context),
-          statusLoad
-              ? MyStyle().showProgress()
-              : statusShowCard
-                  ? showShop()
-                  : Container(
-                      child: Center(
-                        child: MyStyle()
-                            .showTitleH2Dark('ขออภัยคะ ไม่พบร้านอาหารใกล้คุณ'),
-                      ),
-                    ),
-        ],
-      ),
-      bottomSheet: buildBottomSheet(context),
-    );
+  Future<Null> findProcess() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String idUser = preferences.getString('id');
+
+    String url =
+        'http://movehubs.com/app/getOrderWhereIdUser.php?isAdd=true&idUser=$idUser';
+
+    //print('url ==== $url');
+
+    try {
+      Response response = await Dio().get(url);
+      var result = json.decode(response.data);
+      for (var map in result) {
+        OrderUserModel model = OrderUserModel.fromJson(map);
+        String string = model.success;
+        print('Success ==== $string');
+
+        if (string == '0' || string == 'ShopOrder' || string == 'RiderOrder') {
+          setState(() {
+            amountOrder++;
+          });
+        }
+
+        if (!(string == 'Success' || string == 'ShopCancel')) {
+          setState(() {
+            statusProcess = false;
+          });
+        }
+      }
+    } catch (e) {}
   }
 }

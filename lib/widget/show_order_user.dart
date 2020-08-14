@@ -22,13 +22,30 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
   List<List<FoodModel>> listFoodModels = List();
   List<List<String>> listAmounts = List();
 
-  final GlobalKey<RefreshIndicatorState> _refresh = GlobalKey<RefreshIndicatorState>();
+  List<List<String>> listRemark = List();
+
+  final GlobalKey<RefreshIndicatorState> _refresh =
+      GlobalKey<RefreshIndicatorState>();
 
   // Method
   @override
   void initState() {
     super.initState();
     readOrder();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('รายการสั่งอาหาร'),
+      ),
+      body: RefreshIndicator(
+        key: _refresh,
+        child: currentWidget == null ? MyStyle().showProgress() : currentWidget,
+        onRefresh: _handleRefresh,
+      ),
+    );
   }
 
   Future<void> readOrder() async {
@@ -53,6 +70,22 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
       var result = json.decode(response.data);
       for (var map in result) {
         OrderUserModel orderUserModel = OrderUserModel.fromJson(map);
+
+        String remarkString = orderUserModel.remarke;
+        remarkString = remarkString.substring(1, remarkString.length-1);
+        List<String> remarks = remarkString.split(',');
+        if (remarks.length != 0) {
+          int index=0;
+          for (var string in remarks) {
+            remarks[index] = string.trim();
+            index++;
+          }
+          listRemark.add(remarks);
+        } else {
+          remarks.add('');
+        }
+
+
 
         String amountString = orderUserModel.amountFoods;
         amountString = amountString.substring(1, (amountString.length - 1));
@@ -244,15 +277,13 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  //Text(listFoodModels[index][index2].nameFood,style: TextStyle(fontSize: 18.0,),),
-                  //Text(listFoodModels[index][index2].detailFood,style: TextStyle(fontSize: 18.0,),),
                   Text(
                     '${listFoodModels[index][index2].nameFood} ${listFoodModels[index][index2].detailFood}',
                     style: TextStyle(
                       fontSize: 18.0,
                     ),
                   ),
-                  Text('${orderUserModels[index].remarke}'),
+                  Text(listRemark[index][index2]),
                 ],
               ),
             ),
@@ -293,27 +324,11 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
 
   Widget showShop(int index) => MyStyle().showTitle('ร้าน ${nameShops[index]}');
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('รายการสั่งอาหาร'),
-      ),
-      body: RefreshIndicator(
-        key: _refresh,
-        child: currentWidget == null ? MyStyle().showProgress() : currentWidget,
-        onRefresh: _handleRefresh,
-      ),
-      
-    );
-  }
-
   Future<Null> _handleRefresh() async {
     await Future.delayed(
       Duration(seconds: 2),
     );
-    setState(() {
-    });
+    setState(() {});
     return null;
   }
 }

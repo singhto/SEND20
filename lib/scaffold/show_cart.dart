@@ -6,6 +6,7 @@ import 'package:foodlion/models/delivery_model.dart';
 import 'package:foodlion/models/order_model.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
+import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
@@ -41,6 +42,8 @@ class _ShowCartState extends State<ShowCart> {
   String phone;
   String remake = '';
 
+  String myDistance;
+
   // Method
   @override
   void initState() {
@@ -73,6 +76,7 @@ class _ShowCartState extends State<ShowCart> {
       orderModels.clear();
       totalPrice = 0;
       totalDelivery = 0;
+
       sumTotal = 0;
     }
 
@@ -81,6 +85,10 @@ class _ShowCartState extends State<ShowCart> {
       //print("แสดงจำนวน Record SQLite ==>> ${object.length}");
       if (object.length != 0) {
         orderModels = object;
+
+        totalDelivery = int.parse(orderModels[0].transport);
+
+        myDistance = orderModels[0].distance;
 
         for (var model in orderModels) {
           totalPrice = totalPrice +
@@ -154,7 +162,7 @@ class _ShowCartState extends State<ShowCart> {
     setState(() {
       transports.add(transport);
       sumTotals.add(transport);
-      totalDelivery = totalDelivery + transport;
+      //totalDelivery = totalDelivery + transport;
       sumTotal = sumTotal + totalDelivery;
     });
   }
@@ -232,7 +240,14 @@ class _ShowCartState extends State<ShowCart> {
     DateTime dateTime = DateTime.now();
     List<String> idFoods = List();
     List<String> amountFoods = List();
-    String tokenShop, remarke, latUser, lngUser, nameLocal, transportSQLite, distanceSQLite;
+    List<String> remarks = List();
+    String tokenShop,
+        remarke,
+        latUser,
+        lngUser,
+        nameLocal,
+        transportSQLite,
+        distanceSQLite;
 
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(idShopOnSQLites[0].toString());
@@ -241,21 +256,23 @@ class _ShowCartState extends State<ShowCart> {
     for (var model in orderModels) {
       idFoods.add(model.idFood);
       amountFoods.add(model.amountFood);
-      remarke = model.remark;
+      remarks.add(model.remark);
       latUser = model.latUser;
       lngUser = model.lngUser;
       nameLocal = model.nameLocal;
       transportSQLite = model.transport;
       distanceSQLite = model.distance;
-
     }
 
     String url =
-        'http://movehubs.com/app/addOrder.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal&remarke=$remarke&latUser=${latUser.toString()}&lngUser=${lngUser.toString()}&nameLocal=$nameLocal&distance=$distanceSQLite';
+        'http://movehubs.com/app/addOrder.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal&remarke=${remarks.toString()}&latUser=${latUser.toString()}&lngUser=${lngUser.toString()}&nameLocal=$nameLocal&distance=$distanceSQLite';
+
+    print('========= url ===== $url');
 
     Response response = await Dio().get(url);
     if (response.toString() == 'true') {
-      print(' amoutFood ===>> $amountFoods remarke ==>> $remarke  latUser ==>> $latUser lngUser ==>> $lngUser nameLocal==>> $nameLocal');
+      print(
+          ' amoutFood ===>> $amountFoods remarke ==>> $remarke  latUser ==>> $latUser lngUser ==>> $lngUser nameLocal==>> $nameLocal');
       //print('===============.....Success Order');
 
       await SQLiteHelper().deleteSQLiteAll().then((value) {
@@ -272,10 +289,19 @@ class _ShowCartState extends State<ShowCart> {
     }
   }
 
+  ///end Thard
+
   void routeToOrderUser() {
-    MaterialPageRoute materialPageRoute =
-        MaterialPageRoute(builder: (value) => ShowOrderUser());
-    Navigator.of(context).push(materialPageRoute);
+    // MaterialPageRoute materialPageRoute =
+    //     MaterialPageRoute(builder: (value) => ShowOrderUser());
+    // Navigator.of(context).push(materialPageRoute);
+
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Home(),
+        ),
+        (route) => false);
   }
 
   Future<Null> notiToRider() async {
@@ -328,9 +354,9 @@ class _ShowCartState extends State<ShowCart> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-  
           showSum('ค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
-          showSum('ค่าขนส่ง', totalDelivery.toString(), MyStyle().primaryColor),
+          showSum('ค่าส่ง ($myDistance กม.)', totalDelivery.toString(),
+              MyStyle().primaryColor),
           showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
           Center(
             child: OutlineButton(
@@ -398,22 +424,24 @@ class _ShowCartState extends State<ShowCart> {
                       Expanded(
                         flex: 3,
                         child: Container(
+                          padding: EdgeInsets.only(left: 8),
                           child: Column(
                             children: <Widget>[
-                              Text(
-                                orderModels[index].nameFood,
-                                style: MyStyle().h2Style,
+                              Row(
+                                children: [
+                                  Text(
+                                    orderModels[index].nameFood,
+                                    style: MyStyle().h2Style,
+                                  ),
+                                ],
                               ),
-                              Text(
-                                orderModels[index].remark,
+                              Row(
+                                children: [
+                                  Text(
+                                    orderModels[index].remark,
+                                  ),
+                                ],
                               )
-                              // ListView.builder(
-                              //   shrinkWrap: true,
-                              //   physics: ScrollPhysics(),
-                              //   itemCount: 1,
-                              //   itemBuilder: (context, index2) =>
-                              //       Text(orderModels[index].nameShop),
-                              // ),
                             ],
                           ),
                         ),
