@@ -57,6 +57,7 @@ class _HandleShopState extends State<HandleShop> {
         String remarkString = orderUserModel.remarke;
         remarkString = remarkString.substring(1, remarkString.length - 1);
         List<String> remarks = remarkString.split(',');
+
         if (remarks.length != 0) {
           int index = 0;
           for (var string in remarks) {
@@ -260,10 +261,15 @@ class _HandleShopState extends State<HandleShop> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                      '${listFoodModels[index][index2].nameFood} ${listFoodModels[index][index2].detailFood}',
+                  Text('${listFoodModels[index][index2].nameFood}',
                       style: MyStyle().h2NormalStyleGrey),
-                  Text(listRemark[index][index2]),
+                  Text(
+                    '  - ${listFoodModels[index][index2].detailFood}',
+                  ),
+                  Text(
+                    '  ${listRemark[index][index2]}',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ],
               ),
             ),

@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:app_settings/app_settings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
-import 'package:foodlion/scaffold/have_problem.dart';
-import 'package:foodlion/scaffold/location_have_problem.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/scaffold/warning_internet.dart';
@@ -90,12 +89,14 @@ class _HomeState extends State<Home> {
     await Timer(duration, () {
       if (lat == null) {
         //normalToast('ครบ 10 วินาทีแล้ว shopWidget.lengtho ==>0');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HaveProblem(),
-            ),
-            (route) => false);
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => HaveProblem(),
+        //     ),
+        //     (route) => false);
+        AppSettings.openAppSettings();
+      
       }
     });
   }
@@ -112,12 +113,14 @@ class _HomeState extends State<Home> {
 
         if (!serviceLocationEnable) {
           //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LocationHaveProblem(),
-              ),
-              (route) => false);
+          // Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => LocationHaveProblem(),
+          //     ),
+          //     (route) => false);
+          AppSettings.openAppSettings();
+          
         } else {
           findLatLng2();
         }
@@ -185,12 +188,14 @@ class _HomeState extends State<Home> {
       if (currentLocation == null) {
         //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
 
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HaveProblem(),
-            ),
-            (route) => false);
+        // Navigator.pushAndRemoveUntil(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => HaveProblem(),
+        //     ),
+        //     (route) => false);
+        AppSettings.openAppSettings();
+        
       }
     }
     return currentLocation;

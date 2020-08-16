@@ -63,7 +63,7 @@ class _MainHomeState extends State<MainHome> {
   @override
   void initState() {
     super.initState();
-    myDuration();
+    //myDuration();
     aboutNotification();
     editToken();
     findLatLng();
