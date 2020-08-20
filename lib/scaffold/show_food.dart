@@ -68,6 +68,8 @@ class _ShowFoodState extends State<ShowFood> {
 
   int transport;
 
+  bool statusChoose = false;
+
   // Method
   @override
   void initState() {
@@ -242,56 +244,60 @@ class _ShowFoodState extends State<ShowFood> {
             ),
           ),
         ),
-        Column(
+        //buildAmount(),
+        SizedBox(
+          height: 50.0,
+        ),
+      ],
+    );
+  }
+
+  Column buildAmount() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 50.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            SizedBox(
-              height: 50.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                MyStyle().mySizeBox(),
-                IconButton(
-                    icon: Icon(
-                      Icons.remove_circle,
-                      size: 36.0,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      if (amountFood != 0) {
-                        setState(() {
-                          amountFood--;
-                        });
-                      }
-                    }),
-                MyStyle().mySizeBox(),
-                Text(
-                  '$amountFood',
-                  style: MyStyle().h1PrimaryStyle,
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.remove_circle,
+                  size: 36.0,
+                  color: Colors.red,
                 ),
-                MyStyle().mySizeBox(),
-                IconButton(
-                    icon: Icon(
-                      Icons.add_circle,
-                      size: 36.0,
-                      color: Colors.green,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        amountFood++;
-                      });
-                    }),
-                MyStyle().mySizeBox(),
-              ],
+                onPressed: () {
+                  if (amountFood != 0) {
+                    setState(() {
+                      amountFood--;
+                    });
+                  }
+                }),
+            MyStyle().mySizeBox(),
+            Text(
+              '$amountFood',
+              style: MyStyle().h1PrimaryStyle,
             ),
-            SizedBox(
-              height: 20.0,
-            )
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  size: 36.0,
+                  color: Colors.green,
+                ),
+                onPressed: () {
+                  setState(() {
+                    amountFood++;
+                  });
+                }),
+            MyStyle().mySizeBox(),
           ],
         ),
         SizedBox(
-          height: 90.0,
-        ),
+          height: 20.0,
+        )
       ],
     );
   }
@@ -309,15 +315,26 @@ class _ShowFoodState extends State<ShowFood> {
           ),
         ),
         subtitle: Text('${foodModel.detailFood}'),
-        trailing: Text(
-          '฿ $listSumOption',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
-        ),
+        trailing: buildText(),
+      ),
+    );
+  }
+
+  Text buildText() {
+    for (var i = 0; i < 2; i++) {
+      print('listSumOption === $listSumOption');
+      int total = 0;
+      for (var i in listSumOption) {
+        total = total + i;
+      }
+    }
+    return Text(
+      '฿ $total',
+      style: TextStyle(
+        fontSize: 22,
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.0,
       ),
     );
   }
@@ -346,8 +363,8 @@ class _ShowFoodState extends State<ShowFood> {
   }
 
   Widget showSumPriceOption(int index) {
-
     listSumOption[index] = factorPriceOption[index] * listAmountOption[index];
+    print('listSumOption ตอนเพิ่มค่า $listSumOption');
 
     return Text('${listSumOption[index]}');
   }
@@ -355,15 +372,15 @@ class _ShowFoodState extends State<ShowFood> {
   int indexChoose = 0;
 
   Widget checkOption(int index) {
-    // print('isChecks ==>> $isCheckeds');
+    //print('isChecks ==>> $isCheckeds');
     // print('index ==>> $index');
     return Container(
       width: 80,
       child: CheckboxListTile(
         value: isCheckeds[index],
         onChanged: (value) {
-          print('You Click Index = $index');
-
+          //print('You Click Index = $index');
+          statusChoose = value;
           setState(() {
             isCheckeds[index] = value;
 
@@ -386,7 +403,7 @@ class _ShowFoodState extends State<ShowFood> {
               total = calculatrTotal();
 
               print('idChoose ==>> $idOfChoose');
-              print('nameOption ==>> $nameOptions');
+              //print('nameOption ==>> $nameOptions');
 
               int y = 0;
               for (var name in nameOptions) {
@@ -423,12 +440,13 @@ class _ShowFoodState extends State<ShowFood> {
           children: <Widget>[
             MyStyle().mySizeBox(),
             IconButton(
-                icon: Icon(
-                  Icons.remove_circle,
-                  size: 20.0,
-                  color: Colors.red,
-                ),
-                onPressed: () {
+              icon: Icon(
+                Icons.remove_circle,
+                size: 20.0,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                if (statusChoose) {
                   if (listAmountOption[index] != 0) {
                     setState(() {
                       listAmountOption[index]--;
@@ -451,7 +469,9 @@ class _ShowFoodState extends State<ShowFood> {
                       }
                     });
                   }
-                }),
+                }
+              },
+            ),
             MyStyle().mySizeBox(),
             Text('${listAmountOption[index]}',
                 style: TextStyle(
@@ -460,12 +480,13 @@ class _ShowFoodState extends State<ShowFood> {
                 )),
             MyStyle().mySizeBox(),
             IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  size: 20.0,
-                  color: Colors.green,
-                ),
-                onPressed: () {
+              icon: Icon(
+                Icons.add_circle,
+                size: 20.0,
+                color: Colors.green,
+              ),
+              onPressed: () {
+                if (statusChoose) {
                   setState(() {
                     listAmountOption[index]++;
 
@@ -484,7 +505,9 @@ class _ShowFoodState extends State<ShowFood> {
                     total = calculatrTotal();
                     isCheckeds[index] = true;
                   });
-                }),
+                }
+              },
+            ),
           ],
         ),
       ],

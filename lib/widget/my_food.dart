@@ -81,9 +81,9 @@ class _MyFoodState extends State<MyFood> {
     distance = widget.distance;
 
     if (distance == null) {
-      print('distance =====>>>>> $distance ');
-      print(
-          'nameLocalChoose ที่ได้จาก Search View =====>>>>> $nameLocalChoose ');
+      // print('distance =====>>>>> $distance ');
+      // print(
+      //     'nameLocalChoose ที่ได้จาก Search View =====>>>>> $nameLocalChoose ');
 
       if (nameLocalChoose == 'ตำแหน่งปัจจุบัน') {
         findCurrentLocation();
@@ -101,8 +101,8 @@ class _MyFoodState extends State<MyFood> {
     //print('distance  ==== ==  $distance');
 
     double distanceDou = double.parse(distance);
-
     int distanceInt = distanceDou.ceil();
+
     int i = await MyAPI().checkTransport(distanceInt);
 
     setState(() {
@@ -152,14 +152,14 @@ class _MyFoodState extends State<MyFood> {
 
       for (var map in result) {
         FoodModel model = FoodModel.fromJson(map);
-        print('mappppp ==== $map');
+        //print('mappppp ==== $map');
 
         if (nameShop == null) {
           nameShop = await MyAPI().findNameShopWhere(model.idShop);
         }
         userShopModel = UserShopModel.fromJson(map);
 
-        print('url Image = ${userShopModel.urlShop}');
+        //print('url Image = ${userShopModel.urlShop}');
 
         setState(() {
           foodModels.add(model);
@@ -174,10 +174,7 @@ class _MyFoodState extends State<MyFood> {
 
   Widget showNoData() {
     return Center(
-      child: Text(
-        'ไม่มีรายการอาหาร',
-        style: TextStyle(fontSize: 24.0),
-      ),
+      child: MyStyle().showProgress()
     );
   }
 
@@ -436,7 +433,7 @@ class _MyFoodState extends State<MyFood> {
     for (var json in result) {
       SendLocationModeil modeil = SendLocationModeil.fromJson(json);
       latChoose = double.parse(modeil.lat.trim());
-      lngChoose = double.parse(modeil.lat.trim());
+      lngChoose = double.parse(modeil.lng.trim());
 
       findDistance();
     }
@@ -446,6 +443,8 @@ class _MyFoodState extends State<MyFood> {
     UserShopModel userShopModel = await MyAPI().findDetailShopWhereId(myIdShop);
     double latShop = double.parse(userShopModel.lat.trim());
     double lngShop = double.parse(userShopModel.lng.trim());
+
+    print('latShop lngShop $latShop $lngShop');
 
     double distanceDou =
         MyAPI().calculateDistance(latChoose, lngChoose, latShop, lngShop);
