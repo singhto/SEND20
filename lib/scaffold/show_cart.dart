@@ -12,7 +12,6 @@ import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:foodlion/utility/normal_toast.dart';
 import 'package:foodlion/utility/sqlite_helper.dart';
-import 'package:foodlion/widget/show_order_user.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,7 +81,7 @@ class _ShowCartState extends State<ShowCart> {
 
     try {
       var object = await SQLiteHelper().readDatabase();
-      //print("แสดงจำนวน Record SQLite ==>> ${object.length}");
+      print("แสดงจำนวน Record SQLite ==>> ${object.length}");
       if (object.length != 0) {
         orderModels = object;
 
@@ -247,7 +246,13 @@ class _ShowCartState extends State<ShowCart> {
         lngUser,
         nameLocal,
         transportSQLite,
-        distanceSQLite;
+        distanceSQLite,
+        nameOption,
+        sizeOption,
+        priceOption,
+        sumPrice,
+        transport;
+        
 
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(idShopOnSQLites[0].toString());
@@ -262,10 +267,15 @@ class _ShowCartState extends State<ShowCart> {
       nameLocal = model.nameLocal;
       transportSQLite = model.transport;
       distanceSQLite = model.distance;
+      nameOption = model.nameOption;
+      sizeOption = model.sizeOption;
+      priceOption = model.priceOption;
+      sumPrice = model.sumPrice;
+      transport = model.transport;
     }
 
     String url =
-        'http://movehubs.com/app/addOrder2.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal&remarke=${remarks.toString()}&latUser=${latUser.toString()}&lngUser=${lngUser.toString()}&nameLocal=$nameLocal&distance=$distanceSQLite';
+        'http://movehubs.com/app/addOrder2.php?isAdd=true&idUser=${userModel.id}&idShop=${idShopOnSQLites[0]}&DateTime=$dateTime&idFoods=${idFoods.toString()}&amountFoods=${amountFoods.toString()}&totalDelivery=$totalDelivery&totalPrice=$totalPrice&sumTotal=$sumTotal&remarke=${remarks.toString()}&latUser=${latUser.toString()}&lngUser=${lngUser.toString()}&nameLocal=$nameLocal&distance=$distanceSQLite&nameOption=$nameOption&sizeOption=$sizeOption&priceOption=$priceOption&sumPrice=$sumPrice&transport=$transport';
 
     print('========= url ===== $url');
 

@@ -11,7 +11,7 @@ class SearchViewShop extends StatefulWidget {
   final List<UserShopModel> userShopModels;
   final String nameLocalChoose;
   final List<String> distances;
-  
+
   SearchViewShop({this.userShopModels, this.nameLocalChoose, this.distances});
   @override
   _SearchViewShopState createState() => _SearchViewShopState();
@@ -43,12 +43,10 @@ class _SearchViewShopState extends State<SearchViewShop> {
     // TODO: implement initState
     super.initState();
     if (filterUserShopModels.length != 0) {
-
       print('initStat Work');
 
       filterUserShopModels.clear();
     }
-
 
     userShopModels = widget.userShopModels;
     filterUserShopModels = userShopModels;
@@ -99,32 +97,38 @@ class _SearchViewShopState extends State<SearchViewShop> {
   Widget buildListShop() => ListView.builder(
         itemCount: filterUserShopModels.length,
         itemBuilder: (context, index) => GestureDetector(
-          onTap: () {
-          
-          String idShop = filterUserShopModels[index].id;
-          String nameLocalChoose = widget.nameLocalChoose;
-          List<String> distances = widget.distances;
+            onTap: () {
+              String idShop = filterUserShopModels[index].id;
+              String nameLocalChoose = widget.nameLocalChoose;
+              List<String> distances = widget.distances;
 
-          print('You Click idShop  ===>>>> $idShop');
-          print('You Click nameLocalChoose  ===>>>> $nameLocalChoose');
-          print('You Click distances  ===>>>> $distances');
+              print('You Click idShop  ===>>>> $idShop');
+              print('You Click nameLocalChoose  ===>>>> $nameLocalChoose');
+              print('You Click distances  ===>>>> $distances');
 
-          if (MyAPI().checkTimeShop()) {
-          MaterialPageRoute route = MaterialPageRoute(
-            builder: (cont) => MyFood(
-              idShop: idShop,
-              nameLocalChoose: nameLocalChoose,
+              if (MyAPI().checkTimeShop()) {
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (cont) => MyFood(
+                    idShop: idShop,
+                    nameLocalChoose: nameLocalChoose,
+                  ),
+                );
+                Navigator.of(context).push(route).then((value) => (idShop));
+              } else {
+                normalDialog(context, 'SEND ปิดแล้ว',
+                    'SEND DRIVE บริการส่งเวลา 7.30- 20.00 น.');
+              }
+            },
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(filterUserShopModels[index].urlShop),
+              ),
+              title: Text(filterUserShopModels[index].name),
+              subtitle: Text(filterUserShopModels[index].detailShop),
+              trailing: Icon(Icons.keyboard_arrow_right),
+             
+            )
+            //Text(filterUserShopModels[index].name),
             ),
-          );
-          Navigator.of(context).push(route).then((value) => (idShop));
-        } else {
-          normalDialog(context, 'SEND ปิดแล้ว',
-              'SEND DRIVE บริการส่งเวลา 7.30- 20.00 น.');
-        }
-        },
-          child: Text(filterUserShopModels[index].name),
-        ),
       );
-
-      
 }

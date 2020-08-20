@@ -6,9 +6,9 @@ import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/scaffold/home.dart';
-import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
+import 'package:foodlion/utility/normal_dialog.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +33,7 @@ class ReadDetailOrder extends StatefulWidget {
 class _ReadDetailOrderState extends State<ReadDetailOrder> {
   // Field
   OrderUserModel orderUserModel;
-  String nameShop, nameUser, tokenUser;
+  String nameShop, nameUser, tokenUser, idEmtyRider, id, idDelivery;
   int distance, transport, sumFood = 0;
   LatLng shopLatLng, userLatLng;
   IconData shopMarkerIcon;
@@ -54,6 +54,7 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
       nameShop = widget.nameShop;
       distance = widget.distance;
       transport = widget.transport;
+      
 
       findDetailShopAnUser();
       findOrder();
@@ -195,20 +196,55 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Center(child: MyStyle().showTitle('RIDER ทำภาระกิจนี้หรือไม่')),
+        title: Center(child: MyStyle().showTitle('รับออร์เดอร์แทนร้านค้า')),
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) => idEmtyRider = value.trim(),
+             
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'ใส่รหัส BIKER เพื่อมอบหมายงาน'
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               confirm(),
               MyStyle().mySizeBox(),
-              cancel('ปฏิเสธ'),
+              cancel('ยกเลิก'),
             ],
           ),
-          // waitButton(),
+          //waitButton(),
         ],
       ),
     );
+  }
+
+    Future<void> insertDtaToMySQL() async {
+    // urlImage = '${MyConstant().urlImagePathShop}$string';
+
+    String idOrder = orderUserModel.id;
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String idDelivery = preferences.getString('id');
+
+    String urlAPI =
+        'http://movehubs.com/app/editOrderWhereId.php?isAdd=true&id=$idOrder&idDelivery=$idDelivery';
+
+    try {
+      await Dio().get(urlAPI).then(
+        (response) {
+          if (response.toString() == 'true') {
+            Navigator.of(context).pop();
+          } else {
+            normalDialog(context, 'Register False', 'Please Try Again');
+          }
+        },
+      );
+    } catch (e) {}
   }
 
   Widget waitButton() {
@@ -284,7 +320,7 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
     print('idOrder ==> $idOrder, idRider ==> $idRider');
 
     String url2 =
-        'http://movehubs.com/app/editIdRiderWhereIdOrder.php?isAdd=true&id=$idOrder&idDelivery=$idRider';
+        'http://movehubs.com/app/editIdRiderWhereIdOrder.php?isAdd=true&id=$idOrder&idDelivery=$idEmtyRider';
     await Dio().get(url2);
 
     String url =
@@ -294,88 +330,61 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
 
     //Send Notification to User
     MyAPI().notificationAPI(
-        tokenUser, 'RIDER รับ Order', 'กำลังไปรับอาหารที่ร้านครับ');
+        tokenUser, 'ร้านค้ารับออเดอร์แล้ว', ' SEND กำลังไปรับอาหารที่ร้านครับ');
 
     //Send Notification to Shop
     UserShopModel userShopModel =
         await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
     String tokenShop = userShopModel.token;
-    MyAPI().notificationAPI(tokenShop, 'RIDER กำลังไปรับอาหาร',
-        'RIDER กำลังไปที่ร้านเพื่อรับอาหาร');
+    MyAPI().notificationAPI(tokenShop, 'ร้านค้ารับออเดอร์แล้ว',
+        'RIDER กำลังไปที่ร้านเพื่อรับอาหารครับ');
 
     MaterialPageRoute route = MaterialPageRoute(
-      builder: (context) => RiderSuccess(
-        orderUserModel: orderUserModel,
-      ),
+      builder: (context) => Home(),
     );
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
-
-    // setState(() {
-    //   stateStatus = false;
-    // });
-
-    // if (response.toString() == 'true') {
-    //   MaterialPageRoute route = MaterialPageRoute(
-    //     builder: (context) => Home(
-    //       orderUserModel: orderUserModel,
-    //       nameShop: nameShop,
-    //       distance: distance,
-    //       transport: transport,
-    //     ),
-    //   );
-    //   Navigator.pushAndRemoveUntil(context, route, (route) => false);
-    // }
   }
 
-  Widget showSumFood() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              'ค่าอาหาร  ',
-              style: MyStyle().h2StylePrimary,
-            ),
-            Text(
-              '${orderUserModel.totalPrice}',
-              style: MyStyle().h2StylePrimary,
-            ),
-          ],
-        ),
+  Widget showSumFood() => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'ค่าอาหาร  ',
+            style: MyStyle().h2StylePrimary,
+          ),
+          Text(
+            '${orderUserModel.totalPrice}',
+            style: MyStyle().h2StylePrimary,
+          ),
+        ],
       );
 
-  Widget showSumDistance() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              'ค่าขนส่ง  ',
-              style: MyStyle().h2StylePrimary,
-            ),
-            Text(
-              '${orderUserModel.totalDelivery}',
-              style: MyStyle().h2StylePrimary,
-            ),
-          ],
-        ),
+  Widget showSumDistance() => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'ค่าส่ง  ',
+            style: MyStyle().h2StylePrimary,
+          ),
+          Text(
+            '${orderUserModel.totalDelivery}',
+            style: MyStyle().h2StylePrimary,
+          ),
+        ],
       );
 
-  Widget sumTotalPrice() => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              'รวม  ',
-              style: MyStyle().h2StylePrimary,
-            ),
-            Text(
-              '${orderUserModel.sumTotal}',
-              style: MyStyle().h2StylePrimary,
-            ),
-          ],
-        ),
+  Widget sumTotalPrice() => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'รวม  ',
+            style: MyStyle().h2StylePrimary,
+          ),
+          Text(
+            '${orderUserModel.sumTotal}',
+            style: MyStyle().h2StylePrimary,
+          ),
+        ],
       );
 
   Widget showNameUser() {
@@ -438,13 +447,8 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
                       nameFoods[index],
                       style: MyStyle().h3StyleDark,
                     ),
-                    Text(
-                      detailFoods[index],
-                      style: MyStyle().h2NormalStyleGrey,
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
+                    Text(detailFoods[index],
+                        style: TextStyle(fontSize: 16, color: Colors.grey)),
                   ],
                 ),
               ),
@@ -486,7 +490,21 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
     return sumPrice.toString();
   }
 
-  Widget showTitleNameShop() => MyStyle().showTitle('ร้าน$nameShop');
+  Widget showTitleNameShop() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('ร้าน$nameShop',style: MyStyle().h2StylePrimary,),
+              IconButton(icon: Icon(Icons.phone_android, color: Colors.green,), onPressed: (){})
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -506,16 +524,43 @@ class _ReadDetailOrderState extends State<ReadDetailOrder> {
           showMap(shopLatLng, nameShop, 'ร้านค้าที่ไปรับอาหาร', 80.0),
           showNameUser(),
           showMap(userLatLng, nameUser, 'สถานที่ส่งอาหาร', 310.0),
-          //MyStyle().showTitle('รายการอาหารที่สั่ง'),
           showListOrder(),
           Divider(),
           showSumFood(),
           showSumDistance(),
           sumTotalPrice(),
           SizedBox(
-            height: 50.0,
+            height: 200.0,
           ),
         ],
+      ),
+      bottomSheet: GestureDetector(
+        onTap: () => confirmAccepp(),
+        child: Container(
+          height: 60.0,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, -1),
+                blurRadius: 6.0,
+              )
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'รับออเดอร์แทนร้าน',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/noti_user_model.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NotificationUser extends StatefulWidget {
   @override
@@ -59,31 +60,34 @@ class _NotificationUserState extends State<NotificationUser> {
       }
     }
   }
+  
+ Future<Null> launchURL() async {
+  const url = 'http://ps23.co.th/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
   Widget showContent() => ListView.builder(
         itemCount: notiUserModels.length,
         itemBuilder: (value, index) => Card(
+          
           child: ListTile(
-            leading: MyStyle().showLogo(),
+            onTap: () => launchURL(),
+            leading: CircleAvatar(
+                backgroundImage: NetworkImage(notiUserModels[index].image),
+              ),
             title: Expanded(
               child: Text(
                 '${notiUserModels[index].title} ${notiUserModels[index].dateTime}',
                 style: TextStyle(fontSize: 20.0),
               ),
             ),
-            subtitle: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        '${notiUserModels[index].massage}',
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            subtitle: Text(
+              '${notiUserModels[index].massage}',
+              style: TextStyle(fontSize: 18.0),
             ),
           ),
         ),

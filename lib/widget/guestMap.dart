@@ -32,9 +32,9 @@ class GuestMapState extends State<GuestMap> {
 
   Future gotoCurrentPosition() async {
     CameraPosition ps23 = CameraPosition(
-        //bearing: 192.8334901395799,
+
         target: LatLng(lat, lng),
-        //tilt: 59.440717697143555,
+
         zoom: 18);
     print('=====>>>> $lat, $lng');
 
@@ -51,9 +51,6 @@ class GuestMapState extends State<GuestMap> {
   }
 
   Future getLocation() async {
-    // Position position = await Geolocator()
-    //     .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // print(position);
 
     double myLat = widget.myLat;
     double myLng = widget.myLng;

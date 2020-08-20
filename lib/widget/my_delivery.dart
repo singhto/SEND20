@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
-import 'package:foodlion/scaffold/detailOrder.dart';
 import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/readDetailOrder.dart';
 import 'package:foodlion/utility/find_token.dart';
@@ -48,10 +47,6 @@ class _MyDeliveryState extends State<MyDelivery> {
     String amounes = orderUserModel.amountFoods;
 
     print('idShop ==> $idShop, idFoods ==> $idFoods, amounts ==> $amounes');
-
-    //List<int> amountIntFoods = changeToArray(amounes);
-    //List<int> idFoodInt = changeToArray(idFoods);
-    // List<int> priceIntFoods = List();
   }
 
   Future<Null> aboutNotification() async {
@@ -167,16 +162,14 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: orderUserModels.length == 0 ? showNoOrder() : showContent(),
-    );
+    return orderUserModels.length == 0 ? showNoOrder() : showContent();
   }
 
   ListView showContent() {
     return ListView.builder(
       itemCount: orderUserModels.length,
       itemBuilder: (value, index) => GestureDetector(
-        //onTap: () => rountToDetailOrder(index),
+        onTap: () => rountToDetailOrder(index),
         child: Card(
           color: index % 2 == 0 ? Colors.grey.shade300 : Colors.white,
           child: Padding(
@@ -235,6 +228,23 @@ class _MyDeliveryState extends State<MyDelivery> {
                         }),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.mail, color: Colors.grey,),
+                    Expanded(
+                      child: Text(' ${orderUserModels[index].success}',
+                          style: MyStyle().h2NormalStyleGrey),
+                    ),
+                    Expanded(
+                      child: Text('BIKER Id ${orderUserModels[index].idDelivery}',
+                          style: MyStyle().h2NormalStyleGrey),
+                    ),
+               
+                  
+                  ],
+                ),
+
               ],
             ),
           ),
@@ -243,7 +253,7 @@ class _MyDeliveryState extends State<MyDelivery> {
     );
   }
 
-    rountToReadDetailOrder(int index) {
+  rountToReadDetailOrder(int index) {
     MaterialPageRoute route = MaterialPageRoute(
       builder: (value) => ReadDetailOrder(
         orderUserModel: orderUserModels[index],
@@ -302,7 +312,7 @@ class _MyDeliveryState extends State<MyDelivery> {
 
   rountToDetailOrder(int index) {
     MaterialPageRoute route = MaterialPageRoute(
-      builder: (value) => DetailOrder(
+      builder: (value) => ReadDetailOrder(
         orderUserModel: orderUserModels[index],
         nameShop: nameShops[index],
         distance: distances[index],

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:app_settings/app_settings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodlion/models/order_user_model.dart';
+import 'package:foodlion/scaffold/have_problem.dart';
 import 'package:foodlion/scaffold/rider_success.dart';
 import 'package:foodlion/scaffold/show_cart.dart';
 import 'package:foodlion/scaffold/warning_internet.dart';
@@ -29,8 +29,10 @@ import 'package:foodlion/widget/signin_delivery.dart';
 import 'package:foodlion/widget/signin_shop.dart';
 import 'package:foodlion/widget/signin_user.dart';
 import 'package:location/location.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utility/my_style.dart';
+
 
 class Home extends StatefulWidget {
   final Widget currentWidget;
@@ -61,6 +63,7 @@ class _HomeState extends State<Home> {
   int amount = 0, distance, transport;
   OrderUserModel orderUserModel;
   double lat, lng;
+  GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   Location location = Location();
   bool serviceLocationEnable;
@@ -69,9 +72,10 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
-    print('initState work');
+    
+    //print('initState work');
     checkInternet();
+    main();
 
     orderUserModel = widget.orderUserModel;
     nameShop = widget.nameShop;
@@ -79,24 +83,74 @@ class _HomeState extends State<Home> {
     transport = widget.transport;
 
     checkPermission();
-    //myDuration();
+    myDuration();
     //findLatLng2();
+  }
+
+   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      
+      drawer: showDrawer(),
+      appBar: AppBar(
+        
+        title: Text(
+          'SEND',
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 3.0,
+          ),
+        ),
+      ),
+      body: cuttentWidget,
+    );
+  }
+
+  Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    //Remove this method to stop OneSignal Debugging
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+
+    OneSignal.shared.init("e317e283-ba82-4769-87c4-60b87bc3524b", iOSSettings: {
+      OSiOSSettings.autoPrompt: false,
+      OSiOSSettings.inAppLaunchUrl: false
+    });
+    OneSignal.shared
+        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+    await OneSignal.shared
+        .promptUserForPushNotificationPermission(fallbackToSettings: true);
+
+    OneSignal.shared
+        .setNotificationReceivedHandler((OSNotification notification) {
+      // print('noti from server ' + notification.jsonRepresentation());
+      //  print('noti from server ' + notification.payload.body);
+      //detailOrder.dart('noti from server ' + notification.payload.title);
+    });
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      // will be called whenever a notification is opened/button pressed.
+      //print(result.notification.payload.additionalData['page']);
+      navigatorKey.currentState.pushNamed(result.notification.payload.additionalData['page']); // /newsstack
+    });
   }
 
   Future<Null> myDuration() async {
     print('my Dutation ทำงาน');
-    Duration duration = Duration(seconds: 10);
+    Duration duration = Duration(seconds: 5);
     await Timer(duration, () {
       if (lat == null) {
-        //normalToast('ครบ 10 วินาทีแล้ว shopWidget.lengtho ==>0');
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => HaveProblem(),
-        //     ),
-        //     (route) => false);
-        AppSettings.openAppSettings();
-      
+        //AppSettings.openAppSettings();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(),
+            ),
+            (route) => false);
       }
     });
   }
@@ -112,15 +166,14 @@ class _HomeState extends State<Home> {
         print('servcicerEnable22222 =====>>> $serviceLocationEnable');
 
         if (!serviceLocationEnable) {
-          //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
-          // Navigator.pushAndRemoveUntil(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => LocationHaveProblem(),
-          //     ),
-          //     (route) => false);
-          AppSettings.openAppSettings();
-          
+          //AppSettings.openAppSettings();
+           Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Guest(),
+            ),
+            (route) => false);
+
         } else {
           findLatLng2();
         }
@@ -188,14 +241,13 @@ class _HomeState extends State<Home> {
       if (currentLocation == null) {
         //normalDialog(context, 'Setting', 'ตั้งค่าแผนที่');
 
-        // Navigator.pushAndRemoveUntil(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => HaveProblem(),
-        //     ),
-        //     (route) => false);
-        AppSettings.openAppSettings();
-        
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Guest(),
+            ),
+            (route) => false);
+        //AppSettings.openAppSettings();
       }
     }
     return currentLocation;
@@ -332,12 +384,15 @@ class _HomeState extends State<Home> {
       children: <Widget>[
         showHeadUser(),
         menuDeliveryOrder(),
-        menuDeliveyShopOrder(),
+        
+        //menuDeliveyShopOrder(),
         menuDeliveryHis(),
         menuSignOut(),
       ],
     );
   }
+
+
 
   Widget menuMyFood() {
     return ListTile(
@@ -562,7 +617,7 @@ class _HomeState extends State<Home> {
         style: MyStyle().h2Style,
       ),
       subtitle: Text(
-        'รายการอาหารที่ร้านยังไม่ได้กดรับ',
+        'รายการอาหาร',
         style: MyStyle().h3StylePrimary,
       ),
       onTap: () {
@@ -970,23 +1025,7 @@ class _HomeState extends State<Home> {
     Navigator.of(context).push(materialPageRoute).then((value) => checkLogin());
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: showDrawer(),
-      appBar: AppBar(
-        title: Text(
-          'SEND',
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 3.0,
-          ),
-        ),
-      ),
-      body: cuttentWidget,
-    );
-  }
+ 
 
   Future<Null> checkInternet() async {
     try {
@@ -995,11 +1034,25 @@ class _HomeState extends State<Home> {
         print('มี Internet');
       } else {
         print('ใน IF Inter False หรือ ไม่มี Internet');
-        routeToWarningInternet();
+        //routeToWarningInternet();
+        //AppSettings.openDataRoamingSettings();
+         Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
       }
     } catch (e) {
       print('Inter False หรือ ไม่มี Internet');
-      routeToWarningInternet();
+      //routeToWarningInternet();
+      //AppSettings.openDataRoamingSettings();
+       Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
     }
   }
 

@@ -308,15 +308,16 @@ class _DetailOrderState extends State<DetailOrder> {
     print('resAcceptOrder ==>> $response');
 
     //Send Notification to User
-    MyAPI().notificationAPI(
-        tokenUser, 'RIDER รับ Order', 'กำลังไปรับอาหารที่ร้านครับ');
+    // MyAPI().notificationAPI(
+    //     tokenUser, 'RIDER รับ Order', 'กำลังไปรับอาหารที่ร้านครับ');
 
     //Send Notification to Shop
-    UserShopModel userShopModel =
-        await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
-    String tokenShop = userShopModel.token;
-    MyAPI().notificationAPI(tokenShop, 'RIDER กำลังไปรับอาหาร',
-        'RIDER กำลังไปที่ร้านเพื่อรับอาหาร');
+    // UserShopModel userShopModel =
+    //     await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
+    // String tokenShop = userShopModel.token;
+
+    // MyAPI().notificationAPI(tokenShop, 'RIDER กำลังไปรับอาหาร',
+    //     'RIDER กำลังไปที่ร้านเพื่อรับอาหาร');
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => RiderSuccess(

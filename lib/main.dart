@@ -4,10 +4,14 @@ import 'package:foodlion/scaffold/home.dart';
 import 'package:foodlion/scaffold/review_shop.dart';
 import 'package:foodlion/scaffold/settime.dart';
 import 'package:foodlion/widget/guestMap.dart';
+import 'package:foodlion/widget/my_food.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
-void main() => runApp(MyApp());
+void main()  => runApp(MyApp());
+
+
 
 class MyApp extends StatelessWidget {
   Map<int, Color> color = {
@@ -44,6 +48,8 @@ class MyApp extends StatelessWidget {
         '/reviewshop': (context) => ReviewShop(),
         '/settime': (context) => SetTime(),
         '/guestMap': (context) => GuestMap(),
+        '/home': (context) => Home(),
+        '/myFood': (context) => MyFood(),
       },
     );
   }

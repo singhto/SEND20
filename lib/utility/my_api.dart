@@ -76,8 +76,8 @@ class MyAPI {
     //print('now = ${now.toString()}');
     DateTime open = now;
     DateTime close = now;
-    open = DateTime(now.year, now.month, now.day, 7, 30);
-    close = DateTime(now.year, now.month, now.day, 20, 00);
+    open = DateTime(now.year, now.month, now.day, 2, 30);
+    close = DateTime(now.year, now.month, now.day, 23, 00);
     //print('open = ${open.toString()}');
 
     if (now.isAfter(open)) {

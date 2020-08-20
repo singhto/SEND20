@@ -88,7 +88,7 @@ class _ShowFoodState extends State<ShowFood> {
     print('disss  === $distance');
 
     transport = widget.transportInt;
-    print('transport === $transport');
+    print('transport ===>>> $transport');
   }
 
   Future<Null> findLocationShop() async {
@@ -223,7 +223,7 @@ class _ShowFoodState extends State<ShowFood> {
     return Column(
       children: <Widget>[
         showTotal(),
-        //showListSubMunu(),
+        showListSubMunu(),
         Padding(padding: EdgeInsets.only(top: 20.0)),
         Text(
           'คำขอพิเศษ',

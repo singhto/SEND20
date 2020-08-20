@@ -7,6 +7,7 @@ import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/models/user_shop_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyDeliveryHis extends StatefulWidget {
   @override
@@ -32,9 +33,12 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
     distances.clear();
     transports.clear();
 
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String idDelivery = preferences.getString('id');
+
     String url =
-        'http://movehubs.com/app/getOrderWhereStatusSuccess.php?isAdd=true';
-    //String url = 'http://movehubs.com/app/getOrderWhereSuccess.php?isAdd=true&Success=ShopOrder';
+        'http://movehubs.com/app/getOrderWhereStatusIdDev.php?isAdd=true&idDelivery=$idDelivery';
+
     Response response = await Dio().get(url);
     var result = json.decode(response.data);
     print('result ==>> ${result.toString()}');
@@ -49,23 +53,10 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
           await MyAPI().findDetailShopWhereId(orderUserModel.idShop);
       String nameShop = userShopModel.name;
 
-      // double distance = MyAPI().calculateDistance(
-      //     double.parse(userModel.lat),
-      //     double.parse(userModel.lng),
-      //     double.parse(userShopModel.lat),
-      //     double.parse(userShopModel.lng));
-      // print('distance ==>>> $distance');
-
-      // int distanceToInt = distance.round();
-      // print('distanceToInt ==>>> $distanceToInt');
-
-      // int transport = await MyAPI().checkTransport(distanceToInt);
 
       setState(() {
         orderUserModels.add(orderUserModel);
         nameShops.add(nameShop);
-        //distances.add(distanceToInt);
-        //transports.add(transport);
       });
     }
   }
@@ -106,6 +97,19 @@ class _MyDeliveryHisState extends State<MyDeliveryHis> {
                     margin: EdgeInsets.only(left: 16.0),
                     child: Text(
                       'ระยะทาง = ${orderUserModels[index].distance} กม.',
+                      style: MyStyle().h2NormalStyle,
+                    ),
+                  ),
+             
+                ],
+              ),
+                Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      'BIKER ID = ${orderUserModels[index].idDelivery}',
                       style: MyStyle().h2NormalStyle,
                     ),
                   ),

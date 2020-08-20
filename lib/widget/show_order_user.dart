@@ -7,6 +7,7 @@ import 'package:foodlion/models/order_user_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:steps_indicator/steps_indicator.dart';
 
 class ShowOrderUser extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
   List<List<String>> listAmounts = List();
 
   List<List<String>> listRemark = List();
+  List<int> statusInts = List();
 
   final GlobalKey<RefreshIndicatorState> _refresh =
       GlobalKey<RefreshIndicatorState>();
@@ -101,6 +103,24 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
         idFoodString = idFoodString.substring(1, (idFoodString.length - 1));
         List<String> idFoods = idFoodString.split(',');
 
+        int status = 0;
+        switch (orderUserModel.success) {
+          case '0':
+            status = 0;
+            break;
+          case 'ShopOrder':
+            status = 1;
+            break;
+          case 'RiderOrder':
+            status = 2;
+            break;
+          case 'Success':
+            status = 3;
+            break;
+
+          default:
+        }
+
         int i = 0;
         for (var string in idFoods) {
           idFoods[i] = string.trim();
@@ -124,6 +144,7 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
           nameShops.add(nameShop);
           orderUserModels.add(orderUserModel);
           currentWidget = showContent();
+          statusInts.add(status);
         });
       }
     }
@@ -144,11 +165,44 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
                 showTotalPrice(index),
                 showTotalDelivery(index),
                 showSumTotal(index),
+      
+                MyStyle().mySizeBox(),
                 showProcessOrder(index),
+                //buildStepIndicator(statusInts[index]),
+                MyStyle().mySizeBox(),
               ],
             ),
           ),
         ),
+      );
+
+  Widget buildStepIndicator(int index) => Column(
+        children: [
+          StepsIndicator(
+            lineLength: 80,
+       
+            selectedStep: index,
+            nbSteps: 4,
+            doneLineColor: Colors.green,
+            doneStepColor: Colors.green,
+            undoneLineColor: Colors.red,
+            unselectedStepColor: Colors.red,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+               MyStyle().mySizeBox(),
+              Text('ส่งคำสั่งแล้ว'),
+              MyStyle().mySizeBox(),
+              Text('อยู่ในห้องครัว'),
+               MyStyle().mySizeBox(),
+              Text('กำลังจัดส่ง'),
+               MyStyle().mySizeBox(),
+              Text('สำเร็จ'),
+               MyStyle().mySizeBox(),
+            ],
+          )
+        ],
       );
 
   Widget showTotalPrice(int index) => Row(
@@ -190,15 +244,32 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  color: orderUserModels[index].success == 'ShopOrder' ||
+                  color: orderUserModels[index].success == '0' ||
+                          orderUserModels[index].success == 'ShopOrder' ||
                           orderUserModels[index].success == 'RiderOrder' ||
                           orderUserModels[index].success == 'Success'
-                      ? Colors.pink.shade300
+                      ? Colors.green
                       : Colors.grey.shade300),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('กำลังปรุงอาหาร'),
+                  Text('สั่งอาหาร'),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: orderUserModels[index].success == 'ShopOrder' ||
+                          orderUserModels[index].success == 'RiderOrder' ||
+                          orderUserModels[index].success == 'Success'
+                      ? Colors.green
+                      : Colors.grey.shade300),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('ในห้องครัว'),
                 ],
               ),
             ),
@@ -208,12 +279,12 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
               decoration: BoxDecoration(
                   color: orderUserModels[index].success == 'RiderOrder' ||
                           orderUserModels[index].success == 'Success'
-                      ? Colors.orange.shade400
-                      : Colors.grey.shade400),
+                      ? Colors.green
+                      : Colors.grey.shade300),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('กำลังไปส่ง'),
+                  Text('SEND จัดส่ง'),
                 ],
               ),
             ),
@@ -222,8 +293,8 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
             child: Container(
               decoration: BoxDecoration(
                   color: orderUserModels[index].success == 'Success'
-                      ? Colors.green.shade800
-                      : Colors.grey.shade700),
+                      ? Colors.green
+                      : Colors.grey.shade300),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -317,18 +388,26 @@ class _ShowOrderUserState extends State<ShowOrderUser> {
         ),
       );
 
-  Widget showDateTime(int index) =>
-     Row(
-       children: [
-         Text(orderUserModels[index].dateTime, style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey),),
-       ],
-     );
+  Widget showDateTime(int index) => Row(
+        children: [
+          Text(
+            orderUserModels[index].dateTime,
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+                color: Colors.grey),
+          ),
+        ],
+      );
 
   Widget showShop(int index) => Text(
         'ร้าน${nameShops[index]}',
         style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey.shade700),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+            color: Colors.grey.shade700),
       );
 
   Future<Null> _handleRefresh() async {

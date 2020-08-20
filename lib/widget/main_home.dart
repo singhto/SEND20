@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -63,6 +64,7 @@ class _MainHomeState extends State<MainHome> {
   @override
   void initState() {
     super.initState();
+    checkInternet();
     //myDuration();
     aboutNotification();
     editToken();
@@ -97,6 +99,35 @@ class _MainHomeState extends State<MainHome> {
       bottomSheet:
           statusProcess ? MyStyle().mySizeBox() : buildBottomSheet(context),
     );
+  }
+
+  Future<Null> checkInternet() async {
+    try {
+      var result = await InternetAddress.lookup('google.com');
+      if ((result.isNotEmpty) && (result[0].rawAddress.isNotEmpty)) {
+        print('มี Internet');
+      } else {
+        print('ใน IF Inter False หรือ ไม่มี Internet');
+        //routeToWarningInternet();
+        //AppSettings.openDataRoamingSettings();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HaveProblem(),
+            ),
+            (route) => false);
+      }
+    } catch (e) {
+      print('Inter False หรือ ไม่มี Internet');
+      //routeToWarningInternet();
+      //AppSettings.openDataRoamingSettings();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HaveProblem(),
+          ),
+          (route) => false);
+    }
   }
 
   Future<Null> myDuration() async {
@@ -266,7 +297,7 @@ class _MainHomeState extends State<MainHome> {
           setState(() {
             userShopModels.add(model);
             statusLoad = false;
-            if (distance <= 10.0) {
+            if (distance <= 40.0) {
               distances.add(distanceString);
               nearShopModels.add(model);
 
@@ -417,8 +448,8 @@ class _MainHomeState extends State<MainHome> {
       children: <Widget>[
         showHeadUser(),
         menuHome(),
-        //menuNoti(),
-        menuShowCart(),
+        menuNoti(),
+        //menuShowCart(),
         menuUserOrder(),
         menuSignOut(),
       ],
@@ -499,7 +530,7 @@ class _MainHomeState extends State<MainHome> {
         ],
       ),
       subtitle: Text(
-        'แจ้งเตือนจากเรา,',
+        'แจ้งเตือนจาก SEND',
         style: MyStyle().h3StylePrimary,
       ),
       onTap: () {
@@ -649,9 +680,21 @@ class _MainHomeState extends State<MainHome> {
 
   AppBar buildAppBar() {
     return AppBar(
-      title: Text('ค้นหาร้านค้า'),
+      title: Center(
+        child: Text(
+          'ค้นหาร้านค้า',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+          ),
+        ),
+      ),
       actions: <Widget>[
-        //buildISearchViewShop(),
+        buildISearchViewShop(),
+        SizedBox(
+          width: 10,
+        ),
         showCart(),
       ],
     );
@@ -682,35 +725,33 @@ class _MainHomeState extends State<MainHome> {
 
   Widget buildChooseSenLocation(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        SizedBox(
-          width: 20.0,
-        ),
         IconButton(
-            icon: Icon(
-              Icons.add_circle,
-              size: 30,
-              color: Colors.green,
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GuestMap(
-                      myLat: lat,
-                      myLng: lng,
-                    ),
-                  )).then((value) {
-                findSendLocationWhereIdUser();
-              });
-            }),
+          icon: Icon(
+            Icons.add_circle,
+            size: 30,
+            color: Colors.green,
+          ),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GuestMap(
+                    myLat: lat,
+                    myLng: lng,
+                  ),
+                )).then((value) {
+              findSendLocationWhereIdUser();
+            });
+          },
+        ),
         SizedBox(
           width: 10.0,
         ),
         Text(
           'ส่งที่ :',
-          style: MyStyle().h3Style,
+          style: MyStyle().h2Stylegreen,
         ),
         SizedBox(
           width: 10.0,
@@ -732,7 +773,7 @@ class _MainHomeState extends State<MainHome> {
     }
     return indexs.length == 0
         ? Text(
-            'กด + เพิ่มสถานที่ส่งของคุณ',
+            'เพิ่มสถานที่ส่งของคุณ',
             style: MyStyle().h2Stylegreen,
           )
         : DropdownButton<int>(
@@ -746,10 +787,25 @@ class _MainHomeState extends State<MainHome> {
 
                 return DropdownMenuItem(
                   child: Container(
-                    width: 180,
-                    child: Text(
-                      string,
-                      style: MyStyle().h2Stylegreen,
+                    width: 200,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          string,
+                          style: MyStyle().h2Stylegreen,
+                        ),
+                        IconButton(
+                            icon: Icon(
+                              Icons.highlight_off,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              deleteThread(sendLocationModels[e].id);
+                            })
+                      ],
                     ),
                   ),
                   value: e,
@@ -784,6 +840,16 @@ class _MainHomeState extends State<MainHome> {
               });
             },
           );
+  }
+
+  Future<void> deleteThread(String id) async {
+    String url =
+        'http://movehubs.com/app/deleteSendLocationWhereId.php?isAdd=true&id=$id';
+    await Dio().get(url).then((value) {
+      setState(() {
+        findSendLocationWhereIdUser();
+      });
+    });
   }
 
   Future<Null> findProcess() async {

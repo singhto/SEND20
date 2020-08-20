@@ -38,6 +38,7 @@ class _GuestV1State extends State<GuestV1> {
   @override
   void initState() {
     super.initState();
+     readBanner();
 
     lat = widget.lat;
     lng = widget.lng;
@@ -55,7 +56,7 @@ class _GuestV1State extends State<GuestV1> {
       lat = locationData.latitude;
       lng = locationData.longitude;
       //print('lat vvvvvv==>> $lat, lng ==>> $lng');
-      readBanner();
+     
       readShopThread();
       //checkAmount();
       //findUser();
