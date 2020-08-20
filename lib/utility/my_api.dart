@@ -12,6 +12,7 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'normal_toast.dart';
 
 class MyAPI {
+  
   Future<Null> addSendLocation(
       String idUser, String lat, String lng, String nameLocation) async {
     String url =

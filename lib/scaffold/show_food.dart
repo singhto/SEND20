@@ -310,7 +310,7 @@ class _ShowFoodState extends State<ShowFood> {
         ),
         subtitle: Text('${foodModel.detailFood}'),
         trailing: Text(
-          '฿ ${foodModel.priceFood}',
+          '฿ $listSumOption',
           style: TextStyle(
             fontSize: 22,
             color: Colors.red,
@@ -346,12 +346,9 @@ class _ShowFoodState extends State<ShowFood> {
   }
 
   Widget showSumPriceOption(int index) {
-    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
-    // print('listAmountOption[$index] ==>> ${listAmountOption[index]}');
 
     listSumOption[index] = factorPriceOption[index] * listAmountOption[index];
 
-    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
     return Text('${listSumOption[index]}');
   }
 

@@ -6,7 +6,6 @@ import 'package:foodlion/scaffold/settime.dart';
 import 'package:foodlion/widget/guestMap.dart';
 import 'package:foodlion/widget/my_food.dart';
 import 'package:foodlion/widget/my_food_shop.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
 void main()  => runApp(MyApp());

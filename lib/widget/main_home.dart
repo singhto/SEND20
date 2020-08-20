@@ -710,6 +710,7 @@ class _MainHomeState extends State<MainHome> {
               userShopModels: nearShopModels,
               nameLocalChoose: nameLocalChoose,
               distances: distances,
+            
             ),
           )),
     );
