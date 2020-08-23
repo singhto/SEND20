@@ -34,13 +34,12 @@ class ShowFood extends StatefulWidget {
 class _ShowFoodState extends State<ShowFood> {
   // Field
   FoodModel foodModel;
-  int amountFood = 1;
+  int amountFood = 0;
   String idShop,
       idUser,
       idFood,
       nameshop,
       nameFood,
-      detailFood,
       urlFood,
       priceFood,
       statusFood;
@@ -69,6 +68,8 @@ class _ShowFoodState extends State<ShowFood> {
 
   int transport;
 
+  bool statusChoose = false;
+
   // Method
   @override
   void initState() {
@@ -85,11 +86,41 @@ class _ShowFoodState extends State<ShowFood> {
     findTransport();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(foodModel.nameFood,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            )),
+      ),
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              showImage(),
+              MyStyle().mySizeBox(),
+              showName(),
+              showListFood(),
+              SizedBox(
+                height: 50.0,
+              )
+            ],
+          ),
+        ),
+      ),
+      bottomSheet: buildBottomSheet(context),
+    );
+  }
+
   Future<Null> findTransport() async {
     print('disss  === $distance');
 
     transport = widget.transportInt;
-    print('transport === $transport');
+    print('transport ===>>> $transport');
   }
 
   Future<Null> findLocationShop() async {
@@ -107,7 +138,6 @@ class _ShowFoodState extends State<ShowFood> {
     idFood = foodModel.id;
     nameshop = await MyAPI().findNameShopWhere(idShop);
     nameFood = foodModel.nameFood;
-    detailFood = foodModel.detailFood;
     urlFood = foodModel.urlFood;
     priceFood = foodModel.priceFood;
 
@@ -145,8 +175,6 @@ class _ShowFoodState extends State<ShowFood> {
   Widget chooseAmount() {
     return Expanded(
       child: Row(
-        //mainAxisAlignment: MainAxisAlignment.center,
-        //mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           IconButton(
               icon: Icon(
@@ -185,7 +213,6 @@ class _ShowFoodState extends State<ShowFood> {
 
   Widget showButton() {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         chooseAmount(),
       ],
@@ -226,70 +253,77 @@ class _ShowFoodState extends State<ShowFood> {
       children: <Widget>[
         showTotal(),
         showListSubMunu(),
-        showRemark(),
-        showAddSum(),
-      ],
-    );
-  }
-
-  Column showAddSum() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              MyStyle().mySizeBox(),
-              IconButton(
-                  icon: Icon(
-                    Icons.remove_circle,
-                    size: 36.0,
-                    color: Colors.red,
-                  ),
-                  onPressed: () {
-                    if (amountFood != 0) {
-                      setState(() {
-                        amountFood--;
-                      });
-                    }
-                  }),
-              MyStyle().mySizeBox(),
-              Text(
-                '$amountFood',
-                style: MyStyle().h1PrimaryStyle,
-              ),
-              MyStyle().mySizeBox(),
-              IconButton(
-                  icon: Icon(
-                    Icons.add_circle,
-                    size: 36.0,
-                    color: Colors.green,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      amountFood++;
-                    });
-                  }),
-              MyStyle().mySizeBox(),
-            ],
-          ),
+        MyStyle().mySizeBox(),
+        buildRemake(),
+        //buildAmount(),
+        SizedBox(
+          height: 50.0,
         ),
       ],
     );
   }
 
-  TextFormField showRemark() {
+  Widget buildRemake() {
     return TextFormField(
       onChanged: (value) => remake = value.trim(),
       decoration: InputDecoration(
-        labelText: "คำขอพิเศษ เช่น ระดับความเผ็ด หรือ ไม่ใส่ผัก เป็นต้น",
+        labelText: "ใส่คำขอพิเศษหรือไม่ก็ได้เช่น รสชาติ, ไม่ใส่ผัก เป็นต้น",
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25.0),
           borderSide: BorderSide(),
         ),
       ),
+    );
+  }
+
+  Column buildAmount() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 50.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.remove_circle,
+                  size: 36.0,
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  if (amountFood != 0) {
+                    setState(() {
+                      amountFood--;
+                    });
+                  }
+                }),
+            MyStyle().mySizeBox(),
+            Text(
+              '$amountFood',
+              style: MyStyle().h1PrimaryStyle,
+            ),
+            MyStyle().mySizeBox(),
+            IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  size: 36.0,
+                  color: Colors.green,
+                ),
+                onPressed: () {
+                  setState(() {
+                    amountFood++;
+                  });
+                }),
+            MyStyle().mySizeBox(),
+          ],
+        ),
+        SizedBox(
+          height: 20.0,
+        )
+      ],
     );
   }
 
@@ -306,15 +340,26 @@ class _ShowFoodState extends State<ShowFood> {
           ),
         ),
         subtitle: Text('${foodModel.detailFood}'),
-        trailing: Text(
-          '฿ ${foodModel.priceFood}',
-          style: TextStyle(
-            fontSize: 22,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
-        ),
+        trailing: buildText(),
+      ),
+    );
+  }
+
+  Text buildText() {
+    for (var i = 0; i < 2; i++) {
+      print('listSumOption === $listSumOption');
+      int total = 0;
+      for (var i in listSumOption) {
+        total = total + i;
+      }
+    }
+    return Text(
+      'รวม $total บาท',
+      style: TextStyle(
+        fontSize: 22,
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.0,
       ),
     );
   }
@@ -328,42 +373,63 @@ class _ShowFoodState extends State<ShowFood> {
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemCount: subFoodModels.length,
-                itemBuilder: (context, index) => Row(
-                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    checkOption(index),
-                    MyStyle().showTitleH2Grey(subFoodModels[index].nameFood)
-                    //showAmountFood(index),
-                    //showSumPriceOption(index),
-                  ],
+                itemBuilder: (context, index) => Card(
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                    children: <Widget>[
+                      checkOption(index),
+                      Expanded(
+                        flex: 1,
+                        child: showFoodMenu(index),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: showAmountFood(index),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: showSumPriceOption(index),
+                      ),
+
+                      // checkOption(index),
+                      // showFoodMenu(index),
+                      // showAmountFood(index),
+                      // showSumPriceOption(index),
+                    ],
+                  ),
                 ),
               ),
             ],
           );
   }
 
+  Widget showFoodMenu(int index) => Text(subFoodModels[index].nameFood,
+      style: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.w600, color: Colors.grey));
+
   Widget showSumPriceOption(int index) {
-    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
-    // print('listAmountOption[$index] ==>> ${listAmountOption[index]}');
-
     listSumOption[index] = factorPriceOption[index] * listAmountOption[index];
+    //print('listSumOption ตอนเพิ่มค่า $listSumOption');
 
-    // print('listSumOption[$index] ==>> ${listSumOption[index]}');
-    return Text('${listSumOption[index]}');
+    return Text(
+      '${listSumOption[index]}',
+      style: MyStyle().h2StylePrimary,
+    );
   }
 
   int indexChoose = 0;
 
   Widget checkOption(int index) {
-    // print('isChecks ==>> $isCheckeds');
+    //print('isChecks ==>> $isCheckeds');
     // print('index ==>> $index');
     return Container(
       width: 80,
       child: CheckboxListTile(
         value: isCheckeds[index],
         onChanged: (value) {
-          print('You Click Index = $index');
-
+          //print('You Click Index = $index');
+          statusChoose = value;
           setState(() {
             isCheckeds[index] = value;
 
@@ -386,7 +452,7 @@ class _ShowFoodState extends State<ShowFood> {
               total = calculatrTotal();
 
               print('idChoose ==>> $idOfChoose');
-              print('nameOption ==>> $nameOptions');
+              //print('nameOption ==>> $nameOptions');
 
               int y = 0;
               for (var name in nameOptions) {
@@ -423,12 +489,13 @@ class _ShowFoodState extends State<ShowFood> {
           children: <Widget>[
             MyStyle().mySizeBox(),
             IconButton(
-                icon: Icon(
-                  Icons.remove_circle,
-                  size: 20.0,
-                  color: Colors.red,
-                ),
-                onPressed: () {
+              icon: Icon(
+                Icons.remove,
+                size: 20.0,
+                color: Colors.orange,
+              ),
+              onPressed: () {
+                if (statusChoose) {
                   if (listAmountOption[index] != 0) {
                     setState(() {
                       listAmountOption[index]--;
@@ -451,21 +518,25 @@ class _ShowFoodState extends State<ShowFood> {
                       }
                     });
                   }
-                }),
+                }
+              },
+            ),
             MyStyle().mySizeBox(),
             Text('${listAmountOption[index]}',
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
+                  color: Colors.grey,
                 )),
             MyStyle().mySizeBox(),
             IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  size: 20.0,
-                  color: Colors.green,
-                ),
-                onPressed: () {
+              icon: Icon(
+                Icons.add,
+                size: 20.0,
+                color: Colors.orange,
+              ),
+              onPressed: () {
+                if (statusChoose) {
                   setState(() {
                     listAmountOption[index]++;
 
@@ -484,106 +555,86 @@ class _ShowFoodState extends State<ShowFood> {
                     total = calculatrTotal();
                     isCheckeds[index] = true;
                   });
-                }),
+                }
+              },
+            ),
           ],
         ),
       ],
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: MyStyle().showTitleH2White('เลือกเมนูอาหาร'),
+  Widget buildBottomSheet(BuildContext context) {
+    return Container(
+      height: 60.0,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, -1),
+            blurRadius: 6.0,
+          )
+        ],
       ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              showImage(),
-              MyStyle().mySizeBox(),
-              showName(),
-              showListFood(),
-              SizedBox(
-                height: 80.0,
-              )
-            ],
-          ),
-        ),
-      ),
-      bottomSheet: Container(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, -1),
-              blurRadius: 6.0,
-            )
-          ],
-        ),
-        child: Center(
-          child: FlatButton(
-            onPressed: () {
-              if (statusShop) {
-                normalDialog(context, 'ไม่สามารถเลือกได้ ?',
-                    'โปรดเลือกอาหาร จากร้าน $nameCurrentShop คุณสามารถสั่งอาหารได้ครั้งละ 1 ร้าน');
-              } else if (amountFood == 0) {
-                normalDialog(context, 'ยังไม่มี รายการอาหาร',
-                    'กรุณาเพิ่มจำนวน รายการอาหาร');
-              } else if (idUser == null) {
-                normalDialog(
-                    context, 'ยังไม่ได้ Login', 'กรุณา Login ก่อน Order คะ');
-              } else {
-                int sumPrice = 0;
-                for (var num in sumOptions) {
-                  sumPrice = sumPrice + int.parse(num.trim());
-                }
-
-                print(
-                    'idFood=$idFood, idShop=$idShop,nameShop=$nameshop, nameFood=$nameFood, detailFood=$detailFood, urlFood=$urlFood, priceFood=$priceFood, amountFood=$amountFood');
-                print(
-                    'nameOption = $nameOptions, sizeOption = $sizeOptions, priceOption = $priceOptions, sumOption = $sumOptions, remark = $remake');
-                print(
-                    'latUser = $latChoose, lngUser = $lngChoose, nameLocal = $nameLocalChoose, latShop = $latShop, lngShop = $lngShop, sumPrice = $sumPrice, transport = $transport, distance = $distance');
-                OrderModel model = OrderModel(
-                    idFood: idFood,
-                    idShop: idShop,
-                    nameShop: nameshop,
-                    nameFood: nameFood,
-                    detailFood: detailFood,
-                    urlFood: urlFood,
-                    priceFood: priceFood,
-                    amountFood: amountFood.toString(),
-                    nameOption: nameOptions.toString(),
-                    sizeOption: sizeOptions.toString(),
-                    priceOption: priceOptions.toString(),
-                    sumOption: sumOptions.toString(),
-                    remark: remake,
-                    latUser: latChoose.toString(),
-                    lngUser: lngChoose.toString(),
-                    nameLocal: nameLocalChoose,
-                    latShop: latShop.toString(),
-                    lngShop: lngShop.toString(),
-                    sumPrice: sumPrice.toString(),
-                    transport: transport.toString(),
-                    distance: distance);
-                print('model  ======= ${model.toJson()}');
-                SQLiteHelper().insertDatabase(model);
-                Navigator.of(context).pop();
+      child: Center(
+        child: FlatButton(
+          onPressed: () {
+            if (statusShop) {
+              normalDialog(context, 'ไม่สามารถเลือกได้ ?',
+                  'โปรดเลือกอาหาร จากร้าน $nameCurrentShop คุณสามารถสั่งอาหารได้ครั้งละ 1 ร้าน');
+            } else if (total == 0) {
+              normalDialog(context, 'ยังไม่มี รายการอาหาร',
+                  'กรุณาเพิ่มจำนวน รายการอาหาร');
+            } else if (idUser == null) {
+              normalDialog(
+                  context, 'ยังไม่ได้ Login', 'กรุณา Login ก่อน Order คะ');
+            } else {
+              int sumPrice = 0;
+              for (var num in sumOptions) {
+                sumPrice = sumPrice + int.parse(num.trim());
               }
-            },
-            child: Text(
-              'เพิ่มลงในตะกร้า',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-              ),
+
+              print(
+                  'idFood=$idFood, idShop=$idShop,nameShop=$nameshop, nameFood=$nameFood, urlFood=$urlFood, priceFood=$priceFood, amountFood=$amountFood');
+              print(
+                  'nameOption = $nameOptions, sizeOption = $sizeOptions, priceOption = $priceOptions, sumOption = $sumOptions, remark = $remake');
+              print(
+                  'latUser = $latChoose, lngUser = $lngChoose, nameLocal = $nameLocalChoose, latShop = $latShop, lngShop = $lngShop, sumPrice = $sumPrice, transport = $transport, distance = $distance');
+              OrderModel model = OrderModel(
+                  idFood: idFood,
+                  idShop: idShop,
+                  nameShop: nameshop,
+                  nameFood: nameFood,
+                  urlFood: urlFood,
+                  priceFood: priceFood,
+                  amountFood: amountFood.toString(),
+                  nameOption: nameOptions.toString(),
+                  sizeOption: sizeOptions.toString(),
+                  priceOption: priceOptions.toString(),
+                  sumOption: sumOptions.toString(),
+                  remark: remake,
+                  latUser: latChoose.toString(),
+                  lngUser: lngChoose.toString(),
+                  nameLocal: nameLocalChoose,
+                  latShop: latShop.toString(),
+                  lngShop: lngShop.toString(),
+                  sumPrice: sumPrice.toString(),
+                  transport: transport.toString(),
+                  distance: distance);
+              print('model  ======= ${model.toJson()}');
+              SQLiteHelper().insertDatabase(model);
+              Navigator.of(context).pop();
+            }
+          },
+          child: Text(
+            'เพิ่มลงในตะกร้า',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
             ),
           ),
         ),

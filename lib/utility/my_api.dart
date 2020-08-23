@@ -12,7 +12,6 @@ import 'package:foodlion/models/user_shop_model.dart';
 import 'normal_toast.dart';
 
 class MyAPI {
-  
   Future<Null> addSendLocation(
       String idUser, String lat, String lng, String nameLocation) async {
     String url =
@@ -66,8 +65,8 @@ class MyAPI {
 
       if (delivaryModel.token.isNotEmpty) {
         // print('Sent Token to in aaaaa ===>> ${delivaryModel.token}');
-        MyAPI().notificationAPI(delivaryModel.token,
-            'ร้านค้ารับ Order', 'จะต้องไปรับอาหารครับพี่ RIDER');
+        MyAPI().notificationAPI(delivaryModel.token, 'ร้านค้ารับ Order',
+            'จะต้องไปรับอาหารครับพี่ RIDER');
       }
     }
   }
@@ -77,8 +76,8 @@ class MyAPI {
     //print('now = ${now.toString()}');
     DateTime open = now;
     DateTime close = now;
-    open = DateTime(now.year, now.month, now.day, 2, 30);
-    close = DateTime(now.year, now.month, now.day, 23, 00);
+    open = DateTime(now.year, now.month, now.day, 0, 00);
+    close = DateTime(now.year, now.month, now.day, 24, 00);
     //print('open = ${open.toString()}');
 
     if (now.isAfter(open)) {
@@ -179,6 +178,7 @@ class MyAPI {
     }
     return foodModel;
   }
+
 
   Future<Map<String, dynamic>> findLocationShopWhere(String idShop) async {
     Map<String, dynamic> myMap = Map();

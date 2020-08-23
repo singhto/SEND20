@@ -173,9 +173,7 @@ class _MyFoodState extends State<MyFood> {
   }
 
   Widget showNoData() {
-    return Center(
-      child: MyStyle().showProgress()
-    );
+    return Center(child: MyStyle().showProgress());
   }
 
   Widget showListFood() {
@@ -288,9 +286,9 @@ class _MyFoodState extends State<MyFood> {
                         Text(
                           searchFoodModels[index].detailFood,
                           style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).primaryColor),
+                            fontSize: 18.0,
+                            color: Colors.grey,
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
@@ -349,7 +347,15 @@ class _MyFoodState extends State<MyFood> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ร้าน$nameShop'),
+        title: Text(
+          'ร้าน$nameShop',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            color: Colors.white,
+          ),
+        ),
         actions: <Widget>[showCart()],
       ),
       body: statusData ? showNoData() : showListFood(),
@@ -375,13 +381,15 @@ class _MyFoodState extends State<MyFood> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'ส่งที่ $nameLocalChoose',
-            style: MyStyle().h2Stylegreen,
+          Expanded(
+            child: Text(
+              'ส่งที่ $nameLocalChoose',
+              style: MyStyle().h2Stylegrey,
+            ),
           ),
           Text(
             transportInt == null ? '' : 'ค่าส่ง $transportInt บาท',
-            style: MyStyle().h2Stylegreen,
+            style: MyStyle().h2Stylegrey,
           ),
         ],
       ),
@@ -458,6 +466,5 @@ class _MyFoodState extends State<MyFood> {
       distance = distanceDou.toString();
       transportInt = i;
     });
-
   }
 }

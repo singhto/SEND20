@@ -8,12 +8,12 @@ import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ShowOrderUser extends StatefulWidget {
+class ShowOrderNow extends StatefulWidget {
   @override
-  _ShowOrderUserState createState() => _ShowOrderUserState();
+  _ShowOrderNowState createState() => _ShowOrderNowState();
 }
 
-class _ShowOrderUserState extends State<ShowOrderUser> {
+class _ShowOrderNowState extends State<ShowOrderNow> {
   // Field
   bool status, shopBool = true, riderBool = true, userBool = true;
   Widget currentWidget;

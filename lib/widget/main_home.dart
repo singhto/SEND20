@@ -25,6 +25,7 @@ import 'package:foodlion/utility/sqlite_helper.dart';
 import 'package:foodlion/widget/guestMap.dart';
 import 'package:foodlion/widget/my_food.dart';
 import 'package:foodlion/widget/notification_user.dart';
+import 'package:foodlion/widget/show_order_now.dart';
 import 'package:foodlion/widget/show_order_user.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
@@ -524,7 +525,7 @@ class _MainHomeState extends State<MainHome> {
             style: MyStyle().h2Style,
           ),
           Icon(
-            Icons.looks_4,
+            Icons.notification_important,
             color: Colors.red,
           )
         ],
@@ -653,7 +654,7 @@ class _MainHomeState extends State<MainHome> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ShowOrderUser(),
+                  builder: (context) => ShowOrderNow(),
                 ));
           },
           child: Column(
@@ -681,12 +682,24 @@ class _MainHomeState extends State<MainHome> {
   AppBar buildAppBar() {
     return AppBar(
       title: Center(
-        child: Text(
-          'ค้นหาร้านค้า',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
+        child: GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SearchViewShop(
+                userShopModels: nearShopModels,
+                nameLocalChoose: nameLocalChoose,
+                distances: distances,
+              ),
+            ),
+          ),
+          child: Text(
+            'ค้นหาร้านค้า',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
           ),
         ),
       ),
@@ -704,15 +717,15 @@ class _MainHomeState extends State<MainHome> {
     return IconButton(
       icon: Icon(Icons.search, color: Colors.white),
       onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SearchViewShop(
-              userShopModels: nearShopModels,
-              nameLocalChoose: nameLocalChoose,
-              distances: distances,
-            
-            ),
-          )),
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchViewShop(
+            userShopModels: nearShopModels,
+            nameLocalChoose: nameLocalChoose,
+            distances: distances,
+          ),
+        ),
+      ),
     );
   }
 

@@ -4,8 +4,6 @@ import 'package:foodlion/models/user_model.dart';
 import 'package:foodlion/utility/my_api.dart';
 import 'package:foodlion/utility/my_style.dart';
 import 'package:foodlion/utility/normal_dialog.dart';
-import 'package:foodlion/widget/user_home.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

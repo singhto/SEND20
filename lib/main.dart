@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'SEND',
       home: Home(),
+      //home: HomePage(),
       routes: {
         '/myfoodshop': (context) => MyFoodShop(),
         '/reviewshop': (context) => ReviewShop(),

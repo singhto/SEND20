@@ -94,11 +94,6 @@ class _ShowCartState extends State<ShowCart> {
         orderModels = object;
 
         for (var model in orderModels) {
-          totalPrice = totalPrice +
-              (int.parse(model.priceFood) * int.parse(model.amountFood));
-          findLatLngShop(model);
-          sumTotal = totalPrice;
-
           String string = model.nameOption;
           string = string.substring(1, string.length - 1);
           List<String> nameOptions = string.split(',');
@@ -107,8 +102,6 @@ class _ShowCartState extends State<ShowCart> {
             nameOptions[index] = string1.trim();
 
             index++;
-
-            print('string $nameOptions');
           }
 
           String price = model.priceOption;
@@ -168,6 +161,7 @@ class _ShowCartState extends State<ShowCart> {
             listSumOptions2.add(sumOptions);
           });
         }
+
         totalDelivery = int.parse(orderModels[0].transport);
 
         myDistance = orderModels[0].distance;
@@ -204,11 +198,7 @@ class _ShowCartState extends State<ShowCart> {
       double lat2 = double.parse(userShopModel.lat);
       double lng2 = double.parse(userShopModel.lng);
 
-      // List<double> location1 = [13.673452, 100.606735];
-      // List<double> location2 = [13.665821, 100.644286];
-
       int indexOld = 0;
-      // int indexLocation = 0;
 
       int index = int.parse(orderModel.idShop);
       if (checkMemberIdShop(index)) {
@@ -322,7 +312,6 @@ class _ShowCartState extends State<ShowCart> {
     List<String> idFoods = List();
     List<String> amountFoods = List();
     List<String> remarks = List();
-
     String tokenShop,
         remarke,
         latUser,
@@ -363,8 +352,7 @@ class _ShowCartState extends State<ShowCart> {
 
     Response response = await Dio().get(url);
     if (response.toString() == 'true') {
-      print(
-          ' amoutFood ===>> $amountFoods remarke ==>> $remarke  latUser ==>> $latUser lngUser ==>> $lngUser nameLocal==>> $nameLocal');
+      //print(' amoutFood ===>> $amountFoods remarke ==>> $remarke  latUser ==>> $latUser lngUser ==>> $lngUser nameLocal==>> $nameLocal');
       //print('===============.....Success Order');
 
       await SQLiteHelper().deleteSQLiteAll().then((value) {
@@ -446,10 +434,10 @@ class _ShowCartState extends State<ShowCart> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          showSum('ค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
+          showSum('รวมค่าอาหาร', totalPrice.toString(), MyStyle().lightColor),
           showSum('ค่าส่ง ($myDistance กม.)', totalDelivery.toString(),
-              MyStyle().primaryColor),
-          showSum('รวมราคา', sumTotal.toString(), MyStyle().dartColor),
+              MyStyle().lightColor),
+          showSum('รวม', sumTotal.toString(), MyStyle().primaryColor),
           Center(
             child: OutlineButton(
               onPressed: () async {
@@ -459,13 +447,12 @@ class _ShowCartState extends State<ShowCart> {
                   if (phone == 'null') {
                     phoneForm();
                   } else {
-                    confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
+                    //confirmDialog(context, 'ยืนยัน', 'กรุณายืนยันออร์นี้ครับ');
+                    orderThread();
                   }
                 });
               },
               textColor: Colors.green,
-              borderSide: BorderSide(
-                  color: Colors.green, width: 1.0, style: BorderStyle.solid),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
@@ -476,12 +463,12 @@ class _ShowCartState extends State<ShowCart> {
                       color: Colors.orange,
                     ),
                     Text(
-                      '   ส่งคำสั่งซื้อ   ',
+                      '  ยืนยันสั่งซื้อ   ',
                       style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3.0,
-                          color: Colors.green),
+                          color: Colors.orange[700]),
                     ),
                   ],
                 ),
@@ -499,10 +486,6 @@ class _ShowCartState extends State<ShowCart> {
         padding: EdgeInsets.only(top: 20.0, left: 8.0, right: 8.0),
         child: Column(
           children: <Widget>[
-            headTitle(),
-            Divider(
-              color: MyStyle().dartColor,
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: orderModels.length,
@@ -510,81 +493,76 @@ class _ShowCartState extends State<ShowCart> {
                   decoration: BoxDecoration(
                       color:
                           index % 2 == 0 ? Colors.grey.shade300 : Colors.white),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  Text(
-                                    orderModels[index].nameFood,
-                                    style: MyStyle().h2Style,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    orderModels[index].nameOption,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    orderModels[index].remark,
-                                  ),
-                                ],
-                              )
-                            ],
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              orderModels[index].nameFood,
+                              style: MyStyle().h2Stylegrey,
+                            ),
                           ),
-                        ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.delete_forever,
+                                color: MyStyle().dartColor,
+                              ),
+                              onPressed: () {
+                                confirmAnDelete(orderModels[index]);
+                              }),
+                        ],
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              orderModels[index].amountFood,
-                              style: MyStyle().h2NormalStyle,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(
-                              calculateTotal(orderModels[index].priceFood,
-                                  orderModels[index].amountFood),
-                              style: MyStyle().h2NormalStyle,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                          children: <Widget>[
-                            IconButton(
-                                icon: Icon(
-                                  Icons.delete_forever,
-                                  color: MyStyle().dartColor,
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemCount: listNameOptions[index].length,
+                        itemBuilder: (context, index2) => Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Text(
+                                  listNameOptions[index][index2],
+                                  style: MyStyle().h2StylegreyNormal,
                                 ),
-                                onPressed: () {
-                                  confirmAnDelete(orderModels[index]);
-                                }),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                listPriceOptions[index][index2],
+                                style: MyStyle().h2StylegreyNormal,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                listSizeOptions[index][index2],
+                                style: MyStyle().h2StylegreyNormal,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                listSumOptions2[index][index2],
+                                style: MyStyle().h2StylegreyNormal,
+                              ),
+                            ),
                           ],
                         ),
                       ),
+                      Row(
+                        children: [
+                          Text(
+                            orderModels[index].remark,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -601,21 +579,21 @@ class _ShowCartState extends State<ShowCart> {
     showDialog(
       context: context,
       builder: (value) => AlertDialog(
-        title: Text('ยื่นยันการลบรายการอาหาร'),
-        content: Text('คุณต้องการลบ ${model.nameFood} นี่จริงๆ นะคะ'),
+        title: Text('ยื่นยันการลบ',style: MyStyle().h1PrimaryStyle,),
+        content: Text('คุณต้องการลบ ${model.nameFood}',style: MyStyle().h2StylegreyNormal,),
         actions: <Widget>[
           FlatButton(
             onPressed: () {
               Navigator.of(context).pop();
               processDelete(model.id);
             },
-            child: Text('ยืนยันลบ'),
+            child: Text('ยืนยันลบ',style: MyStyle().h2Stylered,),
           ),
           FlatButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('ไม่ลบรายการอาหาร'),
+            child: Text('ไม่ลบ',style: MyStyle().h2Stylegrey,),
           ),
         ],
       ),
@@ -636,35 +614,6 @@ class _ShowCartState extends State<ShowCart> {
     int total = princtInt * amountInt;
 
     return total.toString();
-  }
-
-  Row headTitle() {
-    return Row(
-      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(
-          flex: 3,
-          child: Text(
-            'รายการอาหาร',
-            style: MyStyle().h2Style,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            'จำนวน',
-            style: MyStyle().h2Style,
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Text(
-            'รวม',
-            style: MyStyle().h2Style,
-          ),
-        ),
-      ],
-    );
   }
 
   Future<Null> phoneForm() async {
@@ -701,7 +650,9 @@ class _ShowCartState extends State<ShowCart> {
                     } else if (phone.length == 10) {
                       MyAPI().addPhoneThread(
                           userModel.id.toString(), 'User', phone);
-                      Navigator.pop(context);
+                      orderThread();
+                      routeToOrderUser();
+                      //Navigator.pop(context);
                     } else {
                       normalToast('กรุณากรอกเบอร์ ให้ครบ ห้ามมีช่องว่าง ');
                     }
@@ -721,13 +672,27 @@ class _ShowCartState extends State<ShowCart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ตะกร้า'),
+        title: Text(
+          'อาหารในตะกร้า',
+          style: MyStyle().h2StyleWhite,
+        ),
       ),
       body: orderModels.length == 0
           ? Center(
-              child: Text(
-                'ไม่มีรายการอาหารในตะกร้า',
-                style: MyStyle().h1PrimaryStyle,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.remove_shopping_cart,
+                    color: Colors.grey,
+                    size: 60,
+                  ),
+                  MyStyle().mySizeBox(),
+                  Text(
+                    'ไม่มีรายการอาหารในตะกร้า',
+                    style: MyStyle().h2Stylegrey
+                  ),
+                ],
               ),
             )
           : showContent(),

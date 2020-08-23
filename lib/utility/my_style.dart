@@ -77,7 +77,7 @@ class MyStyle {
     fontFamily: 'ThaiSansNeue',
     color: Colors.white,
     fontWeight: FontWeight.bold,
-    fontSize: 24.0,
+    fontSize: 20.0,
     letterSpacing: 1.0,
   );
 
@@ -98,6 +98,26 @@ class MyStyle {
     fontFamily: 'ThaiSansNeue',
     color: Colors.white,
     fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+    letterSpacing: 1.0,
+  );
+   TextStyle h2Stylegrey = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Colors.grey[600],
+    fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+    letterSpacing: 1.0,
+  );
+    TextStyle h2Stylered = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Colors.red,
+    fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+    letterSpacing: 1.0,
+  );
+     TextStyle h2StylegreyNormal = TextStyle(
+    fontFamily: 'ThaiSansNeue',
+    color: Colors.grey[600],
     fontSize: 18.0,
     letterSpacing: 1.0,
   );
@@ -174,14 +194,14 @@ class MyStyle {
     return Row(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.all(8.0),
+          //padding: EdgeInsets.all(8.0),
           child: Text(
             string,
             style: TextStyle(
               fontFamily: 'ThaiSansNeue',
               color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
               fontWeight: FontWeight.bold,
-              fontSize: 20.0,
+              fontSize: 18.0,
               letterSpacing: 1.0,
             ),
           ),
@@ -201,7 +221,7 @@ class MyStyle {
               fontFamily: 'ThaiSansNeue',
               color: Color.fromARGB(0xff, 0xef, 0x79, 0x36),
               fontWeight: FontWeight.bold,
-              fontSize: 20.0,
+              fontSize: 18.0,
               letterSpacing: 1.0,
             ),
           ),
@@ -229,11 +249,86 @@ class MyStyle {
     );
   }
 
+      Widget showTitleH2White(String string) {
+    return Row(
+      children: <Widget>[
+        Container(
+          //padding: EdgeInsets.only(left: 8.0),
+          child: Text(
+            string,
+            style: TextStyle(
+              fontFamily: 'ThaiSansNeue',
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+      Widget showTextBody(String string) {
+    return Row(
+      children: <Widget>[
+        Container(
+          //padding: EdgeInsets.only(left: 8.0),
+          child: Text(
+            string,
+            style: TextStyle(
+              fontFamily: 'ThaiSansNeue',
+              fontSize: 16.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+        Widget showTextBodyBold(String string) {
+    return Row(
+      children: <Widget>[
+        Container(
+          //padding: EdgeInsets.only(left: 8.0),
+          child: Text(
+            string,
+            style: TextStyle(
+              fontFamily: 'ThaiSansNeue',
+              fontSize: 16.0,
+              letterSpacing: 1.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+      Widget showTitleH2Grey(String string) {
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Text(
+            string,
+            style: TextStyle(
+              fontFamily: 'ThaiSansNeue',
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget showTitleH2Dark(String string) {
     return Row(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 8.0),
+          //padding: EdgeInsets.only(left: 8.0),
           child: Text(
             string,
             style: TextStyle(
@@ -241,7 +336,7 @@ class MyStyle {
               color: Color.fromARGB(0xff, 0xb7, 0x4a, 0x02),
               fontWeight: FontWeight.bold,
               letterSpacing: 1.0,
-              fontSize: 22.0,
+              fontSize: 20.0,
             ),
           ),
         ),

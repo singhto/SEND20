@@ -12,6 +12,7 @@ class SQLiteHelper {
   String idShop = 'idShop';
   String nameShop = 'nameShop';
   String nameFood = 'nameFood';
+  String detailFood = 'detailFood';
   String urlFood = 'urlFood';
   String priceFood = 'priceFood';
   String amountFood = 'amountFood';
@@ -30,6 +31,7 @@ class SQLiteHelper {
   String sumPrice = 'sumPrice';
   String transport = 'transport';
   String distance = 'distance';
+  
 
 
 
@@ -42,7 +44,7 @@ class SQLiteHelper {
     await openDatabase(join(await getDatabasesPath(), nameDatabase),
         onCreate: (Database database, int version) {
       return database.execute(
-          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $urlFood TEXT, $priceFood TEXT, $amountFood TEXT, $nameOption TEXT,$sizeOption TEXT,$priceOption TEXT,$sumOption TEXT,$remark TEXT,$latUser TEXT,$lngUser TEXT,$nameLocal TEXT,$latShop TEXT,$lngShop TEXT,$sumPrice TEXT,$transport TEXT,$distance TEXT)');
+          'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY, $idFood TEXT, $idShop TEXT, $nameShop TEXT, $nameFood TEXT, $detailFood TEXT,$urlFood TEXT, $priceFood TEXT, $amountFood TEXT, $nameOption TEXT,$sizeOption TEXT,$priceOption TEXT,$sumOption TEXT,$remark TEXT,$latUser TEXT,$lngUser TEXT,$nameLocal TEXT,$latShop TEXT,$lngShop TEXT,$sumPrice TEXT,$transport TEXT,$distance TEXT)');
     }, version: versionDatabase);
   }
 

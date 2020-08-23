@@ -15,6 +15,11 @@ class OrderUserModel {
   String lngUser;
   String nameLocal;
   String distance;
+  String nameOption;
+  String sizeOption;
+  String priceOption;
+  String sumPrice;
+  String transport;
 
   OrderUserModel(
       {this.id,
@@ -32,7 +37,12 @@ class OrderUserModel {
       this.latUser,
       this.lngUser,
       this.nameLocal,
-      this.distance});
+      this.distance,
+      this.nameOption,
+      this.sizeOption,
+      this.priceOption,
+      this.sumPrice,
+      this.transport});
 
   OrderUserModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -51,6 +61,11 @@ class OrderUserModel {
     lngUser = json['lngUser'];
     nameLocal = json['nameLocal'];
     distance = json['distance'];
+    nameOption = json['nameOption'];
+    sizeOption = json['sizeOption'];
+    priceOption = json['priceOption'];
+    sumPrice = json['sumPrice'];
+    transport = json['transport'];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +86,11 @@ class OrderUserModel {
     data['lngUser'] = this.lngUser;
     data['nameLocal'] = this.nameLocal;
     data['distance'] = this.distance;
+    data['nameOption'] = this.nameOption;
+    data['sizeOption'] = this.sizeOption;
+    data['priceOption'] = this.priceOption;
+    data['sumPrice'] = this.sumPrice;
+    data['transport'] = this.transport;
     return data;
   }
 }
@@ -91,5 +111,10 @@ class OrderUserModel {
 //     "latUser": "",
 //     "lngUser": "",
 //     "nameLocal": "",
-//     "distance": ""
+//     "distance": "",
+//     "nameOption": "",
+//     "sizeOption": "",
+//     "priceOption": "",
+//     "sumPrice": "",
+//     "transport": ""
 // }

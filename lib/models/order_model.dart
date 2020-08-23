@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class OrderModel {
   int id;
   String idFood;
@@ -20,6 +22,7 @@ class OrderModel {
   String sumPrice;
   String transport;
   String distance;
+  String detailFood;
 
   OrderModel(
       {this.id,
@@ -42,7 +45,8 @@ class OrderModel {
       this.lngShop,
       this.sumPrice,
       this.transport,
-      this.distance});
+      this.distance,
+      this.detailFood});
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -66,6 +70,7 @@ class OrderModel {
     sumPrice = json['sumPrice'];
     transport = json['transport'];
     distance = json['distance'];
+    detailFood = json['detailFood'];
   }
 
   Map<String, dynamic> toJson() {
@@ -91,6 +96,7 @@ class OrderModel {
     data['sumPrice'] = this.sumPrice;
     data['transport'] = this.transport;
     data['distance'] = this.distance;
+    data['detailFood'] = this.detailFood;
     return data;
   }
 }
